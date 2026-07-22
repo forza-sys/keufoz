@@ -1,0 +1,1402 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kurban OPZ Anggota FOZ - 1447 H / 2026</title>
+  <link rel="stylesheet" href="dashboard-keuangan-app.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="indonesia-38.js"></script>
+</head>
+<body>
+  <div class="dashboard-layout">
+    <div id="sidebar-container"></div>
+    <script src="sidebar.js"></script>
+    <main class="main-content expanded">
+
+
+  <div class="app-container">
+    <div class="mobile-rotate-notice">
+      <i class="fas fa-mobile-alt"></i> Gunakan desktop atau rotate layar untuk pengalaman terbaik
+    </div>
+
+    <!-- Page Header -->
+    <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+      <div class="page-title">
+        <h1>Kurban OPZ Anggota FOZ</h1>
+        <p>Ringkasan data penghimpunan dan penyaluran kurban 1447 H / 2026</p>
+        <p id="last-update-text" style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;"><i class="fas fa-clock"></i> Last update: Memuat...</p>
+      </div>
+
+      <div class="header-actions">
+        <button id="audio-toggle" class="action-btn" title="Nyalakan Mars Zakat">
+          <i class="fas fa-volume-up"></i>
+        </button>
+        <button id="theme-toggle" class="action-btn" title="Ganti Tema">
+          <i class="fas fa-moon"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats Row 1 -->
+    <div class="stats-grid">
+      <!-- Primary Solid Card -->
+      <div class="stat-card primary">
+        <div class="stat-header">
+          <div class="stat-title">Jumlah Penghimpunan</div>
+          <div class="stat-icon"><i class="fas fa-hand-holding-heart"></i></div>
+        </div>
+        <div class="stat-value" id="val-penghimpunan">
+          <i class="fas fa-spinner fa-spin"></i>
+        </div>
+        <div class="stat-footer">Live Data Google Sheets</div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="stat-card">
+        <div class="stat-header">
+          <div class="stat-title">Penerima Manfaat</div>
+          <div class="stat-icon dark"><i class="fas fa-users"></i></div>
+        </div>
+        <div class="stat-value" id="val-penerima">
+          <i class="fas fa-spinner fa-spin"></i>
+        </div>
+        <div class="stat-footer">Total Jiwa Terjangkau</div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="stat-card">
+        <div class="stat-header">
+          <div class="stat-title">Jumlah Pekurban</div>
+          <div class="stat-icon green"><i class="fas fa-user-check"></i></div>
+        </div>
+        <div class="stat-value" id="val-pekurban">
+          <i class="fas fa-spinner fa-spin"></i>
+        </div>
+        <div class="stat-footer">Total Jiwa Berpartisipasi</div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="stat-card">
+        <div class="stat-header">
+          <div class="stat-title">Setara Domba/Kambing</div>
+          <div class="stat-icon red"><i class="fas fa-equals"></i></div>
+        </div>
+        <div class="stat-value" id="val-setara">
+          <i class="fas fa-spinner fa-spin"></i>
+        </div>
+        <div class="stat-footer">Konversi (1 Sapi=7, 1 Unta=10 Domba)</div>
+      </div>
+    </div>
+
+    <!-- Stats Row 2 (Small Grid) -->
+    <div class="stats-grid-small cols-4">
+      
+      <!-- Combined Aggregate Card -->
+      <div class="stat-card primary" style="padding: 1rem 1.5rem; justify-content: space-between;">
+        <div class="stat-header" style="margin-bottom: 0.2rem;">
+           <div class="stat-title" style="color: rgba(255,255,255,0.9); font-weight:700;">Pertumbuhan Agregat</div>
+           <i class="fas fa-chart-line" style="color: rgba(255,255,255,0.8);"></i>
+        </div>
+        <div class="stat-value" id="val-growth-total" style="font-size: 1.8rem; margin-bottom: 0.2rem;"><i class="fas fa-spinner fa-spin"></i></div>
+        <div style="display:flex; justify-content:space-between; font-size: 0.75rem; margin-top: auto; color: rgba(255,255,255,0.9); border-top: 1px solid rgba(255,255,255,0.3); padding-top: 0.5rem;">
+           <div>Nas: <span id="val-growth-nasional" style="font-weight:bold; color:white;"><i class="fas fa-spinner fa-spin"></i></span></div>
+           <div>Prov: <span id="val-growth-provinsi" style="font-weight:bold; color:white;"><i class="fas fa-spinner fa-spin"></i></span></div>
+           <div>Kab: <span id="val-growth-kabkota" style="font-weight:bold; color:white;"><i class="fas fa-spinner fa-spin"></i></span></div>
+        </div>
+      </div>
+
+      <div class="stat-card" style="padding: 1rem 1.5rem;">
+        <div class="stat-header" style="margin-bottom: 0.5rem;">
+          <div class="stat-title">Domba / Kambing (Ekor)</div>
+          <i class="fas fa-paw" style="color: var(--primary);"></i>
+        </div>
+        <div class="stat-value" id="val-kambing" style="font-size: 1.5rem; margin-bottom: 0;">...</div>
+      </div>
+
+      <div class="stat-card" style="padding: 1rem 1.5rem;">
+        <div class="stat-header" style="margin-bottom: 0.5rem;">
+          <div class="stat-title">Sapi / Kerbau / Unta (Ekor)</div>
+          <i class="fas fa-paw" style="color: var(--primary);"></i>
+        </div>
+        <div class="stat-value" id="val-sapi" style="font-size: 1.5rem; margin-bottom: 0;">...</div>
+      </div>
+
+      <div class="stat-card" style="padding: 1rem 1.5rem;">
+        <div class="stat-header" style="margin-bottom: 0.5rem;">
+          <div class="stat-title">Lembaga Berpartisipasi</div>
+          <i class="fas fa-building" style="color: var(--primary);"></i>
+        </div>
+        <div class="stat-value" id="val-lembaga" style="font-size: 1.5rem; margin-bottom: 0;">...</div>
+      </div>
+    </div>
+
+    <!-- Map and Countries Distribution Row -->
+    <div class="map-row">
+      <!-- Peta Sebaran -->
+      <div class="map-card">
+        <div class="chart-header">
+          <div class="chart-title" id="val-provinsi">Sebaran Wilayah (Memuat...)</div>
+          <button class="btn" id="btn-peta-penuh" style="padding: 0.4rem 0.8rem;">Lihat Peta Penuh</button>
+        </div>
+        <div class="map-placeholder" id="regions_div" style="height: 350px; width: 100%; display: flex; justify-content: center; align-items: center; border-radius: 8px; overflow: hidden; padding: 1rem;">
+          <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--primary);"></i>
+        </div>
+      </div>
+
+      <!-- List Negara -->
+      <div class="map-card">
+        <div class="chart-header">
+          <div class="chart-title" id="val-negara">Distribusi Luar Negeri <i class="fas fa-globe" style="color: var(--text-muted);"></i></div>
+        </div>
+        
+        <div class="countries-list" id="countries-list">
+          <div class="country-item"><div class="country-info">Memuat data dari Google Sheets...</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Leaderboard Row -->
+    <div class="leaderboard-row">
+      <!-- Top Penghimpunan -->
+      <div class="leaderboard-card">
+        <div class="leaderboard-header">
+          <div class="chart-title">Top 5 Penghimpunan</div>
+          <div class="tab-nav" id="tab-penghimpunan">
+            <button class="tab-btn active" data-scale="Nasional">Nasional</button>
+            <button class="tab-btn" data-scale="Provinsi">Provinsi</button>
+            <button class="tab-btn" data-scale="Kab/Kota">Kab/Kota</button>
+          </div>
+        </div>
+        <div class="leaderboard-list" id="list-penghimpunan">
+           <div class="leaderboard-item" style="justify-content:center;"><i class="fas fa-spinner fa-spin"></i> &nbsp; Memuat...</div>
+        </div>
+      </div>
+
+      <!-- Top Pertumbuhan -->
+      <div class="leaderboard-card">
+        <div class="leaderboard-header">
+          <div class="chart-title">Top 5 Pertumbuhan (%)</div>
+          <div class="tab-nav" id="tab-pertumbuhan">
+            <button class="tab-btn active" data-scale="Nasional">Nasional</button>
+            <button class="tab-btn" data-scale="Provinsi">Provinsi</button>
+            <button class="tab-btn" data-scale="Kab/Kota">Kab/Kota</button>
+          </div>
+        </div>
+        <div class="leaderboard-list" id="list-pertumbuhan">
+           <div class="leaderboard-item" style="justify-content:center;"><i class="fas fa-spinner fa-spin"></i> &nbsp; Memuat...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Insight Data Section -->
+    <div class="insight-section">
+      <div class="insight-header">
+        <div class="insight-title-wrap">
+          <div class="insight-icon"><i class="fas fa-lightbulb"></i></div>
+          <div>
+            <div class="chart-title">Insight Data</div>
+            <p style="font-size:0.78rem; color:var(--text-muted); margin-top:0.15rem;">Analisis otomatis dari data yang terkumpul</p>
+          </div>
+        </div>
+      </div>
+      <div class="insight-grid" id="insight-grid">
+        <div class="insight-card" id="insight-1">
+          <div class="insight-icon-sm"><i class="fas fa-chart-line"></i></div>
+          <div class="insight-body">
+            <div class="insight-label">Pertumbuhan Kurban Agregat</div>
+            <div class="insight-value" id="iv-agregat">—</div>
+            <div class="insight-desc" id="id-agregat">Memuat...</div>
+          </div>
+        </div>
+        <div class="insight-card" id="insight-2">
+          <div class="insight-icon-sm"><i class="fas fa-balance-scale"></i></div>
+          <div class="insight-body">
+            <div class="insight-label">Dinamika Lokal vs Nasional</div>
+            <div class="insight-value" id="iv-dinamika">—</div>
+            <div class="insight-desc" id="id-dinamika">Memuat...</div>
+          </div>
+        </div>
+        <div class="insight-card" id="insight-3">
+          <div class="insight-icon-sm"><i class="fas fa-paw"></i></div>
+          <div class="insight-body">
+            <div class="insight-label">Pola Kurban: Individu vs Kolektif</div>
+            <div class="insight-value" id="iv-pola">—</div>
+            <div class="insight-desc" id="id-pola">Memuat...</div>
+          </div>
+        </div>
+        <div class="insight-card" id="insight-4">
+          <div class="insight-icon-sm"><i class="fas fa-bullseye"></i></div>
+          <div class="insight-body">
+            <div class="insight-label">Fokus Kantong Kemiskinan</div>
+            <div class="insight-value" id="iv-dampak">—</div>
+            <div class="insight-desc" id="id-dampak">Memuat...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Table Section -->
+    <div class="data-table-section">
+      <div class="table-header-bar">
+        <div class="table-title-wrap">
+          <div class="insight-icon"><i class="fas fa-table"></i></div>
+          <div>
+            <div class="chart-title">Data Lembaga</div>
+            <p style="font-size:0.78rem; color:var(--text-muted); margin-top:0.15rem;">Detail data seluruh OPZ yang berpartisipasi</p>
+          </div>
+        </div>
+        <div class="table-controls">
+          <div class="table-search">
+            <i class="fas fa-search"></i>
+            <input type="text" id="table-search" placeholder="Cari lembaga...">
+          </div>
+          <div class="table-filter">
+            <select id="table-filter-skala">
+              <option value="all">Semua Skala</option>
+              <option value="Nasional">Nasional</option>
+              <option value="Provinsi">Provinsi</option>
+              <option value="Kab/Kota">Kab/Kota</option>
+            </select>
+          </div>
+          <div class="table-limit">
+            <select id="table-limit-rows">
+              <option value="10" selected>10 Baris</option>
+              <option value="50">50 Baris</option>
+              <option value="100">100 Baris</option>
+              <option value="all">Semua</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="table-wrapper">
+        <table id="opz-data-table">
+          <thead>
+            <tr>
+              <th class="sortable col-center" style="text-align: center;" data-col="no">No</th>
+              <th class="sortable" data-col="nama">Lembaga <i class="fas fa-sort"></i></th>
+              <th class="sortable col-center" style="text-align: center;" data-col="skala">Skala <i class="fas fa-sort"></i></th>
+              <th class="sortable col-num" style="text-align: left;" data-col="penghimpunan">Total Penghimpunan <i class="fas fa-sort"></i></th>
+              <th class="sortable col-num" style="text-align: center;" data-col="pertumbuhan">Pertumbuhan <i class="fas fa-sort"></i></th>
+              <th class="sortable col-num" style="text-align: center;" data-col="setara">Setara D/K <i class="fas fa-sort"></i></th>
+              <th class="sortable col-num" style="text-align: center;" data-col="pekurban">Pekurban <i class="fas fa-sort"></i></th>
+              <th class="sortable col-num" style="text-align: center;" data-col="penerima">Penerima Manfaat <i class="fas fa-sort"></i></th>
+            </tr>
+          </thead>
+          <tbody id="opz-table-body">
+            <tr><td colspan="7" style="text-align:center; padding:2rem; color:var(--text-muted);">Memuat data...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="table-footer">
+        <div class="table-info">Menampilkan <span id="table-count">0</span> dari <span id="table-total">0</span> lembaga</div>
+        <div class="table-pagination">
+          <button id="btn-prev-page" class="btn-page"><i class="fas fa-chevron-left"></i></button>
+          <span id="page-indicator">1</span>
+          <button id="btn-next-page" class="btn-page"><i class="fas fa-chevron-right"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Logos Marquee Section -->
+    <div class="logos-section">
+      <div class="logos-title">Lembaga Berpartisipasi</div>
+      <div class="marquee-container" id="logo-marquee">
+        <!-- Content will be injected by JS -->
+      </div>
+    </div>
+
+  
+    <div class="footer-credit" style="display: flex; flex-direction: column; align-items: center; gap: 1.5rem; margin-top: 3rem; margin-bottom: 3rem;">
+      <div style="font-size: 0.85rem; color: var(--text-muted); text-align: center;">
+        Ada kekeliruan data, kritik, atau saran?
+        <div style="margin-top: 0.75rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+          <a href="https://forms.gle/PSg3a74ePWGJv2sn7" target="_blank" class="contact-btn"><i class="fas fa-file-alt"></i> Klik di Sini</a>
+          <a href="https://wa.me/6282297372672" target="_blank" class="contact-btn wa-btn"><i class="fab fa-whatsapp"></i> Chat Teguh</a>
+        </div>
+      </div>
+      <div><i class="fas fa-handshake" style="color:var(--primary-color);"></i> Jabat Erat Forum Zakat</div>
+    </div>
+    
+    <audio id="mars-audio" loop preload="auto">
+       <!-- Nanti ganti dengan URL Mars Zakat -->
+       <source src="mars_zakat.mp3" type="audio/mpeg">
+    </audio>
+  </div>
+
+
+
+  <script>
+    function initDashboard() {
+    function parseIndonesianNumber(str) {
+      if (!str) return 0;
+      const cleaned = str.toString().replace(/\./g, '').replace(/,/g, '.');
+      return parseFloat(cleaned) || 0;
+    }
+
+    function formatShort(num) {
+      if (num >= 1e12) {
+        return (num / 1e12).toFixed(2).replace(/\.00$/, '') + ' T';
+      }
+      if (num >= 1e9) {
+        return (num / 1e9).toFixed(1).replace(/\.0$/, '') + ' M';
+      }
+      if (num >= 1e6) {
+        return (num / 1e6).toFixed(1).replace('.0', '') + ' Juta';
+      }
+      if (num >= 1e3) {
+        return (num / 1e3).toFixed(1).replace('.0', '') + ' Ribu';
+      }
+      return num.toLocaleString('id-ID');
+    }
+
+    const provinceAliases = {
+      "aceh": "Aceh",
+      "sumatera utara": "Sumatera Utara", "sumut": "Sumatera Utara",
+      "sumatera barat": "Sumatera Barat", "sumbar": "Sumatera Barat",
+      "riau": "Riau",
+      "kepulauan riau": "Kepulauan Riau", "kepri": "Kepulauan Riau",
+      "jambi": "Jambi",
+      "sumatera selatan": "Sumatera Selatan", "sumsel": "Sumatera Selatan",
+      "bangka belitung": "Kepulauan Bangka Belitung", "babel": "Kepulauan Bangka Belitung",
+      "bengkulu": "Bengkulu",
+      "lampung": "Lampung",
+      "dki jakarta": "DKI Jakarta", "jakarta": "DKI Jakarta",
+      "banten": "Banten",
+      "jawa barat": "Jawa Barat", "jabar": "Jawa Barat",
+      "jawa tengah": "Jawa Tengah", "jateng": "Jawa Tengah",
+      "di yogyakarta": "DI Yogyakarta", "yogyakarta": "DI Yogyakarta", "diy": "DI Yogyakarta",
+      "jawa timur": "Jawa Timur", "jatim": "Jawa Timur",
+      "bali": "Bali",
+      "nusa tenggara barat": "Nusa Tenggara Barat", "ntb": "Nusa Tenggara Barat",
+      "nusa tenggara timur": "Nusa Tenggara Timur", "ntt": "Nusa Tenggara Timur",
+      "kalimantan barat": "Kalimantan Barat", "kalbar": "Kalimantan Barat",
+      "kalimantan tengah": "Kalimantan Tengah", "kalteng": "Kalimantan Tengah",
+      "kalimantan selatan": "Kalimantan Selatan", "kalsel": "Kalimantan Selatan",
+      "kalimantan timur": "Kalimantan Timur", "kaltim": "Kalimantan Timur",
+      "kalimantan utara": "Kalimantan Utara", "kaltara": "Kalimantan Utara",
+      "sulawesi utara": "Sulawesi Utara", "sulut": "Sulawesi Utara",
+      "gorontalo": "Gorontalo",
+      "sulawesi tengah": "Sulawesi Tengah", "sulteng": "Sulawesi Tengah",
+      "sulawesi barat": "Sulawesi Barat", "sulbar": "Sulawesi Barat",
+      "sulawesi selatan": "Sulawesi Selatan", "sulsel": "Sulawesi Selatan",
+      "sulawesi tenggara": "Sulawesi Tenggara", "sultra": "Sulawesi Tenggara",
+      "maluku utara": "Maluku Utara", "malut": "Maluku Utara",
+      "maluku": "Maluku",
+      "papua barat daya": "Papua Barat Daya",
+      "papua barat": "Papua Barat", "pabar": "Papua Barat",
+      "papua selatan": "Papua Selatan",
+      "papua tengah": "Papua Tengah",
+      "papua pegunungan": "Papua Pegunungan",
+      "papua": "Papua"
+    };
+
+    const allProvinces = [
+      "Aceh", "Sumatera Utara", "Sumatera Barat", "Riau", "Kepulauan Riau", "Jambi", "Sumatera Selatan", "Bangka Belitung", "Bengkulu", "Lampung", 
+      "DKI Jakarta", "Jakarta", "Banten", "Jawa Barat", "Jabar", "Jawa Tengah", "Jateng", "DI Yogyakarta", "Yogyakarta", "DIY", "Jawa Timur", "Jatim", "Bali", "Nusa Tenggara Barat", "NTB", "Nusa Tenggara Timur", "NTT", 
+      "Kalimantan Barat", "Kalimantan Tengah", "Kalimantan Selatan", "Kalimantan Timur", "Kalimantan Utara", "Sulawesi Utara", "Gorontalo", "Sulawesi Tengah", "Sulawesi Barat", "Sulawesi Selatan", "Sulawesi Tenggara", 
+      "Maluku Utara", "Maluku", "Papua Barat Daya", "Papua Barat", "Papua Selatan", "Papua Tengah", "Papua Pegunungan", "Papua"
+    ];
+
+    const countryAliases = {
+      'palestina': 'Palestina', 'palestin': 'Palestina', 'gaza': 'Palestina', 'tepi barat': 'Palestina',
+      'syiria': 'Suriah', 'suriah': 'Suriah', 'syria': 'Suriah',
+      'jordan': 'Yordania', 'yordania': 'Yordania', 'jordania': 'Yordania',
+      'lebanon': 'Lebanon', 'libanon': 'Lebanon',
+      'mesir': 'Mesir',
+      'yaman': 'Yaman',
+      'somalia': 'Somalia',
+      'uganda': 'Uganda',
+      'kenya': 'Kenya',
+      'sudan': 'Sudan',
+      'madagaskar': 'Madagaskar',
+      'chad': 'Chad',
+      'turki': 'Turki', 'turkiye': 'Turki', 'türkiye': 'Turki',
+      'myanmar': 'Myanmar', 'rohingya': 'Myanmar',
+      'filipina': 'Filipina',
+      'timor': 'Timor Leste', 'timor leste': 'Timor Leste', 'timor-leste': 'Timor Leste',
+      'kamerun': 'Kamerun', 'cameroon': 'Kamerun',
+      'mali': 'Mali',
+      'niger': 'Niger',
+      'ethiopia': 'Ethiopia', 'ethopia': 'Ethiopia',
+      'tanzania': 'Tanzania',
+      'selandia baru': 'Selandia Baru', 'new zealand': 'Selandia Baru',
+      'bangladesh': 'Bangladesh',
+      'pakistan': 'Pakistan',
+      'sri lanka': 'Sri Lanka', 'srilanka': 'Sri Lanka',
+      'india': 'India',
+      'papua nugini': 'Papua Nugini',
+      'vietnam': 'Vietnam',
+      'kamboja': 'Kamboja',
+      'thailand': 'Thailand',
+      'australia': 'Australia',
+      'jepang': 'Jepang'
+    };
+
+    const opzDomains = {
+      "Dompet Dhuafa": "dompetdhuafa.org",
+      "Rumah Zakat": "rumahzakat.org",
+      "LAZIS Muhammadiyah (LAZISMU)": "lazismu.org",
+      "BSI Maslahat": "bsimaslahat.org",
+      "LAZNAS YDSF": "ydsf.org",
+      "LAZNAS LMI": "lmizakat.org",
+      "Inisiatif Zakat Indonesia (IZI)": "izi.or.id",
+      "LAZNAS Yatim Mandiri": "yatimmandiri.org",
+      "Sinergi Foundation": "sinergifoundation.org",
+      "Rumah Amal Salman": "rumahamal.org",
+      "Baitulmaal Munzalan Indonesia": "munzalan.id",
+      "LAZ DPU Kaltim": "dpukaltim.org",
+      "LAZ Zakat Sukses": "zakatsukses.org",
+      "LAZ Al Bunyan": "albunyan.or.id",
+      "MAI Foundation": "maifoundation.or.id",
+      "LAZ Harapan Dhuafa": "harapandhuafa.org",
+      "ZIS Indosat": "zisindosat.id",
+      "Amaliah Astra": "amaliah.id",
+      "LAZIS Jateng": "lazisjateng.org",
+      "DSM Bali": "dompetsosial.id",
+      "LAZ DASI NTB": "dasintb.org",
+      "LAZNAS Mizan Amanah": "mizanamanah.or.id",
+      "LAZNAS IKADI": "laznasikadi.id",
+      "Pelopor Kepedulian": "peloporkepedulian.org",
+      "Rumah Harapan": "rumahharapan.org",
+      "Sahabat Yatim Indonesia": "sahabatyatim.com",
+      "LAZ RIZKI": "lazrizki.org",
+      "LAZ Persada Jatim Indonesia": "lazpersada.org",
+      "Yuk Peduli": "yukpeduli.com",
+      "LAZ Darul Hikam": "lazdarulhikam.org",
+      "LAZ Masjid Raya Bintaro (LAZ MRBJ)": "mrbj.or.id",
+      "LAZIS UNISIA": "lazisunisia.org",
+      "LAZIS Sultan Agung": "lazissultanagung.org",
+      "BAMUIS BNI": "bamuisbni.com",
+      "Infaq Berkah": "infaqberkah.id",
+      "LAZ YASA Malang": "yasamalang.or.id",
+      "LAZIS Syuhada": "lazissyuhada.org",
+      "Baitul Maal BMT Beringharjo": "bmtberingharjo.com",
+      "LAZ Assyifa Peduli": "assyifapeduli.org",
+      "LAZ Lidzikri": "lidzikri.org",
+      "TAMAN ZAKAT INDONESIA": "tamanzakat.org",
+      "Indonesia Berbagi": "indonesiaberbagi.id",
+      "LAZ Ummul Quro": "lazummulquro.org",
+      "LAZ As-Salam Timika": "assalamtimika.org",
+      "ALZIS Alwashliyah": "alwashliyah.id",
+      "LAZNAS Agnia Care": "agniacare.org",
+      "PPPA Daarul Qur'an": "pppa.id",
+      "PPPA Daarul Qur’an": "pppa.id",
+      "LAZGIS": "lazgis.com"
+    };
+
+    const rawUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQzIND5CL0y6ye7QeP_4R0gq9Qi2M1fF7hrHzaWWMykMTN7T5Z5mmEH4ly2xC6xjPk2CbMfEP5s3Pue/pub?gid=1807251763&single=true&output=csv';
+    const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(rawUrl);
+
+    function renderLeaderboards(scaleHimpun, scaleTumbuh) {
+       if(!window.appOpzData) return;
+       
+       let filteredHimpun = window.appOpzData.filter(o => o.scale.toLowerCase() === scaleHimpun.toLowerCase());
+       filteredHimpun.sort((a, b) => b.himpunan - a.himpunan);
+       
+       let filteredTumbuh = window.appOpzData.filter(o => o.scale.toLowerCase() === scaleTumbuh.toLowerCase());
+       filteredTumbuh.sort((a, b) => b.growth - a.growth);
+       
+       const renderList = (containerId, dataList, isGrowth) => {
+         let html = '';
+         if(dataList.length === 0) {
+           html = `<div class="leaderboard-item" style="justify-content:center; color:var(--text-muted); font-size:0.85rem;">Tidak ada data</div>`;
+         } else {
+           dataList.slice(0, 5).forEach((item, index) => {
+             let rankClass = index === 0 ? 'top-1' : (index === 1 ? 'top-2' : (index === 2 ? 'top-3' : ''));
+             
+             let displayStat = '';
+             if (isGrowth) {
+                if(item.growth > 0) displayStat = `<span style="color:#10b981;">+${item.growth}%</span>`;
+                else if(item.growth < 0) displayStat = `<span style="color:#e11d48;">${item.growth}%</span>`;
+                else displayStat = `0%`;
+             } else {
+                displayStat = `Rp ${formatShort(item.himpunan)}`;
+             }
+             
+             html += `
+                <div class="leaderboard-item">
+                  <div class="opz-info">
+                    <div class="rank-badge ${rankClass}">${index + 1}</div>
+                    <span class="opz-name">${item.name}</span>
+                  </div>
+                  <span class="opz-stat">${displayStat}</span>
+                </div>
+             `;
+           });
+         }
+         document.getElementById(containerId).innerHTML = html;
+       };
+       
+       renderList('list-penghimpunan', filteredHimpun, false);
+       renderList('list-pertumbuhan', filteredTumbuh, true);
+    }
+
+    function fetchAndProcessData() {
+      fetch(rawUrl)
+        .then(res => {
+          if (!res.ok) throw new Error("Direct fetch failed");
+          return res.text();
+        })
+        .then(csv => parseAndRender(csv))
+        .catch(err => {
+          console.warn("Koneksi langsung ditolak (CORS), mencoba via Proxy AllOrigins...");
+          fetch(proxyUrl)
+            .then(res => {
+              if (!res.ok) throw new Error("Proxy fetch failed");
+              return res.text();
+            })
+            .then(csv => parseAndRender(csv))
+            .catch(err2 => {
+              document.getElementById('val-penghimpunan').innerHTML = `<span style="font-size:1rem; color:#e11d48;">Koneksi Terputus (CORS)</span>`;
+              document.getElementById('val-penerima').innerHTML = `-`;
+              document.getElementById('val-pekurban').innerHTML = `-`;
+              document.getElementById('val-setara').innerHTML = `-`;
+              document.getElementById('list-penghimpunan').innerHTML = `<div class="leaderboard-item" style="justify-content:center; color:#e11d48; font-size:0.85rem;">Gagal memuat data</div>`;
+              document.getElementById('list-pertumbuhan').innerHTML = `<div class="leaderboard-item" style="justify-content:center; color:#e11d48; font-size:0.85rem;">Gagal memuat data</div>`;
+            });
+        });
+    }
+
+    function parseAndRender(csvStr) {
+      Papa.parse(csvStr, {
+        header: true,
+        skipEmptyLines: true,
+        complete: function(results) {
+          let data = results.data;
+          
+          let totalPenghimpunan = 0;
+          let totalPenghimpunanLalu = 0;
+          let totalPekurban = 0;
+          let totalPenerima = 0;
+          let totalKambing = 0;
+          let totalSapi = 0;
+          let totalUnta = 0;
+          let lembagaSet = new Set();
+          let provinsiSet = new Set();
+          let provCountMap = new Map();
+          let provLembagaMap = new Map();
+          let negaraMap = new Map(); 
+          let opzList = [];
+          
+          let countOpzKantongKemiskinan = 0;
+          let top16Provs = [
+            "Nusa Tenggara Timur", "Jawa Barat", "Sulawesi Selatan", "Jawa Timur", 
+            "Jawa Tengah", "Papua Pegunungan", "Sumatera Utara", "Sumatera Selatan", 
+            "Lampung", "Papua Selatan", "Sulawesi Tengah", "Papua Tengah", 
+            "Aceh", "Kepulauan Riau", "Banten", "Nusa Tenggara Barat"
+          ];
+          let maxTimestamp = 0;
+          
+          let himpunanSkalaIni = { 'Nasional': 0, 'Provinsi': 0, 'Kab/Kota': 0 };
+          let himpunanSkalaLalu = { 'Nasional': 0, 'Provinsi': 0, 'Kab/Kota': 0 };
+          
+          data.forEach(row => {
+            if(row['Timestamp']) {
+               let tsStr = row['Timestamp'];
+               let parts = tsStr.split(' ');
+               if(parts.length === 2) {
+                 let dmy = parts[0].split('/');
+                 if(dmy.length === 3) {
+                   let ts = new Date(`${dmy[2]}-${dmy[1]}-${dmy[0]}T${parts[1]}`).getTime();
+                   if(!isNaN(ts) && ts > maxTimestamp) maxTimestamp = ts;
+                 }
+               }
+            }
+            
+            let himpunan = parseIndonesianNumber(row['1. Total Penghimpunan Kurban (Rupiah)']);
+            let himpunanLalu = parseIndonesianNumber(row['9. Total Penghimpunan Kurban Tahun Sebelumnya (1446 H/2025) (Rupiah)']);
+            
+            totalPenghimpunan += himpunan;
+            totalPenghimpunanLalu += himpunanLalu;
+            
+            totalPekurban += parseIndonesianNumber(row['2. Total Pekurban (Orang)']);
+            totalPenerima += parseIndonesianNumber(row['3. Total Penerima Manfaat (Orang)']);
+            totalKambing += parseIndonesianNumber(row['4. Total Domba/Kambing (Ekor)']);
+            totalSapi += parseIndonesianNumber(row['5. Total Sapi/Kerbau (ekor)']);
+            totalUnta += parseIndonesianNumber(row['6. Total Unta (ekor)']);
+            
+            let name = (row['Lembaga Anda'] || '').trim();
+            if (name !== '') {
+              lembagaSet.add(name);
+              
+              let scale = (row['SKALA'] || '').trim();
+              let rawGrow = row['Pertumbuhan'] || '0';
+              let growthStr = rawGrow.toString().replace('%', '').trim();
+              let growth = parseFloat(growthStr) || 0;
+              
+              let sKey = 'Kab/Kota';
+              if(scale.toLowerCase().includes('nasional')) sKey = 'Nasional';
+              else if(scale.toLowerCase().includes('provinsi')) sKey = 'Provinsi';
+              
+              himpunanSkalaIni[sKey] += himpunan;
+              himpunanSkalaLalu[sKey] += himpunanLalu;
+              
+              let rowPekurban = parseIndonesianNumber(row['2. Total Pekurban (Orang)']);
+              let rowPenerima = parseIndonesianNumber(row['3. Total Penerima Manfaat (Orang)']);
+              let rowKambing = parseIndonesianNumber(row['4. Total Domba/Kambing (Ekor)']);
+              let rowSapi = parseIndonesianNumber(row['5. Total Sapi/Kerbau (ekor)']);
+              let rowUnta = parseIndonesianNumber(row['6. Total Unta (ekor)']);
+              let rowSetara = rowKambing + (rowSapi * 7) + (rowUnta * 10);
+              
+              opzList.push({
+                name: name,
+                scale: scale,
+                himpunan: himpunan,
+                growth: growth,
+                pekurban: rowPekurban,
+                penerima: rowPenerima,
+                setara: rowSetara
+              });
+            }
+            
+            let opzProvSet = new Set();
+            let provStr = (row['7. Provinsi Penyaluran (Dalam Negeri)'] || '').toLowerCase();
+            if (provStr.includes('seluruh provinsi')) {
+               allProvinces.forEach(p => {
+                  let mapped = p;
+                  if(p === 'Jakarta') mapped = 'DKI Jakarta';
+                  else if(p === 'Jabar') mapped = 'Jawa Barat';
+                  else if(p === 'Jateng') mapped = 'Jawa Tengah';
+                  else if(p === 'Jatim') mapped = 'Jawa Timur';
+                  else if(p === 'DIY' || p === 'Yogyakarta') mapped = 'DI Yogyakarta';
+                  else if(p === 'NTB') mapped = 'Nusa Tenggara Barat';
+                  else if(p === 'NTT') mapped = 'Nusa Tenggara Timur';
+                  opzProvSet.add(mapped);
+               });
+            } else {
+                Object.keys(provinceAliases).forEach(alias => {
+                   let match = false;
+                   if (alias === 'papua') {
+                       let regex = new RegExp('\\b' + alias + '\\b(?!\\s+(barat|selatan|tengah|pegunungan))', 'i');
+                       if (regex.test(provStr)) match = true;
+                   } else {
+                       let regex = new RegExp('\\b' + alias + '\\b', 'i');
+                       if (regex.test(provStr)) match = true;
+                   }
+                   if (match) {
+                      opzProvSet.add(provinceAliases[alias]);
+                   }
+                });
+             }
+            
+            let touchesPoverty = false;
+            opzProvSet.forEach(p => {
+                if (top16Provs.includes(p)) touchesPoverty = true;
+            });
+            if (touchesPoverty) countOpzKantongKemiskinan++;
+            
+            opzProvSet.forEach(p => {
+                provinsiSet.add(p);
+                provCountMap.set(p, (provCountMap.get(p) || 0) + 1);
+                
+                let list = provLembagaMap.get(p) || [];
+                if (name && !list.includes(name)) list.push(name);
+                provLembagaMap.set(p, list);
+            });
+            
+            let negStr = (row['8. Negara Penyaluran Kurban di Luar Negeri'] || '').toLowerCase();
+            Object.keys(countryAliases).forEach(alias => {
+               let regex = new RegExp(`\\b${alias}\\b`, 'i');
+               if (regex.test(negStr)) {
+                  let canonical = countryAliases[alias];
+                  negaraMap.set(canonical, (negaraMap.get(canonical) || 0) + 1);
+               }
+            });
+          });
+          
+          let setaraKambing = totalKambing + (totalSapi * 7) + (totalUnta * 10);
+          let totalSapiUnta = totalSapi + totalUnta;
+          let finalProvCount = provinsiSet.size > 38 ? 38 : provinsiSet.size;
+
+          let calcGrowth = (ini, lalu) => {
+             if (lalu === 0 && ini > 0) return 100;
+             if (lalu === 0 && ini === 0) return 0;
+             return Math.round(((ini - lalu) / lalu) * 100);
+          };
+          
+          let growTotal = calcGrowth(totalPenghimpunan, totalPenghimpunanLalu);
+          let growNas = calcGrowth(himpunanSkalaIni['Nasional'], himpunanSkalaLalu['Nasional']);
+          let growProv = calcGrowth(himpunanSkalaIni['Provinsi'], himpunanSkalaLalu['Provinsi']);
+          let growKab = calcGrowth(himpunanSkalaIni['Kab/Kota'], himpunanSkalaLalu['Kab/Kota']);
+
+          const formatGrowMain = (val) => {
+             if(val > 0) return `<span style="color:white;"><i class="fas fa-arrow-up" style="font-size:1.2rem;"></i> +${val}%</span>`;
+             if(val < 0) return `<span style="color:#fecaca;"><i class="fas fa-arrow-down" style="font-size:1.2rem;"></i> ${val}%</span>`;
+             return `<span style="color:rgba(255,255,255,0.8);">0%</span>`;
+          };
+          const formatGrowSub = (val) => {
+             if(val > 0) return `<span style="color:white;"><i class="fas fa-arrow-up" style="font-size:0.6rem;"></i> +${val}%</span>`;
+             if(val < 0) return `<span style="color:#fecaca;"><i class="fas fa-arrow-down" style="font-size:0.6rem;"></i> ${val}%</span>`;
+             return `<span style="color:rgba(255,255,255,0.8);">0%</span>`;
+          };
+
+          document.getElementById('val-growth-total').innerHTML = formatGrowMain(growTotal);
+          document.getElementById('val-growth-nasional').innerHTML = formatGrowSub(growNas);
+          document.getElementById('val-growth-provinsi').innerHTML = formatGrowSub(growProv);
+          document.getElementById('val-growth-kabkota').innerHTML = formatGrowSub(growKab);
+
+          document.getElementById('val-penghimpunan').innerHTML = formatShort(totalPenghimpunan) + ` <span class="stat-badge up"><i class="fas fa-sync-alt"></i> Live</span>`;
+          document.getElementById('val-penerima').innerHTML = formatShort(totalPenerima) + ` <span class="stat-badge green"><i class="fas fa-sync-alt"></i> Live</span>`;
+          document.getElementById('val-pekurban').innerHTML = formatShort(totalPekurban) + ` <span class="stat-badge red"><i class="fas fa-sync-alt"></i> Live</span>`;
+          document.getElementById('val-setara').innerHTML = formatShort(setaraKambing);
+          
+          document.getElementById('val-kambing').innerHTML = formatShort(totalKambing);
+          document.getElementById('val-sapi').innerHTML = formatShort(totalSapiUnta);
+          document.getElementById('val-lembaga').innerHTML = lembagaSet.size + ` <span style="font-size:0.8rem; color:var(--text-muted); font-weight:600;">Lembaga</span>`;
+          
+          document.getElementById('val-provinsi').innerText = `Sebaran Wilayah (${finalProvCount} Provinsi)`;
+          
+          let negaraArr = Array.from(negaraMap.entries()).sort((a,b) => b[1] - a[1]);
+          
+          let cList = document.getElementById('countries-list');
+          cList.innerHTML = '';
+          document.getElementById('val-negara').innerHTML = `Distribusi Luar Negeri (${negaraArr.length} Negara) <i class="fas fa-globe" style="color: var(--text-muted);"></i>`;
+          let totalNegaraDocs = negaraArr.reduce((sum, curr) => sum + curr[1], 0);
+          
+          if(negaraArr.length === 0) {
+            cList.innerHTML = `<div class="country-item"><div class="country-info">Belum ada data negara</div></div>`;
+          } else {
+            negaraArr.forEach(n => {
+               let pct = Math.round((n[1] / totalNegaraDocs) * 100) || 1;
+               let iso = '';
+               let name = n[0];
+               
+                    if(name === 'Palestina') iso = 'ps';
+               else if(name === 'Suriah') iso = 'sy';
+               else if(name === 'Somalia') iso = 'so';
+               else if(name === 'Mesir') iso = 'eg';
+               else if(name === 'Sudan') iso = 'sd';
+               else if(name === 'Uganda') iso = 'ug';
+               else if(name === 'Turki') iso = 'tr';
+               else if(name === 'Yaman') iso = 'ye';
+               else if(name === 'Kenya') iso = 'ke';
+               else if(name === 'Myanmar') iso = 'mm';
+               else if(name === 'Filipina') iso = 'ph';
+               else if(name === 'Timor Leste') iso = 'tl';
+               else if(name === 'Kamerun') iso = 'cm';
+               else if(name === 'Mali') iso = 'ml';
+               else if(name === 'Niger') iso = 'ne';
+               else if(name === 'Ethiopia') iso = 'et';
+               else if(name === 'Madagaskar') iso = 'mg';
+               else if(name === 'Chad') iso = 'td';
+               else if(name === 'Yordania') iso = 'jo';
+               else if(name === 'Lebanon') iso = 'lb';
+               else if(name === 'Tanzania') iso = 'tz';
+               else if(name === 'Selandia Baru') iso = 'nz';
+               else if(name === 'Bangladesh') iso = 'bd';
+               else if(name === 'Pakistan') iso = 'pk';
+               else if(name === 'Sri Lanka') iso = 'lk';
+               else if(name === 'India') iso = 'in';
+               else if(name === 'Papua Nugini') iso = 'pg';
+               else if(name === 'Vietnam') iso = 'vn';
+               else if(name === 'Kamboja') iso = 'kh';
+               else if(name === 'Thailand') iso = 'th';
+               else if(name === 'Australia') iso = 'au';
+               else if(name === 'Jepang') iso = 'jp';
+               
+               let flagHtml = iso 
+                 ? `<img src="https://flagcdn.com/w40/${iso}.png" alt="${name}" style="width: 32px; height: 24px; border-radius: 3px; object-fit: cover; box-shadow: 0 1px 3px rgba(0,0,0,0.2);">`
+                 : `<div style="width: 32px; height: 24px; background: #e2e8f0; border-radius: 3px; display:flex; align-items:center; justify-content:center;"><i class="fas fa-globe" style="color:#94a3b8; font-size:0.9rem;"></i></div>`;
+
+               cList.innerHTML += `
+                <div class="country-item">
+                  <div class="country-info">
+                    <div class="flag" style="display:flex; align-items:center;">${flagHtml}</div>
+                    <span class="country-name" style="font-weight: 600; font-size: 1.05rem;">${name}</span>
+                  </div>
+                  <span class="country-stat" style="font-weight: 700; color: var(--primary);">${pct}%</span>
+                </div>
+               `;
+            });
+            
+             // Removed Lainnya logic to show all countries
+          }
+          
+          if(maxTimestamp > 0) {
+             let d = new Date(maxTimestamp);
+             let dateStr = d.toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'});
+             let timeStr = d.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'});
+             document.getElementById('last-update-text').innerHTML = `<i class="fas fa-clock"></i> Last update: ${dateStr}, ${timeStr} WIB`;
+          } else {
+             document.getElementById('last-update-text').innerHTML = `<i class="fas fa-clock"></i> Last update: Saat ini`;
+          }
+          
+          // Trigger Leaderboards Update
+          window.appOpzData = opzList;
+          let initialHimpun = document.querySelector('#tab-penghimpunan .tab-btn.active').getAttribute('data-scale');
+          let initialTumbuh = document.querySelector('#tab-pertumbuhan .tab-btn.active').getAttribute('data-scale');
+          renderLeaderboards(initialHimpun, initialTumbuh);
+
+          // Render Map
+          // Render Map using Leaflet
+          function getColor(d, maxVal) {
+             if (!d || d === 0) return '#f1f5f9';
+             let ratio = d / maxVal;
+             if (ratio > 0.8) return '#14532d';
+             if (ratio > 0.6) return '#166534';
+             if (ratio > 0.4) return '#15803d';
+             if (ratio > 0.2) return '#16a34a';
+             if (ratio > 0.1) return '#22c55e';
+             return '#bbf7d0';
+          }
+          
+          let maxProvCount = 0;
+          provCountMap.forEach(v => { if(v > maxProvCount) maxProvCount = v; });
+          if(maxProvCount === 0) maxProvCount = 1;
+
+          function getProvLembaga(pName) {
+             let list = [];
+             let searchP = pName.toLowerCase().replace('dki ', '').replace('di ', '');
+             provLembagaMap.forEach((v, k) => {
+                 let searchK = k.toLowerCase().replace('dki ', '').replace('di ', '');
+                 if (searchK === searchP || searchK === searchP.replace('kepulauan ', '')) list = list.concat(v);
+                 if(searchK === 'yogyakarta' && searchP.includes('yogyakarta')) list = list.concat(v);
+                 if((searchK === 'jabar' || searchK === 'jawa barat') && (searchP === 'jabar' || searchP === 'jawa barat')) list = list.concat(v);
+                 if((searchK === 'jateng' || searchK === 'jawa tengah') && (searchP === 'jateng' || searchP === 'jawa tengah')) list = list.concat(v);
+                 if((searchK === 'jatim' || searchK === 'jawa timur') && (searchP === 'jatim' || searchP === 'jawa timur')) list = list.concat(v);
+                 if(searchK === 'bangka belitung' && searchP.includes('bangka belitung')) list = list.concat(v);
+             });
+             return [...new Set(list)].sort();
+          }
+
+          function getProvCount(pName) {
+             let count = 0;
+             let searchP = pName.toLowerCase().replace('dki ', '').replace('di ', '');
+             provCountMap.forEach((v, k) => {
+                 let searchK = k.toLowerCase().replace('dki ', '').replace('di ', '');
+                 if (searchK === searchP || searchK === searchP.replace('kepulauan ', '')) count = v;
+                 // Special cases
+                 if(searchK === 'yogyakarta' && searchP.includes('yogyakarta')) count = v;
+                 if((searchK === 'jabar' || searchK === 'jawa barat') && (searchP === 'jabar' || searchP === 'jawa barat')) count = v;
+                 if((searchK === 'jateng' || searchK === 'jawa tengah') && (searchP === 'jateng' || searchP === 'jawa tengah')) count = v;
+                 if((searchK === 'jatim' || searchK === 'jawa timur') && (searchP === 'jatim' || searchP === 'jawa timur')) count = v;
+                 if(searchK === 'bangka belitung' && searchP.includes('bangka belitung')) count = v;
+                 // Papua new provinces mapping logic if needed (not needed since we have 38 provs in geoJSON!)
+             });
+             return count;
+          }
+
+          function style(feature) {
+             let count = getProvCount(feature.properties.PROVINSI);
+             return {
+                 fillColor: getColor(count, maxProvCount),
+                 weight: 1,
+                 opacity: 1,
+                 color: '#ffffff',
+                 dashArray: '',
+                 fillOpacity: 1
+             };
+          }
+          
+          function onEachFeature(feature, layer) {
+             let count = getProvCount(feature.properties.PROVINSI);
+             let lembagaList = getProvLembaga(feature.properties.PROVINSI);
+             let listHtml = lembagaList.length > 0 ? lembagaList.join('<br/>• ') : 'Tidak ada data';
+
+             layer.bindTooltip(`<b>${feature.properties.PROVINSI}</b><br/>${count} Lembaga Penyalur<br/><span style="font-size:0.8em;color:#aaa;">Klik untuk melihat daftar lembaga</span>`, {
+                 sticky: true,
+                 direction: 'auto'
+             });
+
+             layer.bindPopup(`<div style="min-width:200px;"><b>${feature.properties.PROVINSI}</b><br/>${count} Lembaga Penyalur<hr style="margin:8px 0;border-color:#eee;border-style:solid;"/><div style="max-height:150px; overflow-y:auto; font-size:0.85em; line-height:1.4;">• ${listHtml}</div></div>`);
+
+             layer.on({
+                 mouseover: function(e) {
+                     var layer = e.target;
+                     layer.setStyle({ weight: 2, color: '#666', dashArray: '', fillOpacity: 0.7 });
+                     layer.bringToFront();
+                 },
+                 mouseout: function(e) { geojsonLayer.resetStyle(e.target); }
+             });
+          }
+
+          // Kosongkan loading text dan hapus flex layout yang merusak Leaflet
+          let regionsDiv = document.getElementById('regions_div');
+          regionsDiv.innerHTML = '';
+          regionsDiv.style.display = 'block';
+          regionsDiv.style.padding = '0';
+          
+          let modalRegionsDiv = document.getElementById('modal-regions_div');
+          if(modalRegionsDiv) modalRegionsDiv.innerHTML = '';
+
+          let geojsonLayer = L.geoJSON(INDONESIA_MAP, {
+              style: style,
+              onEachFeature: onEachFeature
+          });
+
+          let mapOpts = { zoomControl: false, dragging: false, scrollWheelZoom: false, doubleClickZoom: false };
+          let map = L.map('regions_div', mapOpts);
+          geojsonLayer.addTo(map);
+          map.fitBounds(geojsonLayer.getBounds());
+          
+          setTimeout(() => {
+              map.invalidateSize();
+              map.fitBounds(geojsonLayer.getBounds());
+          }, 300);
+
+          // Setup Fullscreen Modal
+          let modal = document.getElementById('map-modal');
+          let modalMap = null;
+          document.getElementById('btn-peta-penuh').addEventListener('click', () => {
+              modal.classList.add('active');
+              if (!modalMap) {
+                  let modalOpts = { scrollWheelZoom: true };
+                  modalMap = L.map('modal-regions_div', modalOpts);
+                  let modalLayer = L.geoJSON(INDONESIA_MAP, { style: style, onEachFeature: onEachFeature });
+                  modalLayer.addTo(modalMap);
+                  modalMap.fitBounds(modalLayer.getBounds());
+              }
+              setTimeout(() => {
+                  if (modalMap) {
+                      modalMap.invalidateSize();
+                  }
+              }, 350);
+          });
+          document.getElementById('close-modal').addEventListener('click', () => {
+              modal.classList.remove('active');
+          });
+
+          // ---- INSIGHT DATA ----
+          // 1. Pertumbuhan Kurban Agregat (POV Asosiasi)
+          let agregatDesc = '';
+          if (growTotal > 0) agregatDesc = `Penghimpunan kurban anggota FOZ secara agregat <strong>tumbuh +${growTotal}%</strong> dibanding tahun lalu. Gerakan kurban kolektif menunjukkan tren positif — semakin banyak masyarakat mempercayakan kurbannya melalui OPZ.`;
+          else if (growTotal === 0) agregatDesc = 'Penghimpunan kurban agregat <strong>stagnan</strong> dibanding tahun lalu. Perlu strategi baru untuk mendorong pertumbuhan gerakan kurban di tahun berikutnya.';
+          else agregatDesc = `Penghimpunan kurban agregat <strong>mengalami penurunan (${growTotal}%)</strong> dibanding tahun lalu. Evaluasi menyeluruh diperlukan untuk memahami faktor penyebab dan menyusun langkah pemulihan.`;
+          document.getElementById('iv-agregat').innerHTML = growTotal > 0 ? `<span style="color:#10b981"><i class="fas fa-arrow-up"></i> +${growTotal}%</span>` : growTotal < 0 ? `<span style="color:#e11d48"><i class="fas fa-arrow-down"></i> ${growTotal}%</span>` : '0%';
+          document.getElementById('id-agregat').innerHTML = agregatDesc;
+
+          // 2. Dinamika Lokal vs Nasional (POV Asosiasi)
+          let dinamikaDesc = '';
+          if (growKab > growNas && growKab > growProv) dinamikaDesc = `OPZ skala <strong>Kab/Kota tumbuh paling cepat (+${growKab}%)</strong> dibanding Provinsi (+${growProv}%) dan Nasional (+${growNas}%). Momentum kurban menguat di akar rumput — FOZ perlu memperkuat pembinaan kapasitas OPZ lokal untuk memaksimalkan potensi ini.`;
+          else if (growNas > growKab && growNas > growProv) dinamikaDesc = `OPZ skala <strong>Nasional memimpin pertumbuhan (+${growNas}%)</strong> dibanding Provinsi (+${growProv}%) dan Kab/Kota (+${growKab}%). Jaringan dan brand OPZ besar masih menjadi motor utama — FOZ dapat mendorong kolaborasi agar momentum ini juga menular ke OPZ lokal.`;
+          else dinamikaDesc = `OPZ skala <strong>Provinsi tumbuh paling tinggi (+${growProv}%)</strong> dibanding Nasional (+${growNas}%) dan Kab/Kota (+${growKab}%). OPZ tingkat regional sedang dalam fase ekspansi — peluang bagi FOZ untuk memperkuat jejaring di level ini.`;
+          document.getElementById('iv-dinamika').innerHTML = `<span style="color:#10b981">Lokal +${growKab}%</span> &nbsp;vs&nbsp; <span style="color:#3b82f6">Nasional +${growNas}%</span>`;
+          document.getElementById('id-dinamika').innerHTML = dinamikaDesc;
+
+          // 3. Pola Kurban: Individu vs Kolektif (POV Lembaga)
+          let totalHewan = totalKambing + totalSapi + totalUnta;
+          let pctDomba = totalHewan > 0 ? Math.round((totalKambing / totalHewan) * 100) : 0;
+          let pctSapi = totalHewan > 0 ? Math.round(((totalSapi + totalUnta) / totalHewan) * 100) : 0;
+          let polaDesc = '';
+          if (pctDomba >= 70) polaDesc = `<strong>${pctDomba}% hewan kurban adalah domba/kambing</strong> — pola kurban individu masih sangat dominan. OPZ dapat mengembangkan lebih banyak program <strong>patungan sapi</strong> untuk menjangkau segmen pekurban yang lebih luas dengan nilai terjangkau.`;
+          else if (pctSapi >= 50) polaDesc = `<strong>${pctSapi}% hewan kurban adalah sapi/kerbau/unta</strong> — program kurban kolektif (patungan) menjadi pilihan utama pekurban. Tren ini menunjukkan tingginya semangat gotong royong dan peluang efisiensi logistik penyaluran.`;
+          else polaDesc = `Komposisi hewan kurban cukup berimbang: <strong>${pctDomba}% domba/kambing</strong> dan <strong>${pctSapi}% sapi/kerbau</strong>. OPZ memiliki fleksibilitas dalam merancang program yang mengakomodasi kedua preferensi pekurban.`;
+          document.getElementById('iv-pola').innerHTML = `<span style="color:#10b981">${pctDomba}% Domba</span> &nbsp;—&nbsp; <span style="color:#3b82f6">${pctSapi}% Sapi</span>`;
+          document.getElementById('id-pola').innerHTML = polaDesc;
+
+          // 4. Fokus Kantong Kemiskinan
+          let pctKemiskinan = opzList.length > 0 ? Math.round((countOpzKantongKemiskinan / opzList.length) * 100) : 0;
+          let kemiskinanDesc = `Sebanyak <strong>${pctKemiskinan}% OPZ anggota FOZ</strong> telah memastikan kurbannya turut tersalurkan ke dalam 16 provinsi prioritas utama yang menyumbang 80% beban kemiskinan ekstrem nasional.`;
+          document.getElementById('iv-dampak').innerHTML = `${pctKemiskinan}% <span style="font-size:0.75rem; color:var(--text-muted);">OPZ Hadir</span>`;
+          document.getElementById('id-dampak').innerHTML = kemiskinanDesc;
+
+          // 5. Render Data Table
+          window.appTableData = opzList.map(o => ({
+            nama: o.name,
+            skala: o.scale,
+            penghimpunan: o.himpunan,
+            pertumbuhan: o.growth,
+            setara: o.setara,
+            pekurban: o.pekurban,
+            penerima: o.penerima
+          }));
+          
+          // Pagination state
+          window.tableCurrentPage = 1;
+          
+          function renderTable() {
+            let data = [...window.appTableData];
+            let searchVal = document.getElementById('table-search').value.toLowerCase();
+            let filterVal = document.getElementById('table-filter-skala').value;
+            let limitVal = document.getElementById('table-limit-rows').value;
+            
+            // Filter
+            if (filterVal !== 'all') {
+              data = data.filter(d => d.skala.toLowerCase() === filterVal.toLowerCase());
+            }
+            // Search
+            if (searchVal) {
+              data = data.filter(d => d.nama.toLowerCase().includes(searchVal));
+            }
+            // Sort
+            if (window.tableSortCol) {
+              let col = window.tableSortCol;
+              let dir = window.tableSortDir || 'asc';
+              data.sort((a, b) => {
+                let va = a[col], vb = b[col];
+                if (col === 'nama' || col === 'skala') {
+                  va = (va || '').toLowerCase(); vb = (vb || '').toLowerCase();
+                  return dir === 'asc' ? va.localeCompare(vb) : vb.localeCompare(va);
+                }
+                va = va || 0; vb = vb || 0;
+                return dir === 'asc' ? va - vb : vb - va;
+              });
+            } else {
+              data.sort((a, b) => b.penghimpunan - a.penghimpunan);
+            }
+            
+            let totalData = data.length;
+            document.getElementById('table-total').innerText = totalData;
+            
+            // Pagination logic
+            let rowsPerPage = limitVal === 'all' ? totalData : parseInt(limitVal, 10);
+            if (isNaN(rowsPerPage) || rowsPerPage <= 0) rowsPerPage = 10;
+            
+            let maxPage = Math.ceil(totalData / rowsPerPage) || 1;
+            if (window.tableCurrentPage > maxPage) window.tableCurrentPage = maxPage;
+            if (window.tableCurrentPage < 1) window.tableCurrentPage = 1;
+            
+            document.getElementById('page-indicator').innerText = window.tableCurrentPage + ' / ' + maxPage;
+            
+            let btnPrev = document.getElementById('btn-prev-page');
+            let btnNext = document.getElementById('btn-next-page');
+            btnPrev.disabled = window.tableCurrentPage === 1;
+            btnNext.disabled = window.tableCurrentPage === maxPage;
+            
+            let startIndex = (window.tableCurrentPage - 1) * rowsPerPage;
+            let paginatedData = data.slice(startIndex, startIndex + rowsPerPage);
+            
+            let tbody = document.getElementById('opz-table-body');
+            if (paginatedData.length === 0) {
+              tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:2rem; color:var(--text-muted);">Tidak ada data ditemukan</td></tr>';
+              document.getElementById('table-count').innerText = '0';
+              return;
+            }
+            
+            let html = '';
+            paginatedData.forEach((d, idx) => {
+              let realIndex = startIndex + idx + 1;
+              let growthHtml = '';
+              if (d.pertumbuhan > 0) growthHtml = `<span style="color:#10b981; font-weight:600;"><i class="fas fa-arrow-up" style="font-size:0.65rem;"></i> +${d.pertumbuhan}%</span>`;
+              else if (d.pertumbuhan < 0) growthHtml = `<span style="color:#e11d48; font-weight:600;"><i class="fas fa-arrow-down" style="font-size:0.65rem;"></i> ${d.pertumbuhan}%</span>`;
+              else growthHtml = `<span style="color:var(--text-muted);">0%</span>`;
+              
+              let skalaBadge = '';
+              if (d.skala === 'Nasional') skalaBadge = '<span class="skala-badge skala-nasional">Nasional</span>';
+              else if (d.skala === 'Provinsi') skalaBadge = '<span class="skala-badge skala-provinsi">Provinsi</span>';
+              else skalaBadge = '<span class="skala-badge skala-kabkota">Kab/Kota</span>';
+              
+              html += `<tr>
+                <td style="text-align: center;">${realIndex}</td>
+                <td class="col-nama">${d.nama}</td>
+                <td style="text-align: center;">${skalaBadge}</td>
+                <td class="col-num" style="text-align: left;">Rp ${d.penghimpunan.toLocaleString('id-ID')}</td>
+                <td class="col-num" style="text-align: center;">${growthHtml}</td>
+                <td class="col-num" style="text-align: center;">${d.setara.toLocaleString('id-ID')}</td>
+                <td class="col-num" style="text-align: center;">${d.pekurban.toLocaleString('id-ID')}</td>
+                <td class="col-num" style="text-align: center;">${d.penerima.toLocaleString('id-ID')}</td>
+              </tr>`;
+            });
+            tbody.innerHTML = html;
+            document.getElementById('table-count').innerText = paginatedData.length;
+          }
+          
+          // Table event listeners
+          document.getElementById('table-search').addEventListener('input', () => { window.tableCurrentPage = 1; renderTable(); });
+          document.getElementById('table-filter-skala').addEventListener('change', () => { window.tableCurrentPage = 1; renderTable(); });
+          document.getElementById('table-limit-rows').addEventListener('change', () => { window.tableCurrentPage = 1; renderTable(); });
+          
+          document.getElementById('btn-prev-page').addEventListener('click', () => {
+            if (window.tableCurrentPage > 1) {
+              window.tableCurrentPage--;
+              renderTable();
+            }
+          });
+          
+          document.getElementById('btn-next-page').addEventListener('click', () => {
+            window.tableCurrentPage++;
+            renderTable();
+          });
+          
+          document.querySelectorAll('#opz-data-table th.sortable').forEach(th => {
+            th.addEventListener('click', () => {
+              let col = th.getAttribute('data-col');
+              if (col === 'no') return;
+              let colMap = { nama: 'nama', skala: 'skala', penghimpunan: 'penghimpunan', pertumbuhan: 'pertumbuhan', setara: 'setara', pekurban: 'pekurban', penerima: 'penerima' };
+              let sortCol = colMap[col];
+              if (window.tableSortCol === sortCol) {
+                window.tableSortDir = window.tableSortDir === 'asc' ? 'desc' : 'asc';
+              } else {
+                window.tableSortCol = sortCol;
+                window.tableSortDir = col === 'nama' || col === 'skala' ? 'asc' : 'desc';
+              }
+              // Update sort icons
+              document.querySelectorAll('#opz-data-table th.sortable i').forEach(ic => { ic.className = 'fas fa-sort'; });
+              let icon = th.querySelector('i');
+              if (icon) icon.className = window.tableSortDir === 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down';
+              renderTable();
+            });
+          });
+          
+          renderTable();
+
+          // 6. Render Logos Grid (Static)
+          let gridHtml = '';
+          let lembagaArray = Array.from(lembagaSet);
+          
+          let uniqueOpz = [];
+          let seen = new Set();
+          opzList.forEach(o => {
+             if(!seen.has(o.name)) {
+                seen.add(o.name);
+                uniqueOpz.push(o);
+             }
+          });
+          const getPriority = (name) => {
+             let n = name.toLowerCase();
+             
+             // 1. Ketua Umum
+             if (n.includes('inisiatif zakat') || n.includes('izi')) return 1;
+             // 2. Sekretaris Umum (Dompet Dhuafa ditaruh kedua sesuai instruksi)
+             if (n.includes('dompet dhuafa') || n === 'dd') return 2;
+             // 3. Wakil Ketua Umum
+             if (n.includes('ybm bri')) return 3;
+             // 4. Wakil Sekretaris Umum
+             if (n.includes('ybm pln')) return 4;
+             // 5. Bendahara Umum
+             if (n.includes('yakesma')) return 5;
+             
+             // 6. Anggota Pengurus Harian lainnya (Bidang I - V)
+             const pengurusLain = [
+                'laznas lmi', 'lmi',
+                'zis indosat',
+                'nurul hayat',
+                'lazismu', 'muhammadiyah',
+                'baitul maal hidayatullah', 'bmh',
+                'pppa', 'daarul qur',
+                'sahabat yatim',
+                'baitulmaal muamalat', 'bmm',
+                'bsi maslahat',
+                'ydsf',
+                'baitulmaalku'
+             ];
+             for(let i=0; i<pengurusLain.length; i++) {
+                if(n.includes(pengurusLain[i])) return 6;
+             }
+             
+             // 99. Lembaga lainnya
+             return 99;
+          };
+          
+          uniqueOpz.sort((a,b) => {
+             let pA = getPriority(a.name);
+             let pB = getPriority(b.name);
+             if (pA !== pB) return pA - pB;
+             
+             let rankA = a.scale.toLowerCase().includes('nasional') ? 1 : (a.scale.toLowerCase().includes('provinsi') ? 2 : 3);
+             let rankB = b.scale.toLowerCase().includes('nasional') ? 1 : (b.scale.toLowerCase().includes('provinsi') ? 2 : 3);
+             if (rankA !== rankB) return rankA - rankB;
+             
+             return a.name.localeCompare(b.name);
+          });
+          
+          uniqueOpz.forEach(opz => {
+             let lembaga = opz.name;
+             let domain = opzDomains[lembaga];
+             if(!domain) {
+                let slug = lembaga.toLowerCase().replace(/[^a-z0-9]/g, '');
+                domain = slug + '.org';
+             }
+             let fallbackUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(lembaga)}&background=random&color=fff&size=128&bold=true`;
+             let clearbitUrl = `https://logo.clearbit.com/${domain}`;
+             
+             const logoFilenameMap = {
+               "LAZ Musa'adatul Ummah": "LAZ Musa'adatul Ummah.png",
+               "LAZIS UNISIA": "LAZIS UNISIA.png",
+               "LAZ Masjid Raya Bintaro (LAZ MRBJ)": "LAZ Masjid Raya Bintaro (LAZ MRBJ).png",
+               "Rumah Amal Salman": "Rumah Amal Salman.png",
+               "ALZIS Alwashliyah": "ALZIS Alwashliyah.png",
+               "Yayasan Gugus Karya Mandiri": "Yayasan Gugus Karya Mandiri.png",
+               "Saku Yatim": "Saku Yatim.png",
+               "Amaliah Astra": "Amaliah Astra.png",
+               "LAZNAS YDSF": "LAZNAS YDSF.png",
+               "Bangkit Foundation": "BANGKIT Foundation.png",
+               "Indonesia Beramal Sholeh (IBS)": "Indonesia Beramal Sholeh (IBS).png",
+               "LAZNAS Mizan Amanah": "LAZNAS Mizan Amanah.png",
+               "LAZIS Pesantren Al Hilal": "LAZIS Al Hilal.png",
+               "TAMAN ZAKAT INDONESIA": "Taman Zakat Indonesia.png",
+               "LAZIS Jateng": "LAZIS Jateng.png",
+               "LAZIS Muhammadiyah (LAZISMU)": "LAZIS Muhammadiyah (LAZISMU).png",
+               "Sedekah Harian": "Sedekah Harian.png",
+               "Yuk Peduli": "Yuk Peduli.png",
+               "Rumah Sosial KUTUB (R-SIK)": "Rumah Sosial KUTUB (R-SIK).png",
+               "LAZ MKU": "LAZ MKU.png",
+               "LAZIS Agnia Care": "LAZIS Agnia Care.png",
+               "Sahabat Asnaf Indonesia": "Sahabat Asnaf Indonesia.png",
+               "LAZIS NURUL FALAH": "LAZIS Nurul Falah.png",
+               "Inisiatif Zakat Indonesia (IZI)": "Inisiatif Zakat Indonesia (IZI).png",
+               "Pelopor Kepedulian": "Pelopor Kepedulian.png",
+               "Amanah Takaful": "Amanah Takaful.png",
+               "LAZ Persada Jatim Indonesia": "LAZ Persada Jatim Indonesia.png",
+               "Itqan Peduli": "Itqan Peduli.png",
+               "LAZ Pundi Surga": "LAZ Pundi Surga.png",
+               "Al-Qoyyim Sukoharjo": "Al-Qoyyim Sukoharjo.png",
+               "LAZ Zakat Sukses": "LAZ Zakat Sukses.png",
+               "LAZ RIZKI": "LAZ RIZKI.png",
+               "LAZ Generasi Rabbani": "LAZ Generasi Rabbani.png",
+               "Sinergi Foundation": "Sinergi Foundation.png",
+               "LAZ IBNU SINA": "LAZ Ibnu Sina.png",
+               "LAZ BMBU Kota Bontang": "LAZ BMBU Kota Bontang.png",
+               "STF UIN Syarif Hidayatullah": "STF UIN Syarif Hidayatullah.png",
+               "ZIS Indosat": "ZIS Indosat.png",
+               "BAMUIS BNI": "BAMUIS BNI.png",
+               "LAZIS Baiturrahman": "LAZIS Baiturrahman.png",
+               "LAZNAS Yatim Mandiri": "LAZNAS Yatim Mandiri.png",
+               "Infaq Berkah": "Infaq Berkah.png",
+               "Explore! Humanity": "Explore! Humanity.png",
+               "LAZ Rumah Peduli Umat": "LAZ Rumah Peduli Umat.png",
+               "Sahabat Yatim Indonesia": "Sahabat Yatim Indonesia.png",
+               "Dompet Dhuafa": "Dompet Dhuafa.png",
+               "LAZ Balqis Peduli": "LAZ Balqis Peduli.png",
+               "Rumah Zakat": "Rumah Zakat.png",
+               "Goedang Zakat Al- Khairaat": "Goedang Zakat Al- Khairaat.png",
+               "LAZ KESEJAHTERAAN UMAT": "LAZ Kesejahteraan Umat.png",
+               "Lazisnur": "LAZISNUR.png",
+               "LAZ Azka Al Baitul Amien Jember": "LAZ AZKA Al Baitul Amien Jember.png",
+               "LAZ Al Bunyan": "LAZ Al Bunyan.png",
+               "LAZIS Khoiru Ummah": "LAZIS Khoiru Ummah.png",
+               "LAZ Ummul Quro": "LAZ Ummul Quro.png",
+               "LAZ DPU Kaltim": "LAZ DPU Kaltim.png",
+               "LAZNAS IKADI": "LAZNAS IKADI.png",
+               "LAZ As-Salam Timika": "LAZ As-Salam Timika.png",
+               "LAZ Sahabat Kebaikan Umat (SAKU)": "LAZ Sahabat Kebaikan Umat (SAKU).png",
+               "LAZ Darul Hikam": "LAZ DARUL HIKAM.png",
+               "Baitul Maal Timoho Sejahtera": "Baitul Maal Timoho Sejahtera.png",
+               "Indonesia Berbagi": "Indonesia Berbagi.png",
+               "LAZ Harapan Dhuafa": "LAZ Harapan Dhuafa.png",
+               "Pondok Sedekah Indonesia": "Pondok Sedekah Indonesia.png",
+               "Baitul Maal BMT Beringharjo": "Baitul Maal BMT Beringharjo.png",
+               "LAZ YASA Malang": "LAZ YASA Malang.png",
+               "DSM Bali": "DSM Bali.png",
+               "Yayasan Rute Langkah Amanah": "Yayasan Rute Langkah Amanah.png",
+               "Baitulmaal Munzalan Indonesia": "Baitulmaal Munzalan Indonesia.png",
+               "BSI Maslahat": "BSI Maslahat.png",
+               "LAZ Risalah Charity": "LAZ Risalah Charity.png",
+               "Sukoharjo Peduli": "Sukoharjo Peduli.png",
+               "ZIS Yayasan Annur Insan Pembangkitan (YANIP)": "ZIS Yayasan Annur Insan Pembangkitan (YANIP).png",
+               "LAZIS Syuhada": "LAZIS Syuhada.png",
+               "LAZ DASI NTB": "LAZ DASI NTB.png",
+               "Solo Peduli": "Solo Peduli.png",
+               "Harapan Amal Mulia": "Harapan Amal Mulia.png",
+               "Rumah Harapan": "Rumah Harapan.png",
+               "LAZIS Sultan Agung": "LAZIS Sultan Agung.png",
+               "MAI Foundation": "MAI Foundation.png",
+               "LAZ Hidayah Berbagi Indonesia": "LAZ Hidayah Berbagi Indonesia.png",
+               "LAZ Lidzikri": "LAZ Lidzikri.png",
+               "LAZ Assyifa Peduli": "LAZ Assyifa Peduli.png",
+               "Inovasi Zakat Indonesia": "Inovasi Zakat Indonesia.png",
+               "LAZNAS LMI": "LAZNAS LMI.png"
+             };
+             
+             let mappedFilename = logoFilenameMap[lembaga];
+             let logoUrl = mappedFilename ? `logos_standard/${mappedFilename}` : `logos_standard/${lembaga}.png`;
+             
+             gridHtml += `
+               <div class="logo-item" title="${lembaga}">
+                 <img src="${logoUrl}" onerror="if(this.getAttribute('data-tried') !== 'true') { this.setAttribute('data-tried', 'true'); this.src='${clearbitUrl}'; } else { this.onerror=null; this.src='${fallbackUrl}'; }" alt="${lembaga}">
+               </div>
+             `;
+          });
+          
+          let finalGrid = `<div class="logos-grid">${gridHtml}</div>`;
+          document.getElementById('logo-marquee').innerHTML = finalGrid;
+          document.getElementById('logo-marquee').className = ''; // remove marquee class
+        }
+      });
+    }
+
+    // Initialize Dashboard Logic
+      // Setup Tab Listeners
+      document.querySelectorAll('#tab-penghimpunan .tab-btn').forEach(btn => {
+         btn.addEventListener('click', (e) => {
+            document.querySelectorAll('#tab-penghimpunan .tab-btn').forEach(b => b.classList.remove('active'));
+            e.target.classList.add('active');
+            let scaleHimpun = e.target.getAttribute('data-scale');
+            let scaleTumbuh = document.querySelector('#tab-pertumbuhan .tab-btn.active').getAttribute('data-scale');
+            renderLeaderboards(scaleHimpun, scaleTumbuh);
+         });
+      });
+      
+      document.querySelectorAll('#tab-pertumbuhan .tab-btn').forEach(btn => {
+         btn.addEventListener('click', (e) => {
+            document.querySelectorAll('#tab-pertumbuhan .tab-btn').forEach(b => b.classList.remove('active'));
+            e.target.classList.add('active');
+            let scaleHimpun = document.querySelector('#tab-penghimpunan .tab-btn.active').getAttribute('data-scale');
+            let scaleTumbuh = e.target.getAttribute('data-scale');
+            renderLeaderboards(scaleHimpun, scaleTumbuh);
+         });
+      });
+
+      
+    // Dark Mode Logic
+    const themeBtn = document.getElementById('theme-toggle');
+    if (localStorage.getItem('theme') === 'dark') {
+      document.body.classList.add('dark-mode');
+      themeBtn.innerHTML = '<i class="fas fa-sun"></i>';
+    }
+    themeBtn.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+      if (document.body.classList.contains('dark-mode')) {
+        localStorage.setItem('theme', 'dark');
+        themeBtn.innerHTML = '<i class="fas fa-sun"></i>';
+      } else {
+        localStorage.setItem('theme', 'light');
+        themeBtn.innerHTML = '<i class="fas fa-moon"></i>';
+      }
+    });
+
+    // Audio Logic
+    const audioBtn = document.getElementById('audio-toggle');
+    const marsAudio = document.getElementById('mars-audio');
+    
+    // Set volume to 25%
+    marsAudio.volume = 0.25;
+    let isPlaying = false; 
+    
+    // Default mode senyap (jangan putar otomatis)
+    audioBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+
+    audioBtn.addEventListener('click', () => {
+      if (isPlaying) {
+        marsAudio.pause();
+        audioBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+        isPlaying = false;
+      } else {
+        marsAudio.play().catch(e => alert('Pastikan file mars_zakat.mp3 ada di folder ini!'));
+        audioBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+        isPlaying = true;
+      }
+    });
+
+      fetchAndProcessData();
+
+    } // end initDashboard
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initDashboard);
+    } else {
+      initDashboard();
+    }
+  </script>
+
+  </main>
+
+
+  </div>
+  
+  <!-- Fullscreen Map Modal -->
+  <div id="map-modal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 style="margin:0;">Peta Sebaran Kurban Nasional</h2>
+        <button id="close-modal" class="btn-close"><i class="fas fa-times"></i></button>
+      </div>
+      <div id="modal-regions_div" style="width: 100%; height: 75vh;"></div>
+    </div>
+  </div>
+</body>
+</html>

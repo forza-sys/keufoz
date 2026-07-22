@@ -1,0 +1,451 @@
+// ===================================================
+// kas-komprehensif.js — Live Data from Google Apps Script
+// ===================================================
+
+const API_URL = "https://script.google.com/macros/s/AKfycbxt_cQNcL10YLav3a0NBizKUIH2yo2COOHsCl5VySPdH9gG7VYu1haqCBJ5rH7ThIZcyw/exec";
+
+// ---- Globals ----
+let ALL_DATA     = null;   // raw API response
+let DATES        = [];     // array of date strings
+let ITEMS        = [];     // flat item array
+let activeDateIdx = 0;     // index of selected date
+let activeCard    = null;  // 'bank' | 'titipan' | 'foz' | 'piutang' | null
+let activeTab     = 'posisi';  // 'posisi' | 'pencairan'
+let chartTren    = null;
+let chartKomp    = null;
+
+// ---- Utility ----
+function formatRp(v) {
+  if (v === null || v === undefined || isNaN(v)) return "—";
+  const abs = Math.abs(v);
+  const str = new Intl.NumberFormat('id-ID', { maximumFractionDigits: 0 }).format(abs);
+  return (v < 0 ? "-Rp " : "Rp ") + str;
+}
+
+function pctChange(newer, older) {
+  if (!older || older === 0) return null;
+  return ((newer - older) / Math.abs(older)) * 100;
+}
+
+function renderChange(val, prevVal, elId) {
+  const el = document.getElementById(elId);
+  if (!el || prevVal === null || prevVal === undefined || isNaN(prevVal)) return;
+  const pct = pctChange(val, prevVal);
+  if (pct === null) return;
+  const dir   = pct >= 0 ? 'up' : 'down';
+  const icon  = pct >= 0 ? 'fa-arrow-up' : 'fa-arrow-down';
+  const absPct = Math.abs(pct).toFixed(1);
+  const prevDate = DATES[activeDateIdx - 1] || "sebelumnya";
+  el.innerHTML = `<span class="${dir}"><i class="fas ${icon}"></i> ${absPct}%</span>&nbsp;vs ${prevDate}`;
+}
+
+function getVal(keterangan, dateIdx) {
+  const ket = keterangan.trim().toUpperCase();
+  const row = ITEMS.find(item => item.keterangan.trim().toUpperCase() === ket);
+  if (!row) return null;
+  return row.values[dateIdx] ?? null;
+}
+
+// ---- Structure map (row index → category & section) ----
+// We parse by the "No" column to identify headers/groups
+function categorizeItems() {
+  // Section 1: Posisi Kas
+  //   Group "bank"     → "Kas di Bank" (No=1) + sub items until "Total Kas di Bank"
+  //   Group "titipan"  → "Dana Titipan" (No=2) + sub items until "Total Dana Titipan"
+  //   Group "foz"      → "Kas FOZ" (No=3) + sub items
+  //   Group "piutang"  → "Piutang" (No=4) + sub items
+  //   Summary "netto"  → "Saldo Net FOZ setelah Piutang" (No=5)
+  // Section 2: Pencairan
+  //   starts at "Pencairan Operasional, Program dan Kepegawaian"
+
+  const GROUPS = {
+    bank:     { header: 'Kas di Bank',     total: 'Total Kas di Bank',    section: 'posisi' },
+    titipan:  { header: 'Dana Titipan',    total: 'Total Dana Titipan',   section: 'posisi' },
+    foz:      { header: 'Kas FOZ',         total: null,                   section: 'posisi' },
+    piutang:  { header: 'Piutang',         total: 'Total Piutang',        section: 'posisi' },
+  };
+
+  let currentGroup   = null;
+  let inPencairan    = false;
+
+  return ITEMS.map(item => {
+    const ket = item.keterangan.trim();
+    const ketUpper = ket.toUpperCase();
+
+    // Detect section: Pencairan
+    if (ketUpper.includes('PENCAIRAN OPERASIONAL, PROGRAM')) {
+      inPencairan = true;
+    }
+
+    // Detect group headers
+    for (const [gKey, gDef] of Object.entries(GROUPS)) {
+      if (ket === gDef.header) {
+        currentGroup = gKey;
+        return { ...item, group: gKey, isGroupHeader: true, isTotal: false, section: inPencairan ? 'pencairan' : 'posisi' };
+      }
+    }
+
+    // Detect "Saldo Net FOZ setelah Piutang" — summary row for section
+    if (ketUpper.includes('SALDO NET FOZ SETELAH PIUTANG')) {
+      return { ...item, group: 'netto', isGroupHeader: false, isTotal: true, section: inPencairan ? 'pencairan' : 'posisi' };
+    }
+
+    // Detect "Saldo Net FOZ setelah Pencairan"
+    if (ketUpper.includes('SALDO NET FOZ SETELAH PENCAIRAN')) {
+      return { ...item, group: 'netto-pencairan', isGroupHeader: false, isTotal: true, section: 'pencairan' };
+    }
+
+    // Detect Total rows
+    const isTotal = ketUpper.startsWith('TOTAL') || ketUpper.includes('SALDO NET FOZ') || ketUpper.includes('SALDO DANA TITIPAN');
+
+    return {
+      ...item,
+      group: currentGroup,
+      isGroupHeader: false,
+      isTotal,
+      section: inPencairan ? 'pencairan' : 'posisi'
+    };
+  });
+}
+
+// ---- Render ----
+function updateKPIs() {
+  const idx  = activeDateIdx;
+  const prev = idx > 0 ? idx - 1 : null;
+
+  // 1. Kas di Bank
+  const bank = getVal('Total Kas di Bank', idx);
+  document.getElementById('kpi-bank').textContent = formatRp(bank);
+  if (prev !== null) renderChange(bank, getVal('Total Kas di Bank', prev), 'kpi-bank-sub');
+
+  // 2. Dana Titipan — nilai negatif karena kewajiban
+  const titipan = getVal('Total Dana Titipan', idx);
+  document.getElementById('kpi-titipan').textContent = formatRp(titipan);
+  if (prev !== null) renderChange(titipan, getVal('Total Dana Titipan', prev), 'kpi-titipan-sub');
+
+  // 3. Saldo Net FOZ (before piutang)
+  const foz = getVal('Saldo Net FOZ', idx);
+  document.getElementById('kpi-foz').textContent = formatRp(foz);
+  if (prev !== null) renderChange(foz, getVal('Saldo Net FOZ', prev), 'kpi-foz-sub');
+
+  // 4. Piutang
+  const piutang = getVal('Total Piutang', idx);
+  document.getElementById('kpi-piutang').textContent = formatRp(piutang);
+  if (prev !== null) renderChange(piutang, getVal('Total Piutang', prev), 'kpi-piutang-sub');
+
+  // 5. Saldo Net + Piutang
+  const netto = getVal('Saldo Net FOZ setelah Piutang', idx);
+  document.getElementById('kpi-netto').textContent = formatRp(netto);
+  if (prev !== null) renderChange(netto, getVal('Saldo Net FOZ setelah Piutang', prev), 'kpi-netto-sub');
+}
+
+function renderTrenChart() {
+  const ctx = document.getElementById('chart-tren');
+  if (!ctx) return;
+  if (chartTren) { chartTren.destroy(); chartTren = null; }
+
+  const fozData     = DATES.map((_, i) => getVal('Saldo Net FOZ', i) || 0);
+  const nettoData   = DATES.map((_, i) => getVal('Saldo Net FOZ setelah Piutang', i) || 0);
+
+  chartTren = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: DATES,
+      datasets: [
+        {
+          label: 'Saldo Net FOZ',
+          data: fozData,
+          borderColor: '#10b981',
+          backgroundColor: 'rgba(16,185,129,0.08)',
+          fill: true, tension: 0.4, borderWidth: 2.5,
+          pointBackgroundColor: '#10b981', pointRadius: 5
+        },
+        {
+          label: 'Saldo Net + Piutang',
+          data: nettoData,
+          borderColor: '#0d9488',
+          backgroundColor: 'transparent',
+          fill: false, tension: 0.4, borderWidth: 2, borderDash: [5,4],
+          pointBackgroundColor: '#0d9488', pointRadius: 4
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } },
+        tooltip: {
+          callbacks: {
+            label: ctx => formatRp(ctx.raw)
+          }
+        }
+      },
+      scales: {
+        y: {
+          ticks: { callback: v => 'Rp ' + (v/1e9).toFixed(1) + 'M', font: { size: 11 } },
+          grid: { color: 'rgba(0,0,0,0.04)' }
+        },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+}
+
+function renderKompChart() {
+  const ctx = document.getElementById('chart-komp');
+  if (!ctx) return;
+  if (chartKomp) { chartKomp.destroy(); chartKomp = null; }
+
+  const CategorizedItems = categorizeItems();
+  let labels = [], values = [], titleText = '';
+
+  if (!activeCard || activeCard === 'bank') {
+    // Komposisi Kas di Bank
+    titleText = 'Komposisi Kas di Bank';
+    CategorizedItems.forEach(item => {
+      if (item.group === 'bank' && !item.isGroupHeader && !item.isTotal) {
+        const v = item.values[activeDateIdx] || 0;
+        if (v > 0) { labels.push(item.keterangan.split(' - ')[0].trim().replace('Bank Syariah Indonesia (FOZ)', 'BSI (FOZ)').replace('Bank Rakyat Indonesia (FOZ)', 'BRI (FOZ)')); values.push(v); }
+      }
+    });
+  } else if (activeCard === 'foz') {
+    // Komponen Kas FOZ
+    titleText = 'Komponen Kas FOZ';
+    CategorizedItems.forEach(item => {
+      if (item.group === 'foz' && !item.isGroupHeader && !item.isTotal) {
+        const v = item.values[activeDateIdx] || 0;
+        if (v > 0) { labels.push(item.keterangan); values.push(v); }
+      }
+    });
+  } else if (activeCard === 'piutang') {
+    titleText = 'Rincian Piutang';
+    CategorizedItems.forEach(item => {
+      if (item.group === 'piutang' && !item.isGroupHeader && !item.isTotal) {
+        const v = item.values[activeDateIdx] || 0;
+        if (v > 0) { labels.push(item.keterangan); values.push(v); }
+      }
+    });
+  } else if (activeCard === 'titipan') {
+    titleText = 'Top Dana Titipan';
+    const sub = [];
+    CategorizedItems.forEach(item => {
+      if (item.group === 'titipan' && !item.isGroupHeader && !item.isTotal) {
+        const v = Math.abs(item.values[activeDateIdx] || 0);
+        if (v > 0) sub.push({ label: item.keterangan, v });
+      }
+    });
+    sub.sort((a, b) => b.v - a.v).slice(0, 5).forEach(x => { labels.push(x.label.replace('Dana Titipan ', '')); values.push(x.v); });
+  }
+
+  document.getElementById('chart-komp-title').textContent = titleText;
+
+  chartKomp = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels,
+      datasets: [{
+        data: values,
+        backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#ef4444', '#0d9488', '#ec4899'],
+        borderWidth: 2,
+        borderColor: '#fff'
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '60%',
+      plugins: {
+        legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } },
+        tooltip: { callbacks: { label: ctx => ' ' + formatRp(ctx.raw) } }
+      }
+    }
+  });
+}
+
+function renderTable() {
+  const CategorizedItems = categorizeItems();
+  const thead = document.getElementById('detail-thead');
+  const tbody = document.getElementById('detail-tbody');
+  const note  = document.getElementById('detail-note');
+  const badge = document.getElementById('detail-panel-badge');
+  const title = document.getElementById('detail-panel-title');
+
+  // Determine filter
+  let filteredItems = [];
+  let sectionItems = CategorizedItems.filter(item => item.section === activeTab);
+
+  if (activeCard) {
+    filteredItems = sectionItems.filter(item => item.group === activeCard);
+    const names = { bank: 'Kas di Bank', titipan: 'Dana Titipan', foz: 'Kas FOZ', piutang: 'Piutang' };
+    title.textContent = 'Rincian: ' + (names[activeCard] || activeCard);
+    badge.textContent = names[activeCard] || activeCard;
+  } else {
+    filteredItems = sectionItems;
+    title.textContent = activeTab === 'posisi' ? 'Posisi Kas Lengkap' : 'Rincian Setelah Pencairan';
+    badge.textContent = 'Semua Pos';
+  }
+
+  // Warning for Dana Titipan
+  if (activeCard === 'titipan') {
+    note.innerHTML = `<div class="info-note"><i class="fas fa-info-circle"></i> Dana Titipan adalah <strong>kewajiban</strong> FOZ kepada pihak ketiga (seperti mitra dan program eksternal). Ditampilkan sebagai angka negatif karena merupakan pengurang dari total kas.</div>`;
+  } else {
+    note.innerHTML = '';
+  }
+
+  // Table header
+  thead.innerHTML = `
+    <tr>
+      <th style="width:60%;">Keterangan</th>
+      <th style="text-align: right; padding-right: 20px;">Nilai (${DATES[activeDateIdx]})</th>
+    </tr>
+  `;
+
+  // Table rows
+  let html = '';
+  filteredItems.forEach(item => {
+    const ket = item.keterangan.trim();
+    if (!ket || ket === ' ') return;
+
+    // Skip redundant group total rows
+    const upperKet = ket.toUpperCase();
+    if (upperKet === "TOTAL KAS DI BANK" || 
+        upperKet === "TOTAL DANA TITIPAN" || 
+        upperKet === "TOTAL DANA TITIPAN FOZ" || 
+        upperKet === "TOTAL PIUTANG") {
+        return;
+    }
+
+    const val = item.values[activeDateIdx];
+    const displayVal = (val !== null && val !== undefined && !isNaN(val)) ? val : null;
+    const isNeg = displayVal !== null && displayVal < 0;
+
+    let rowClass = '';
+    let tdName   = `padding: 11px 20px; font-size: 0.88rem;`;
+    let tdVal    = `padding: 11px 20px; font-size: 0.88rem; text-align: right;`;
+
+    if (item.isGroupHeader) {
+      rowClass = 'is-group-header';
+      tdName  += ' font-weight: 700; font-size: 0.9rem;';
+    } else if (item.isTotal) {
+      rowClass = 'is-total';
+      tdName  += ' font-weight: 700;';
+      tdVal   += ' font-weight: 700;';
+    }
+
+    if (isNeg) tdVal += ' color: var(--red);';
+    else if (displayVal > 0 && item.isTotal) tdVal += ' color: var(--green);';
+
+    let displayCellVal = '—';
+    if (item.isGroupHeader) {
+      // Ambil nilai total kategori untuk ditampilkan di header
+      let totalVal = 0;
+      if (ket === "Kas di Bank") {
+        totalVal = getVal('Total Kas di Bank', activeDateIdx);
+      } else if (ket === "Dana Titipan") {
+        totalVal = getVal('Total Dana Titipan FOZ', activeDateIdx) || getVal('Total Dana Titipan', activeDateIdx);
+      } else if (ket === "Kas FOZ") {
+        totalVal = getVal('Saldo Net FOZ', activeDateIdx);
+      } else if (ket === "Piutang") {
+        totalVal = getVal('Total Piutang', activeDateIdx);
+      }
+      displayCellVal = totalVal !== null ? formatRp(totalVal) : '—';
+      tdVal += ' font-weight: 700; color: var(--green);'; // Buat angka di header berwarna hijau tebal
+      if (totalVal < 0) {
+        tdVal = tdVal.replace('var(--green)', 'var(--red)'); // Merah jika negatif
+      }
+    } else {
+      displayCellVal = displayVal !== null ? formatRp(displayVal) : '—';
+    }
+
+    html += `
+      <tr class="${rowClass}">
+        <td style="${tdName}">${ket}</td>
+        <td style="${tdVal}">${displayCellVal}</td>
+      </tr>
+    `;
+  });
+
+  tbody.innerHTML = html || `<tr><td colspan="2" class="empty-state">Tidak ada data untuk ditampilkan.</td></tr>`;
+}
+
+// ---- Event Handlers (Global) ----
+window.filterCard = function(card) {
+  if (activeCard === card) {
+    activeCard = null;
+    document.querySelectorAll('.kpi-card').forEach(el => el.classList.remove('active'));
+  } else {
+    activeCard = card;
+    document.querySelectorAll('.kpi-card').forEach(el => el.classList.remove('active'));
+    document.getElementById('card-' + card)?.classList.add('active');
+  }
+  renderKompChart();
+  renderTable();
+};
+
+window.switchTab = function(tab) {
+  activeTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + tab)?.classList.add('active');
+  renderTable();
+};
+
+// ---- Init ----
+async function initDashboard() {
+  const loadingState = document.getElementById('loading-state');
+  const dashboardContent = document.getElementById('dashboard-content');
+  if (loadingState) {
+    loadingState.style.display = 'block';
+    loadingState.innerHTML = `
+      <i class="fas fa-circle-notch fa-spin" style="font-size:2rem; color:var(--green);"></i>
+      <p style="margin-top:12px;">Mengambil data dari Google Sheets...</p>
+    `;
+  }
+  if (dashboardContent) dashboardContent.style.display = 'none';
+
+  try {
+    const res = await fetch(API_URL);
+    if (!res.ok) throw new Error('Network error');
+    ALL_DATA = await res.json();
+    DATES    = ALL_DATA.dates;
+    ITEMS    = ALL_DATA.items;
+    activeDateIdx = DATES.length - 1;
+
+    // Populate date dropdown
+    const sel = document.getElementById('date-select');
+    if (sel) {
+      sel.innerHTML = DATES.map((d, i) => `<option value="${i}"${i === activeDateIdx ? ' selected' : ''}>${d}</option>`).join('');
+      
+      // Re-create node to clear old listeners
+      const newSel = sel.cloneNode(true);
+      sel.parentNode.replaceChild(newSel, sel);
+      newSel.addEventListener('change', () => {
+        activeDateIdx = parseInt(newSel.value);
+        updateKPIs();
+        renderTrenChart();
+        renderKompChart();
+        renderTable();
+      });
+    }
+
+    if (loadingState) loadingState.style.display = 'none';
+    if (dashboardContent) dashboardContent.style.display = 'block';
+
+    updateKPIs();
+    renderTrenChart();
+    renderKompChart();
+    renderTable();
+
+  } catch (err) {
+    if (loadingState) {
+      loadingState.innerHTML = `
+        <i class="fas fa-exclamation-circle" style="font-size:2rem; color:var(--red);"></i>
+        <p style="margin-top:12px; color:var(--red);">Gagal mengambil data. Pastikan koneksi internet aktif dan Google Apps Script sudah di-deploy.</p>
+      `;
+    }
+    console.error(err);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', initDashboard);
+window.addEventListener('hazana:pjax-loaded', initDashboard);
