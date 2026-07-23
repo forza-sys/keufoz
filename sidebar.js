@@ -7,6 +7,11 @@
         
         container.dataset.injected = 'true';
         container.innerHTML = `
+            <div class="rotate-screen-warning">
+                <i class="fas fa-mobile-alt"></i>
+                <h2>Mohon Putar Perangkat Anda</h2>
+                <p>Dashboard Keuangan menampilkan banyak tabel data. Silakan putar layar HP Anda (Landscape) atau buka di Laptop/PC untuk pengalaman terbaik.</p>
+            </div>
             <div class="mobile-header">
                 <button id="mobile-menu-btn" class="menu-btn"><i class="fas fa-bars"></i></button>
                 <div class="mobile-logo">KEUANGAN FOZ</div>

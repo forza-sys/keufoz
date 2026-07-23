@@ -1951,3 +1951,50 @@ body {
   margin: 0 auto;
   width: 100%;
 }
+
+/* Rotate Screen Warning for Mobile Portrait */
+.rotate-screen-warning {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: var(--bg-app, #f4f7f6);
+  z-index: 99999;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 30px;
+}
+
+.rotate-screen-warning i {
+  font-size: 4rem;
+  color: var(--primary, #10b981);
+  margin-bottom: 20px;
+  animation: rotatePhone 2s ease-in-out infinite;
+}
+
+@keyframes rotatePhone {
+  0% { transform: rotate(0deg); }
+  50% { transform: rotate(-90deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.rotate-screen-warning h2 {
+  font-size: 1.2rem;
+  color: var(--text-main, #111);
+  margin-bottom: 10px;
+}
+
+.rotate-screen-warning p {
+  font-size: 0.9rem;
+  color: var(--text-muted, #666);
+}
+
+@media screen and (max-width: 768px) and (orientation: portrait) {
+  .app-container {
+    display: none !important;
+  }
+  .rotate-screen-warning {
+    display: flex !important;
+  }
+}
