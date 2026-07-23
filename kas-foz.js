@@ -70,9 +70,32 @@ async function init() {
 }
 
 async function fetchData() {
-  const res = await fetch(KAS_FOZ_API);
-  if (!res.ok) throw new Error('Network response was not ok');
-  ALL_DATA = await res.json();
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
+  
+  try {
+    const res = await fetch(KAS_FOZ_API, {
+      redirect: 'follow',
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
+    
+    if (!res.ok) throw new Error('Network response was not ok: ' + res.status);
+    
+    const text = await res.text();
+    try {
+      ALL_DATA = JSON.parse(text);
+    } catch (e) {
+      // Google might return an HTML auth page instead of JSON
+      throw new Error('API mengembalikan format yang tidak valid. Coba buka di Incognito mode atau pastikan Apps Script terotorisasi.');
+    }
+  } catch (err) {
+    clearTimeout(timeoutId);
+    if (err.name === 'AbortError') {
+      throw new Error('Request timeout. Coba refresh halaman atau buka di Incognito mode.');
+    }
+    throw err;
+  }
 }
 
 function renderKPIs(data) {
