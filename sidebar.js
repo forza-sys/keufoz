@@ -53,7 +53,7 @@
                     <li><a href="${base}sekretariat/dashboard.html"><i class="fas fa-id-card"></i> <span>Data Keanggotaan</span></a></li>
                 </ul>
             `;
-        } else if (path.includes('/executive/') || path.includes('dashboard-keuangan') || path.includes('kas-komprehensif')) {
+        } else if (path.includes('/executive/') || path.includes('dashboard-keuangan') || path.includes('kas-komprehensif') || path === '/' || path.endsWith('index.html')) {
              menuHTML = `
                 <ul class="sidebar-menu">
                     <li><a href="${base}kas-komprehensif.html"><i class="fas fa-wallet"></i> <span>Kas Komprehensif</span></a></li>
@@ -78,7 +78,9 @@
         }
 
         // Set active menu based on current URL
-        const currentFile = window.location.pathname.split('/').pop() || 'dashboard.html';
+        let currentFile = window.location.pathname.split('/').pop() || 'index.html';
+        if (currentFile === 'index.html') currentFile = 'kas-komprehensif.html'; // Alias index.html to kas-komprehensif
+        
         document.querySelectorAll('.sidebar-menu a').forEach(a => {
             const href = a.getAttribute('href');
             if (href && href.includes(currentFile)) {
