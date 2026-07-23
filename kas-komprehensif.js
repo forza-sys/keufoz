@@ -14,6 +14,31 @@ let activeCard    = null;  // 'bank' | 'titipan' | 'foz' | 'piutang' | null
 let activeTab     = 'posisi';  // 'posisi' | 'pencairan'
 let chartTren    = null;
 let chartKomp    = null;
+let totalPaguOps = 136764793; // fallback
+
+const PAGU_URL = "https://docs.google.com/spreadsheets/d/181CZUA-74uh-8yLJO_iI5aMtaBYMl4p2IdnOOg38Cas/gviz/tq?tqx=out:json&sheet=Pagu";
+
+async function fetchTotalPagu() {
+  try {
+    const res = await fetch(PAGU_URL);
+    const text = await res.text();
+    const start = text.indexOf('(');
+    const end = text.lastIndexOf(')');
+    const json = JSON.parse(text.substring(start + 1, end));
+    let total = 0;
+    json.table.rows.forEach(r => {
+      const pos = r.c && r.c[0] ? r.c[0].v : null;
+      const nominal = r.c && r.c[1] ? r.c[1].v : null;
+      if (typeof pos === 'string' && !pos.toLowerCase().startsWith('total') && typeof nominal === 'number') {
+        total += nominal;
+      }
+    });
+    return total > 0 ? total : 136764793;
+  } catch (e) {
+    console.error('Failed to fetch Pagu', e);
+    return 136764793; // fallback to known total
+  }
+}
 
 // ---- Utility ----
 function formatRp(v) {
@@ -138,6 +163,13 @@ function updateKPIs() {
   const netto = getVal('Saldo Net FOZ setelah Piutang', idx);
   document.getElementById('kpi-netto').textContent = formatRp(netto);
   if (prev !== null) renderChange(netto, getVal('Saldo Net FOZ setelah Piutang', prev), 'kpi-netto-sub');
+
+  // 6. Financial Health Rate
+  if (totalPaguOps > 0 && foz !== null) {
+    const healthMonths = (foz / totalPaguOps).toFixed(1);
+    document.getElementById('kpi-health').textContent = healthMonths + " bln";
+    document.getElementById('kpi-health-sub').innerHTML = 'Rasio Net FOZ : Pagu Ops';
+  }
 }
 
 function renderTrenChart() {
@@ -461,9 +493,11 @@ async function initDashboard() {
   if (dashboardContent) dashboardContent.style.display = 'none';
 
   try {
-    ALL_DATA = await fetchCSVData();
+    const [csvData, paguData] = await Promise.all([fetchCSVData(), fetchTotalPagu()]);
+    ALL_DATA = csvData;
     DATES    = ALL_DATA.dates;
     ITEMS    = ALL_DATA.items;
+    totalPaguOps = paguData;
     activeDateIdx = DATES.length - 1;
 
     // Populate date dropdown
