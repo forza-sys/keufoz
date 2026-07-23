@@ -9,6 +9,7 @@ const MONTHS = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 
 
 let membersData = []; // Gabungan Kesepakatan & Iuran
 let activeMonthIdx = 0; // 0 for Januari, etc. (Default to current month or latest)
+let activeTab = 'pemasukan'; // 'pemasukan' | 'kepatuhan'
 let chartTren = null;
 
 // ---- Utility ----
@@ -49,6 +50,19 @@ function parseCSV(text) {
   });
 }
 
+function parseTransactionMonth(dateStr) {
+  if (!dateStr || dateStr === '-') return -1;
+  // expects format dd/mm/yy
+  const parts = dateStr.split('/');
+  if (parts.length === 3) {
+    const m = parseInt(parts[1], 10);
+    if (!isNaN(m) && m >= 1 && m <= 12) {
+      return m - 1; // 0-indexed month
+    }
+  }
+  return -1;
+}
+
 // ---- Data Fetching ----
 async function fetchAllData() {
   const [resKes, resIuran] = await Promise.all([
@@ -58,10 +72,6 @@ async function fetchAllData() {
 
   const csvKes = parseCSV(resKes);
   const csvIuran = parseCSV(resIuran);
-
-  // Headers are in row 1 (index 0)
-  // Kesepakatan: No., Nama Lemaga, Skala, Iuran / Bulan
-  // Iuran: No., Nama Lemaga, Skala, Januari, Februari, ..., Desember
 
   const kesData = csvKes.slice(1);
   const iuranData = csvIuran.slice(1);
@@ -81,7 +91,6 @@ async function fetchAllData() {
     const iuranBulan = parseRp(iuranBulanStr);
 
     const monthlyStatus = [];
-    // Months start from index 3 (Januari) to 14 (Desember)
     for (let m = 0; m < 12; m++) {
       const statusStr = rowIuran[3 + m] ? rowIuran[3 + m].trim() : '';
       let status = 'belum'; // default
@@ -92,7 +101,8 @@ async function fetchAllData() {
       }
       monthlyStatus.push({
         raw: statusStr,
-        status: status
+        status: status,
+        trxMonth: parseTransactionMonth(statusStr)
       });
     }
 
@@ -108,37 +118,115 @@ async function fetchAllData() {
   activeMonthIdx = 0; 
 }
 
+// ---- Tab Switching ----
+window.switchTab = function(tabId) {
+  activeTab = tabId;
+  
+  // Update UI styles
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.style.color = 'var(--text-muted)';
+    btn.style.borderBottomColor = 'transparent';
+    btn.classList.remove('active');
+  });
+  
+  const activeBtn = document.getElementById('tab-' + tabId);
+  activeBtn.style.color = 'var(--green)';
+  activeBtn.style.borderBottomColor = 'var(--green)';
+  activeBtn.classList.add('active');
+  
+  // Update Table headers and labels based on mode
+  if (activeTab === 'pemasukan') {
+    document.getElementById('kpi1-label').textContent = 'Lembaga Membayar';
+    document.getElementById('kpi1-sub').textContent = 'Melakukan transaksi bulan ini';
+    document.getElementById('kpi2-label').textContent = 'Jumlah Transaksi';
+    document.getElementById('kpi2-sub').textContent = 'Total pelunasan iuran bulanan';
+    document.getElementById('kpi3-label').textContent = 'Tingkat Partisipasi';
+    document.getElementById('kpi3-sub').textContent = 'Persentase lembaga aktif';
+    document.getElementById('kpi4-label').textContent = 'Pemasukan Riil';
+    document.getElementById('kpi4-sub').textContent = 'Uang kas masuk (Cash-basis)';
+    document.getElementById('th-status').textContent = 'Total Transaksi & Tanggal';
+  } else {
+    document.getElementById('kpi1-label').textContent = 'Anggota Wajib Bayar';
+    document.getElementById('kpi1-sub').textContent = 'Lembaga aktif di bulan ini';
+    document.getElementById('kpi2-label').textContent = 'Total Lunas';
+    document.getElementById('kpi2-sub').textContent = 'Sudah lunas kewajiban bulan ini';
+    document.getElementById('kpi3-label').textContent = 'Tingkat Kepatuhan';
+    document.getElementById('kpi3-sub').textContent = 'Rasio lunas terhadap wajib bayar';
+    document.getElementById('kpi4-label').textContent = 'Nominal Terkumpul';
+    document.getElementById('kpi4-sub').textContent = 'Berdasarkan bulan kewajiban';
+    document.getElementById('th-status').textContent = 'Status Bulan Ini';
+  }
+
+  updateDashboard();
+};
+
+
 // ---- UI Updates ----
 function updateDashboard() {
   updateKPIs();
   renderTable();
+  renderTrenChart(); // Chart labels/title change based on mode
 }
 
 function updateKPIs() {
-  let wajib = 0;
-  let lunas = 0;
-  let nominal = 0;
-  let potensi = 0;
+  if (activeTab === 'pemasukan') {
+    let lembagaCount = 0;
+    let totalTransaksi = 0;
+    let totalNominal = 0;
+    let totalAktif = 0;
 
-  membersData.forEach(m => {
-    const st = m.monthlyStatus[activeMonthIdx];
-    if (st.status !== 'na') {
-      wajib++;
-      potensi += m.iuranBulan;
-      if (st.status === 'lunas') {
-        lunas++;
-        nominal += m.iuranBulan;
+    membersData.forEach(m => {
+      let isWajibAtAll = false;
+      let memberTransaksiBulanIni = 0;
+
+      m.monthlyStatus.forEach(st => {
+        if (st.status !== 'na') isWajibAtAll = true;
+        if (st.trxMonth === activeMonthIdx) {
+          memberTransaksiBulanIni++;
+        }
+      });
+
+      if (isWajibAtAll) totalAktif++;
+      if (memberTransaksiBulanIni > 0) {
+        lembagaCount++;
+        totalTransaksi += memberTransaksiBulanIni;
+        totalNominal += (m.iuranBulan * memberTransaksiBulanIni);
       }
-    }
-  });
+    });
 
-  const persen = wajib > 0 ? (lunas / wajib * 100).toFixed(1) : 0;
+    const persen = totalAktif > 0 ? (lembagaCount / totalAktif * 100).toFixed(1) : 0;
 
-  document.getElementById('kpi-wajib').textContent = wajib;
-  document.getElementById('kpi-lunas').textContent = lunas;
-  document.getElementById('kpi-persen').textContent = persen + '%';
-  document.getElementById('kpi-nominal').textContent = formatRp(nominal);
-  document.getElementById('kpi-potensi').textContent = 'Potensi: ' + formatRp(potensi);
+    document.getElementById('kpi1-value').textContent = lembagaCount;
+    document.getElementById('kpi2-value').textContent = totalTransaksi + ' bln';
+    document.getElementById('kpi3-value').textContent = persen + '%';
+    document.getElementById('kpi4-value').textContent = formatRp(totalNominal);
+
+  } else {
+    let wajib = 0;
+    let lunas = 0;
+    let nominal = 0;
+    let potensi = 0;
+
+    membersData.forEach(m => {
+      const st = m.monthlyStatus[activeMonthIdx];
+      if (st.status !== 'na') {
+        wajib++;
+        potensi += m.iuranBulan;
+        if (st.status === 'lunas') {
+          lunas++;
+          nominal += m.iuranBulan;
+        }
+      }
+    });
+
+    const persen = wajib > 0 ? (lunas / wajib * 100).toFixed(1) : 0;
+
+    document.getElementById('kpi1-value').textContent = wajib;
+    document.getElementById('kpi2-value').textContent = lunas;
+    document.getElementById('kpi3-value').textContent = persen + '%';
+    document.getElementById('kpi4-value').textContent = formatRp(nominal);
+    document.getElementById('kpi4-sub').textContent = 'Potensi: ' + formatRp(potensi);
+  }
 }
 
 function renderTable() {
@@ -152,22 +240,53 @@ function renderTable() {
   membersData.forEach(m => {
     if (searchQ && !m.nama.toLowerCase().includes(searchQ)) return;
     
-    const st = m.monthlyStatus[activeMonthIdx];
-    
-    if (filterSt !== 'all' && st.status !== filterSt) return;
-
     let badgeClass = '';
     let badgeText = '';
-    
-    if (st.status === 'lunas') {
-      badgeClass = 'lunas';
-      badgeText = '<i class="fas fa-check"></i> Lunas (' + st.raw + ')';
-    } else if (st.status === 'belum') {
-      badgeClass = 'belum';
-      badgeText = '<i class="fas fa-times"></i> Belum Bayar';
+
+    if (activeTab === 'pemasukan') {
+      let dates = [];
+      let trxs = 0;
+      m.monthlyStatus.forEach(st => {
+        if (st.trxMonth === activeMonthIdx) {
+          trxs++;
+          if (!dates.includes(st.raw)) dates.push(st.raw);
+        }
+      });
+      
+      if (filterSt === 'lunas' && trxs === 0) return;
+      if (filterSt === 'belum' && trxs > 0) return;
+      if (filterSt === 'na') {
+        const isNa = m.monthlyStatus[activeMonthIdx].status === 'na';
+        if (!isNa) return;
+      }
+      
+      if (trxs > 0) {
+        badgeClass = 'lunas';
+        badgeText = `<i class="fas fa-check"></i> ${trxs} bln lunas (${dates.join(', ')})`;
+      } else {
+        const isNa = m.monthlyStatus[activeMonthIdx].status === 'na';
+        if (isNa) {
+          badgeClass = 'na';
+          badgeText = '-';
+        } else {
+          badgeClass = 'belum';
+          badgeText = 'Tidak ada transaksi';
+        }
+      }
     } else {
-      badgeClass = 'na';
-      badgeText = '-';
+      const st = m.monthlyStatus[activeMonthIdx];
+      if (filterSt !== 'all' && st.status !== filterSt) return;
+
+      if (st.status === 'lunas') {
+        badgeClass = 'lunas';
+        badgeText = '<i class="fas fa-check"></i> Lunas (' + st.raw + ')';
+      } else if (st.status === 'belum') {
+        badgeClass = 'belum';
+        badgeText = '<i class="fas fa-times"></i> Belum Bayar';
+      } else {
+        badgeClass = 'na';
+        badgeText = '-';
+      }
     }
 
     const tr = document.createElement('tr');
@@ -188,22 +307,49 @@ function renderTrenChart() {
   if (chartTren) { chartTren.destroy(); chartTren = null; }
 
   const nominalTerkumpul = [];
-  const tingkatKepatuhan = [];
-
-  for (let m = 0; m < 12; m++) {
-    let w = 0, l = 0, nom = 0;
-    membersData.forEach(mem => {
-      const st = mem.monthlyStatus[m];
-      if (st.status !== 'na') {
-        w++;
-        if (st.status === 'lunas') {
-          l++;
-          nom += mem.iuranBulan;
+  const persentase = [];
+  
+  if (activeTab === 'pemasukan') {
+    for (let m = 0; m < 12; m++) {
+      let nom = 0;
+      let totalAktif = 0;
+      let lembagaCount = 0;
+      
+      membersData.forEach(mem => {
+        let isWajibAtAll = false;
+        let memberTransaksiBulanIni = 0;
+        
+        mem.monthlyStatus.forEach(st => {
+          if (st.status !== 'na') isWajibAtAll = true;
+          if (st.trxMonth === m) memberTransaksiBulanIni++;
+        });
+        
+        if (isWajibAtAll) totalAktif++;
+        if (memberTransaksiBulanIni > 0) {
+          lembagaCount++;
+          nom += (mem.iuranBulan * memberTransaksiBulanIni);
         }
-      }
-    });
-    nominalTerkumpul.push(nom);
-    tingkatKepatuhan.push(w > 0 ? (l / w * 100) : 0);
+      });
+      
+      nominalTerkumpul.push(nom);
+      persentase.push(totalAktif > 0 ? (lembagaCount / totalAktif * 100) : 0);
+    }
+  } else {
+    for (let m = 0; m < 12; m++) {
+      let w = 0, l = 0, nom = 0;
+      membersData.forEach(mem => {
+        const st = mem.monthlyStatus[m];
+        if (st.status !== 'na') {
+          w++;
+          if (st.status === 'lunas') {
+            l++;
+            nom += mem.iuranBulan;
+          }
+        }
+      });
+      nominalTerkumpul.push(nom);
+      persentase.push(w > 0 ? (l / w * 100) : 0);
+    }
   }
 
   chartTren = new Chart(ctx, {
@@ -212,15 +358,15 @@ function renderTrenChart() {
       labels: MONTHS,
       datasets: [
         {
-          label: 'Nominal Terkumpul (Rp)',
+          label: 'Nominal (Rp)',
           data: nominalTerkumpul,
           backgroundColor: '#8b5cf6',
           borderRadius: 4,
           yAxisID: 'y'
         },
         {
-          label: 'Tingkat Kepatuhan (%)',
-          data: tingkatKepatuhan,
+          label: activeTab === 'pemasukan' ? 'Tingkat Partisipasi (%)' : 'Tingkat Kepatuhan (%)',
+          data: persentase,
           type: 'line',
           borderColor: '#10b981',
           backgroundColor: '#10b981',
@@ -294,8 +440,8 @@ async function initDashboard() {
     if (loadingState) loadingState.style.display = 'none';
     if (dashboardContent) dashboardContent.style.display = 'block';
 
-    updateDashboard();
-    renderTrenChart();
+    // Set default tab explicitly
+    window.switchTab('pemasukan');
 
   } catch (err) {
     if (loadingState) {

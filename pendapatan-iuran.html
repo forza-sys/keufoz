@@ -149,6 +149,16 @@
         </div>
       </div>
 
+      <!-- Section Tabs -->
+      <div class="section-tabs" style="display: flex; gap: 8px; margin: 0 0 24px; border-bottom: 2px solid var(--border-color, #e5e7eb);">
+        <button class="tab-btn active" style="padding: 9px 18px; font-size: 0.88rem; font-weight: 600; border: none; background: none; cursor: pointer; color: var(--green); border-bottom: 2.5px solid var(--green); margin-bottom: -2px; transition: all 0.15s;" id="tab-pemasukan" onclick="switchTab('pemasukan')">
+          <i class="fas fa-money-check-alt"></i> Arus Kas Pemasukan
+        </button>
+        <button class="tab-btn" style="padding: 9px 18px; font-size: 0.88rem; font-weight: 600; border: none; background: none; cursor: pointer; color: var(--text-muted); border-bottom: 2.5px solid transparent; margin-bottom: -2px; transition: all 0.15s;" id="tab-kepatuhan" onclick="switchTab('kepatuhan')">
+          <i class="fas fa-tasks"></i> Kepatuhan Kewajiban
+        </button>
+      </div>
+
       <!-- Loading State -->
       <div id="loading-state" style="padding:40px; text-align:center; color:var(--text-muted);">
         <i class="fas fa-circle-notch fa-spin" style="font-size:2rem; color:var(--green);"></i>
@@ -160,32 +170,32 @@
 
         <!-- KPI Strip -->
         <div class="kpi-strip">
-          <!-- 1. Total Anggota Wajib Bayar -->
+          <!-- 1. Card 1 -->
           <div class="kpi-card blue">
-            <div class="kpi-label">Anggota Wajib Bayar</div>
-            <div class="kpi-value" id="kpi-wajib">—</div>
-            <div class="kpi-sub">Lembaga aktif di bulan ini</div>
+            <div class="kpi-label" id="kpi1-label">Lembaga Membayar</div>
+            <div class="kpi-value" id="kpi1-value">—</div>
+            <div class="kpi-sub" id="kpi1-sub">Melakukan transaksi bulan ini</div>
             <i class="fas fa-users kpi-icon"></i>
           </div>
-          <!-- 2. Total Lunas -->
+          <!-- 2. Card 2 -->
           <div class="kpi-card green">
-            <div class="kpi-label">Total Lunas</div>
-            <div class="kpi-value" id="kpi-lunas">—</div>
-            <div class="kpi-sub">Sudah membayar iuran</div>
+            <div class="kpi-label" id="kpi2-label">Jumlah Transaksi</div>
+            <div class="kpi-value" id="kpi2-value">—</div>
+            <div class="kpi-sub" id="kpi2-sub">Total pelunasan iuran bulanan</div>
             <i class="fas fa-check-circle kpi-icon"></i>
           </div>
-          <!-- 3. Tingkat Kepatuhan -->
+          <!-- 3. Card 3 -->
           <div class="kpi-card amber">
-            <div class="kpi-label">Tingkat Kepatuhan</div>
-            <div class="kpi-value" id="kpi-persen">—</div>
-            <div class="kpi-sub">Rasio lunas terhadap wajib bayar</div>
+            <div class="kpi-label" id="kpi3-label">Tingkat Partisipasi</div>
+            <div class="kpi-value" id="kpi3-value">—</div>
+            <div class="kpi-sub" id="kpi3-sub">Persentase dari total anggota</div>
             <i class="fas fa-percentage kpi-icon"></i>
           </div>
-          <!-- 4. Nominal Terkumpul -->
+          <!-- 4. Card 4 -->
           <div class="kpi-card purple">
-            <div class="kpi-label">Nominal Terkumpul</div>
-            <div class="kpi-value" id="kpi-nominal">—</div>
-            <div class="kpi-sub" id="kpi-potensi">Potensi: —</div>
+            <div class="kpi-label" id="kpi4-label">Pemasukan Riil</div>
+            <div class="kpi-value" id="kpi4-value">—</div>
+            <div class="kpi-sub" id="kpi4-sub">Uang kas masuk (Cash-basis)</div>
             <i class="fas fa-money-bill-wave kpi-icon"></i>
           </div>
         </div>
@@ -221,8 +231,8 @@
                   <th>No</th>
                   <th>Nama Lembaga</th>
                   <th>Skala</th>
-                  <th>Iuran/Bulan</th>
-                  <th>Status Bulan Ini</th>
+                  <th id="th-iuran">Iuran/Bulan</th>
+                  <th id="th-status">Status/Pemasukan</th>
                 </tr>
               </thead>
               <tbody>
