@@ -283,8 +283,8 @@ function renderKPIs(data) {
   const cardPersen = document.getElementById('kpi-card-persen');
   if (cardPersen) {
     cardPersen.className = 'kpi-card';
-    if (persen <= 75) cardPersen.classList.add('green');
-    else if (persen <= 100) cardPersen.classList.add('amber');
+    if (persen <= 70) cardPersen.classList.add('green');
+    else if (persen < 95) cardPersen.classList.add('amber');
     else cardPersen.classList.add('red');
   }
 }
@@ -314,10 +314,10 @@ function renderHealthTable(data, filter) {
 
     if (paguValue > 0) {
       persen = (pengeluaran / paguValue) * 100;
-      if (persen <= 75) {
+      if (persen <= 70) {
         statusBadge = '<span class="badge badge-sehat">🟢 Sehat</span>';
         fillColor = '#10b981';
-      } else if (persen <= 100) {
+      } else if (persen < 95) {
         statusBadge = '<span class="badge badge-hatihati">🟡 Hati-hati</span>';
         fillColor = '#f59e0b';
       } else {
@@ -358,13 +358,14 @@ function renderHealthTable(data, filter) {
         <td>${r.kategoriKas || '—'}</td>
         <td style="text-align:right">${r.paguValue > 0 ? formatRp(r.paguValue) : '—'}</td>
         <td style="text-align:right">${formatRp(r.pengeluaran)}</td>
+        <td style="text-align:right">${r.paguValue > 0 ? formatRp(r.paguValue - r.pengeluaran) : '—'}</td>
         <td style="text-align:right; padding-right:15px">${progressHtml}</td>
         <td style="text-align:center">${r.statusBadge}</td>
       </tr>
     `;
   });
 
-  tbody.innerHTML = html || `<tr><td colspan="7" class="empty-state">Tidak ada data.</td></tr>`;
+  tbody.innerHTML = html || `<tr><td colspan="8" class="empty-state">Tidak ada data.</td></tr>`;
 }
 
 // ---- Render Charts ----
