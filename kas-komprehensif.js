@@ -1,8 +1,9 @@
 // ===================================================
-// kas-komprehensif.js — Live Data from Google Apps Script
+// kas-komprehensif.js — Live Data from Google Sheets Publish to Web (CSV)
+// No Apps Script needed, avoids multi-account CORS issues
 // ===================================================
 
-const API_URL = "https://script.google.com/macros/s/AKfycbxt_cQNcL10YLav3a0NBizKUIH2yo2COOHsCl5VySPdH9gG7VYu1haqCBJ5rH7ThIZcyw/exec";
+const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSKL88ZG4XbFoYpEyPOOud0seaKiqJmzExGSFTikeDwFAeOc9i_uvcekq1Cfzh73fPfMQOmNULKVzTh/pub?output=csv";
 
 // ---- Globals ----
 let ALL_DATA     = null;   // raw API response
@@ -390,6 +391,62 @@ window.switchTab = function(tab) {
   renderTable();
 };
 
+// ---- Data Fetching & Parsing ----
+async function fetchCSVData() {
+  const res = await fetch(CSV_URL);
+  if (!res.ok) throw new Error('Network error');
+  const text = await res.text();
+
+  const lines = text.split('\n');
+  const dates = [];
+  const items = [];
+
+  const header = lines[0].split(',');
+  for(let i = 2; i < header.length; i++) {
+    dates.push(header[i].replace(/"/g, '').trim());
+  }
+
+  for(let i = 1; i < lines.length; i++) {
+    const line = lines[i];
+    if (!line.trim()) continue;
+    
+    let row = [];
+    let currentStr = "";
+    let inQuotes = false;
+    for (let c = 0; c < line.length; c++) {
+      const char = line[c];
+      if (char === '"' && line[c+1] === '"') {
+        currentStr += '"'; c++;
+      } else if (char === '"') {
+        inQuotes = !inQuotes;
+      } else if (char === ',' && !inQuotes) {
+        row.push(currentStr); currentStr = "";
+      } else {
+        currentStr += char;
+      }
+    }
+    row.push(currentStr);
+    
+    const keterangan = row[1] ? row[1].replace(/"/g, '').trim() : '';
+    if (!keterangan) continue;
+    
+    const values = [];
+    for(let j = 2; j < row.length; j++) {
+      let valStr = row[j].replace(/"/g, '').replace(/[Rp\s\.]/g, '').replace(/,/g, '.').trim();
+      let num = parseFloat(valStr);
+      values.push(isNaN(num) ? null : num);
+    }
+    
+    items.push({
+      no: row[0] ? row[0].replace(/"/g, '').trim() : '',
+      keterangan: keterangan,
+      values: values
+    });
+  }
+
+  return { dates, items };
+}
+
 // ---- Init ----
 async function initDashboard() {
   const loadingState = document.getElementById('loading-state');
@@ -404,9 +461,7 @@ async function initDashboard() {
   if (dashboardContent) dashboardContent.style.display = 'none';
 
   try {
-    const res = await fetch(API_URL);
-    if (!res.ok) throw new Error('Network error');
-    ALL_DATA = await res.json();
+    ALL_DATA = await fetchCSVData();
     DATES    = ALL_DATA.dates;
     ITEMS    = ALL_DATA.items;
     activeDateIdx = DATES.length - 1;
@@ -440,7 +495,7 @@ async function initDashboard() {
     if (loadingState) {
       loadingState.innerHTML = `
         <i class="fas fa-exclamation-circle" style="font-size:2rem; color:var(--red);"></i>
-        <p style="margin-top:12px; color:var(--red);">Gagal mengambil data. Pastikan koneksi internet aktif dan Google Apps Script sudah di-deploy.</p>
+        <p style="margin-top:12px; color:var(--red);">Gagal mengambil data. Pastikan koneksi internet aktif dan link Publish to Web valid.</p>
       `;
     }
     console.error(err);
