@@ -53,11 +53,12 @@
                     <li><a href="${base}sekretariat/dashboard.html"><i class="fas fa-id-card"></i> <span>Data Keanggotaan</span></a></li>
                 </ul>
             `;
-        } else if (path.includes('/executive/') || path.includes('dashboard-keuangan') || path.includes('kas-komprehensif') || path.includes('kas-foz') || path === '/' || path.endsWith('index.html')) {
+        } else if (path.includes('/executive/') || path.includes('dashboard-keuangan') || path.includes('kas-komprehensif') || path.includes('kas-foz') || path.includes('pendapatan-iuran') || path === '/' || path.endsWith('index.html')) {
              menuHTML = `
                 <ul class="sidebar-menu">
                     <li><a href="${base}kas-komprehensif.html"><i class="fas fa-wallet"></i> <span>Kas Komprehensif</span></a></li>
                     <li><a href="${base}kas-foz.html"><i class="fas fa-cash-register"></i> <span>Kas FOZ</span></a></li>
+                    <li><a href="${base}pendapatan-iuran.html"><i class="fas fa-hand-holding-usd"></i> <span>Pendapatan Iuran</span></a></li>
                 </ul>
             `;
         } else {
