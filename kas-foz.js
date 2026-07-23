@@ -105,17 +105,13 @@ function renderKPIs(data) {
   
   if (data.sheets) {
     data.sheets.forEach(s => {
-      totalPeng += s.pengeluaran || 0;
-      totalTrans += s.transaksi || 0;
+      totalPeng += s.totalPengeluaran || 0;
+      totalTrans += s.transaksiCount || 0;
     });
   }
 
-  totalPeng = data.totalPengeluaran || totalPeng;
-  totalPagu = data.totalPagu || 0;
-  totalTrans = data.totalTransaksi || totalTrans;
-  
-  if(data.pagu) {
-     totalPagu = Object.values(data.pagu).reduce((a,b)=>a+(b||0), 0);
+  if (data.pagu && Array.isArray(data.pagu)) {
+    data.pagu.forEach(p => { totalPagu += p.nominal || 0; });
   }
 
   const persen = totalPagu > 0 ? (totalPeng / totalPagu) * 100 : 0;
@@ -126,10 +122,33 @@ function renderKPIs(data) {
   document.getElementById('kpi-transaksi').textContent = totalTrans.toLocaleString('id-ID');
   
   const cardPersen = document.getElementById('kpi-card-persen');
-  cardPersen.className = 'kpi-card';
-  if (persen <= 75) cardPersen.classList.add('green');
-  else if (persen <= 100) cardPersen.classList.add('amber');
-  else cardPersen.classList.add('red');
+  if (cardPersen) {
+    cardPersen.className = 'kpi-card';
+    if (persen <= 75) cardPersen.classList.add('green');
+    else if (persen <= 100) cardPersen.classList.add('amber');
+    else cardPersen.classList.add('red');
+  }
+}
+
+// Build a lookup object from pagu array: { 'Kas Kecil': 5000000, ... }
+function buildPaguLookup(paguArray) {
+  const lookup = {};
+  if (!Array.isArray(paguArray)) return lookup;
+  paguArray.forEach(p => { lookup[p.pos] = p.nominal || 0; });
+  return lookup;
+}
+
+// Find pagu for a sheet by checking PAGU_MAP (reverse: pagu name -> sheet name)
+function findPaguForSheet(sheetName, paguLookup) {
+  // Check direct match in pagu
+  if (paguLookup[sheetName] !== undefined) return paguLookup[sheetName];
+  // Check via PAGU_MAP (key=pagu name, value=sheet name)
+  for (const [paguName, mappedSheet] of Object.entries(PAGU_MAP)) {
+    if (mappedSheet === sheetName && paguLookup[paguName] !== undefined) {
+      return paguLookup[paguName];
+    }
+  }
+  return 0;
 }
 
 function renderHealthTable(data, filter) {
@@ -139,15 +158,16 @@ function renderHealthTable(data, filter) {
   
   if (!data.sheets) return;
   
+  const paguLookup = buildPaguLookup(data.pagu);
+  
   let filtered = data.sheets;
   if (filter !== 'Semua') {
-    filtered = filtered.filter(s => s.category === filter);
+    filtered = filtered.filter(s => s.kategoriKas === filter);
   }
   
   const rows = filtered.map(s => {
-    const paguName = PAGU_MAP[s.sheetName];
-    const paguValue = (paguName && data.pagu) ? (data.pagu[paguName] || 0) : 0;
-    const pengeluaran = s.pengeluaran || 0;
+    const paguValue = findPaguForSheet(s.name, paguLookup);
+    const pengeluaran = s.totalPengeluaran || 0;
     
     let persen = null;
     let statusBadge = '';
@@ -197,8 +217,8 @@ function renderHealthTable(data, filter) {
     html += `
       <tr>
         <td style="text-align:center">${i + 1}</td>
-        <td style="font-weight:600">${r.sheetName}</td>
-        <td>${r.category || '—'}</td>
+        <td style="font-weight:600">${r.name}</td>
+        <td>${r.kategoriKas || '—'}</td>
         <td style="text-align:right">${r.paguValue > 0 ? formatRp(r.paguValue) : '—'}</td>
         <td style="text-align:right">${formatRp(r.pengeluaran)}</td>
         <td style="text-align:right; padding-right:15px">${progressHtml}</td>
@@ -216,10 +236,10 @@ function renderCharts(data) {
   const ctxPagu = document.getElementById('chart-pagu-realisasi');
   if (ctxPagu && chartPagu) chartPagu.destroy();
   
+  const paguLookup = buildPaguLookup(data.pagu);
   let itemsWithPagu = data.sheets.map(s => {
-    const paguName = PAGU_MAP[s.sheetName];
-    const paguValue = (paguName && data.pagu) ? (data.pagu[paguName] || 0) : 0;
-    return { name: s.sheetName, pagu: paguValue, realisasi: s.pengeluaran || 0 };
+    const paguValue = findPaguForSheet(s.name, paguLookup);
+    return { name: s.name, pagu: paguValue, realisasi: s.totalPengeluaran || 0 };
   }).filter(s => s.pagu > 0);
   
   itemsWithPagu.sort((a, b) => b.realisasi - a.realisasi);
@@ -264,8 +284,8 @@ function renderCharts(data) {
   
   const categorySums = {};
   data.sheets.forEach(s => {
-    const cat = s.category || 'Lainnya';
-    categorySums[cat] = (categorySums[cat] || 0) + (s.pengeluaran || 0);
+    const cat = s.kategoriKas || 'Lainnya';
+    categorySums[cat] = (categorySums[cat] || 0) + (s.totalPengeluaran || 0);
   });
   
   const catLabels = Object.keys(categorySums);
