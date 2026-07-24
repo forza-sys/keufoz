@@ -177,12 +177,6 @@
           <p id="page-subtitle">Posisi dan komposisi kas FOZ — data langsung dari Google Sheets</p>
         </div>
         <div class="top-nav-actions" style="display:flex; gap:10px; align-items:center;">
-          <!-- Date Selector -->
-          <div class="date-selector">
-            <i class="fas fa-calendar-day" style="color:var(--green); font-size:0.9rem;"></i>
-            <label for="date-select">Per tanggal:</label>
-            <select id="date-select"></select>
-          </div>
           <button class="icon-btn" id="theme-toggle" title="Toggle Dark Mode">
             <i class="fas fa-moon"></i>
           </button>
@@ -199,7 +193,14 @@
       <div id="dashboard-content" style="display:none;">
 
         <!-- SECTION 1: POSISI KAS -->
-        <h3 style="font-size:1.05rem; font-weight:700; color:var(--text-main); margin-bottom:12px;">Ringkasan Posisi Kas <span style="font-size:0.8rem; font-weight:500; color:var(--text-muted);">(Snapshot Harian)</span></h3>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <h3 style="font-size:1.05rem; font-weight:700; color:var(--text-main); margin: 0;">Ringkasan Posisi Kas <span style="font-size:0.8rem; font-weight:500; color:var(--text-muted);">(Snapshot Harian)</span></h3>
+          <div class="date-selector" style="margin: 0;">
+            <i class="fas fa-calendar-day" style="color:var(--green); font-size:0.9rem;"></i>
+            <label for="date-select">Per tanggal:</label>
+            <select id="date-select"></select>
+          </div>
+        </div>
         <div class="kpi-strip">
           <!-- 1. Kas di Bank -->
           <div class="kpi-card blue" id="card-bank" onclick="filterCard('bank')">
