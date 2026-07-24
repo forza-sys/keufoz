@@ -100,10 +100,9 @@ async function loadPengeluaranData() {
       for (let r = 0; r < rows.length; r++) {
         const noVal = rows[r].c && rows[r].c[0] ? rows[r].c[0].v : null;
         if (noVal !== null && typeof noVal === 'number') {
-           const dateVal = rows[r].c && rows[r].c[1] ? rows[r].c[1].v : null;
            const hVal = rows[r].c && rows[r].c[7] ? rows[r].c[7].v : null; 
-           if (dateVal && typeof hVal === 'number' && hVal < 0) {
-               PENGELUARAN_DATA.trx.push({ val: Math.abs(hVal) });
+           if (typeof hVal === 'number' && hVal > 0) {
+               PENGELUARAN_DATA.trx.push({ val: hVal });
            }
         }
       }
