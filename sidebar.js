@@ -166,9 +166,10 @@
                         
                         if (scriptsToLoad.length > 0) {
                             let loadedCount = 0;
+                            const cacheBuster = new Date().getTime();
                             scriptsToLoad.forEach(src => {
                                 const s = document.createElement('script');
-                                s.src = src;
+                                s.src = src.includes('?') ? `${src}&v=${cacheBuster}` : `${src}?v=${cacheBuster}`;
                                 s.onload = s.onerror = () => {
                                     loadedCount++;
                                     if (loadedCount === scriptsToLoad.length) {
