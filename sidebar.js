@@ -123,7 +123,8 @@
 
                 setTimeout(async () => {
                     try {
-                        const res = await fetch(targetHref);
+                        const urlWithCb = targetHref.includes('?') ? `${targetHref}&_cb=${Date.now()}` : `${targetHref}?_cb=${Date.now()}`;
+                        const res = await fetch(urlWithCb, { cache: 'no-cache' });
                         const html = await res.text();
                         const doc = new DOMParser().parseFromString(html, 'text/html');
                         
