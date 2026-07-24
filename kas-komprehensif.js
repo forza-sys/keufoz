@@ -80,11 +80,14 @@ async function fetchGvizSheet(sheetName) {
 
 async function loadPengeluaranData() {
   const paguRows = await fetchGvizSheet('Pagu');
+  PENGELUARAN_DATA.paguTahunan = 0;
   paguRows.forEach(r => {
     const pos = r.c && r.c[0] ? r.c[0].v : null;
     const nominal = r.c && r.c[1] ? r.c[1].v : null;
-    if (pos === 'Pagu Bulanan' && typeof nominal === 'number') {
-      PENGELUARAN_DATA.paguBulanan = nominal;
+    if (pos && typeof pos === 'string' && !pos.toLowerCase().startsWith('total')) {
+      if (typeof nominal === 'number' && nominal > 0) {
+        PENGELUARAN_DATA.paguTahunan += nominal;
+      }
     }
   });
 
@@ -99,12 +102,8 @@ async function loadPengeluaranData() {
         if (noVal !== null && typeof noVal === 'number') {
            const dateVal = rows[r].c && rows[r].c[1] ? rows[r].c[1].v : null;
            const hVal = rows[r].c && rows[r].c[7] ? rows[r].c[7].v : null; 
-           if (dateVal && typeof dateVal === 'string' && dateVal.startsWith('Date')) {
-              const match = dateVal.match(/Date\((\d+),(\d+),(\d+)\)/);
-              if (match && typeof hVal === 'number') {
-                  const m = parseInt(match[2]); // 0-indexed month
-                  PENGELUARAN_DATA.trx.push({ month: m, val: hVal });
-              }
+           if (dateVal && typeof hVal === 'number' && hVal < 0) {
+               PENGELUARAN_DATA.trx.push({ val: Math.abs(hVal) });
            }
         }
       }
@@ -125,10 +124,10 @@ function updatePengeluaranKPI() {
   });
     
   document.getElementById('kpi-total-pengeluaran').textContent = formatRp(total);
-  document.getElementById('kpi-pagu').textContent = formatRp(PENGELUARAN_DATA.paguBulanan * 12);
+  document.getElementById('kpi-pagu').textContent = formatRp(PENGELUARAN_DATA.paguTahunan);
   document.getElementById('kpi-transaksi-out').textContent = count;
   
-  const paguTahunan = PENGELUARAN_DATA.paguBulanan * 12;
+  const paguTahunan = PENGELUARAN_DATA.paguTahunan;
   const persen = paguTahunan > 0 ? ((total / paguTahunan) * 100).toFixed(1) : 0;
   document.getElementById('kpi-persen').textContent = persen + '%';
 }
