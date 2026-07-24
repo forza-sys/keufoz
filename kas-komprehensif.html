@@ -198,8 +198,8 @@
       <!-- Main Content (hidden until data loads) -->
       <div id="dashboard-content" style="display:none;">
 
-        <!-- SECTION 1: POSISI KAS -->
-        <h3 style="font-size:1.05rem; font-weight:700; color:var(--text-main); margin-bottom:12px;">1. Ringkasan Posisi Kas <span style="font-size:0.8rem; font-weight:500; color:var(--text-muted);">(Snapshot Harian)</span></h3>
+        <!-- POSISI KAS -->
+        <h3 style="font-size:1.05rem; font-weight:700; color:var(--text-main); margin-bottom:12px;">Ringkasan Posisi Kas <span style="font-size:0.8rem; font-weight:500; color:var(--text-muted);">(Snapshot Harian)</span></h3>
         <div class="kpi-strip">
           <!-- 1. Kas di Bank -->
           <div class="kpi-card blue" id="card-bank" onclick="filterCard('bank')">
@@ -248,69 +248,6 @@
             <div class="kpi-sub" id="kpi-health-sub">Rasio Net FOZ : Pagu Ops</div>
             <div class="kpi-hint" style="opacity:0;"> </div>
             <i class="fas fa-heartbeat kpi-icon"></i>
-          </div>
-        </div>
-
-        <!-- SECTION 2: PENGELUARAN FOZ -->
-        <h3 style="font-size:1.05rem; font-weight:700; color:var(--text-main); margin:28px 0 12px;">2. Kas FOZ & Pengeluaran <span style="font-size:0.8rem; font-weight:500; color:var(--text-muted);">(Akumulasi Total)</span></h3>
-        <div class="kpi-strip" style="grid-template-columns: repeat(4, 1fr);">
-          <div class="kpi-card blue">
-            <div class="kpi-label">Total Pengeluaran</div>
-            <div class="kpi-value" id="kpi-total-pengeluaran">—</div>
-            <i class="fas fa-money-bill-wave kpi-icon"></i>
-          </div>
-          <div class="kpi-card green">
-            <div class="kpi-label" style="font-size:0.7rem;">Beban Tetap Operasional Bulanan</div>
-            <div class="kpi-value" id="kpi-pagu">—</div>
-            <i class="fas fa-clipboard-list kpi-icon"></i>
-          </div>
-          <div class="kpi-card amber">
-            <div class="kpi-label">% Terpakai</div>
-            <div class="kpi-value" id="kpi-persen">—</div>
-            <i class="fas fa-tachometer-alt kpi-icon"></i>
-          </div>
-          <div class="kpi-card purple">
-            <div class="kpi-label">Jumlah Transaksi</div>
-            <div class="kpi-value" id="kpi-transaksi-out">—</div>
-            <i class="fas fa-receipt kpi-icon"></i>
-          </div>
-        </div>
-
-        <!-- SECTION 3: PENDAPATAN IURAN -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin: 28px 0 12px;">
-          <h3 style="font-size:1.05rem; font-weight:700; color:var(--text-main); margin: 0;">3. Pemasukan Iuran Anggota <span style="font-size:0.8rem; font-weight:500; color:var(--text-muted);" id="pendapatan-title-sub">(Arus Kas Total)</span></h3>
-          <div class="date-selector" style="margin: 0; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 4px 12px; display: flex; align-items: center; gap: 6px;">
-            <i class="fas fa-calendar-alt" style="color:var(--blue); font-size:0.9rem;"></i>
-            <label for="pendapatan-month-select" style="font-size: 0.8rem; font-weight: 500; color: var(--text-muted);">Bulan:</label>
-            <select id="pendapatan-month-select" style="border: none; background: transparent; font-family: inherit; font-size: 0.85rem; font-weight: 600; color: var(--text-main); cursor: pointer; outline: none;">
-              <option value="total">Semua / Total</option>
-            </select>
-          </div>
-        </div>
-        <div class="kpi-strip" style="grid-template-columns: repeat(4, 1fr);">
-          <div class="kpi-card blue">
-            <div class="kpi-label">Lembaga Membayar</div>
-            <div class="kpi-value" id="kpi-lembaga-in">—</div>
-            <div class="kpi-sub">Transaksi tahun ini</div>
-            <i class="fas fa-users kpi-icon"></i>
-          </div>
-          <div class="kpi-card green">
-            <div class="kpi-label">Total Pelunasan</div>
-            <div class="kpi-value" id="kpi-transaksi-in">—</div>
-            <div class="kpi-sub">Iuran bulanan yg dilunasi</div>
-            <i class="fas fa-check-circle kpi-icon"></i>
-          </div>
-          <div class="kpi-card amber">
-            <div class="kpi-label">Tingkat Partisipasi</div>
-            <div class="kpi-value" id="kpi-partisipasi-in">—</div>
-            <div class="kpi-sub">Dari total anggota FOZ</div>
-            <i class="fas fa-percentage kpi-icon"></i>
-          </div>
-          <div class="kpi-card purple">
-            <div class="kpi-label">Pemasukan Riil</div>
-            <div class="kpi-value positive" id="kpi-pemasukan-in">—</div>
-            <div class="kpi-sub">Uang kas masuk (Cash-basis)</div>
-            <i class="fas fa-money-bill-wave kpi-icon"></i>
           </div>
         </div>
 

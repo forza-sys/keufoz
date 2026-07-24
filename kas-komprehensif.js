@@ -157,13 +157,17 @@ function updatePengeluaranKPI() {
   const data = PENGELUARAN_DATA;
   if (!data || data.totalCount === undefined) return;
 
-  document.getElementById('kpi-total-pengeluaran').textContent = formatRp(data.totalVal);
-  document.getElementById('kpi-pagu').textContent = formatRp(data.paguTahunan);
-  document.getElementById('kpi-transaksi-out').textContent = data.totalCount;
+  const elTotal = document.getElementById('kpi-total-pengeluaran');
+  if (elTotal) elTotal.textContent = formatRp(data.totalVal);
+  const elPagu = document.getElementById('kpi-pagu');
+  if (elPagu) elPagu.textContent = formatRp(data.paguTahunan);
+  const elTrx = document.getElementById('kpi-transaksi-out');
+  if (elTrx) elTrx.textContent = data.totalCount;
   
   const paguTahunan = data.paguTahunan;
   const persen = paguTahunan > 0 ? ((data.totalVal / paguTahunan) * 100).toFixed(1) : 0;
-  document.getElementById('kpi-persen').textContent = persen + '%';
+  const elPersen = document.getElementById('kpi-persen');
+  if (elPersen) elPersen.textContent = persen + '%';
 }
 
 
@@ -274,10 +278,14 @@ function updatePendapatanKPI(selectedMonth = 'total') {
 
     const persen = totalAktif > 0 ? (lembagaCount / totalAktif * 100).toFixed(1) : 0;
 
-    document.getElementById('kpi-lembaga-in').textContent = lembagaCount;
-    document.getElementById('kpi-transaksi-in').textContent = totalTransaksi + ' bln';
-    document.getElementById('kpi-partisipasi-in').textContent = persen + '%';
-    document.getElementById('kpi-pemasukan-in').textContent = formatRp(totalNominal);
+    const elLembaga = document.getElementById('kpi-lembaga-in');
+    if (elLembaga) elLembaga.textContent = lembagaCount;
+    const elTrx = document.getElementById('kpi-transaksi-in');
+    if (elTrx) elTrx.textContent = totalTransaksi + ' bln';
+    const elPartisipasi = document.getElementById('kpi-partisipasi-in');
+    if (elPartisipasi) elPartisipasi.textContent = persen + '%';
+    const elPemasukan = document.getElementById('kpi-pemasukan-in');
+    if (elPemasukan) elPemasukan.textContent = formatRp(totalNominal);
 }
 
 // =======================================================
