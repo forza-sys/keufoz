@@ -76,7 +76,7 @@
     .kpi-card.active { border-color: var(--green) !important; box-shadow: 0 4px 14px rgba(16,185,129,0.18); }
 
     .kpi-label { font-size: 0.77rem; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.03em; }
-    .kpi-value { font-size: 1.12rem; font-weight: 700; margin-top: 6px; line-height: 1.2; word-break: break-word; }
+    .kpi-value { font-size: 1.05rem; font-weight: 700; margin-top: 6px; line-height: 1.2; white-space: nowrap; letter-spacing: -0.2px; }
     .kpi-value.negative { color: var(--red); }
     .kpi-value.positive { color: var(--green); }
     .kpi-sub  { font-size: 0.75rem; color: var(--text-muted); margin-top: 5px; display: flex; align-items: center; gap: 4px; }
@@ -211,7 +211,7 @@
           </div>
           <!-- 2. Dana Titipan (kewajiban, negatif) -->
           <div class="kpi-card amber" id="card-titipan" onclick="filterCard('titipan')">
-            <div class="kpi-label">Dana Titipan <span style="font-size:0.65rem; color:#b45309;">(Kewajiban)</span></div>
+            <div class="kpi-label">Dana Titipan</div>
             <div class="kpi-value negative" id="kpi-titipan">—</div>
             <div class="kpi-sub" id="kpi-titipan-sub"></div>
             <div class="kpi-hint"><i class="fas fa-hand-pointer"></i> Klik untuk rincian</div>
