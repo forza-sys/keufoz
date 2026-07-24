@@ -159,7 +159,7 @@
         // Set session
         sessionStorage.setItem('foz_auth', 'true');
         // Redirect
-        window.location.href = 'kas-komprehensif.html';
+        window.location.href = 'dashboard.html';
       } else {
         const errMsg = document.getElementById('error-msg');
         errMsg.classList.add('show-error');
@@ -176,7 +176,7 @@
     
     // Redirect auto if already logged in
     if (sessionStorage.getItem('foz_auth') === 'true') {
-      window.location.href = 'kas-komprehensif.html';
+      window.location.href = 'dashboard.html';
     }
   </script>
 </body>

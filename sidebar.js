@@ -58,9 +58,10 @@
                     <li><a href="${base}sekretariat/dashboard.html"><i class="fas fa-id-card"></i> <span>Data Keanggotaan</span></a></li>
                 </ul>
             `;
-        } else if (path.includes('/executive/') || path.includes('dashboard-keuangan') || path.includes('kas-komprehensif') || path.includes('kas-foz') || path.includes('pendapatan-iuran') || path === '/' || path.endsWith('index.html')) {
+        } else if (path.includes('/executive/') || path.includes('dashboard') || path.includes('kas-komprehensif') || path.includes('kas-foz') || path.includes('pendapatan-iuran') || path === '/' || path.endsWith('index.html')) {
              menuHTML = `
                 <ul class="sidebar-menu">
+                    <li><a href="${base}dashboard.html"><i class="fas fa-th-large"></i> <span>Dashboard</span></a></li>
                     <li><a href="${base}kas-komprehensif.html"><i class="fas fa-wallet"></i> <span>Kas Komprehensif</span></a></li>
                     <li><a href="${base}kas-foz.html"><i class="fas fa-cash-register"></i> <span>Kas FOZ</span></a></li>
                     <li><a href="${base}pendapatan-iuran.html"><i class="fas fa-hand-holding-usd"></i> <span>Pendapatan Iuran</span></a></li>
@@ -90,13 +91,15 @@
         }
 
         // Set active menu based on current URL
-        let currentFile = window.location.pathname.split('/').pop() || 'index.html';
-        if (currentFile === 'index.html') currentFile = 'kas-komprehensif.html'; // Alias index.html to kas-komprehensif
+        let currentFile = window.location.pathname.split('/').pop() || 'dashboard.html';
+        if (currentFile === 'index.html' || !currentFile) currentFile = 'dashboard.html'; // Alias index.html to dashboard
         
+        let foundActive = false;
         document.querySelectorAll('.sidebar-menu a').forEach(a => {
             const href = a.getAttribute('href');
-            if (href && href.includes(currentFile)) {
+            if (href && href.endsWith(currentFile) && !foundActive) {
                 a.parentElement.classList.add('active');
+                foundActive = true;
             }
             
             // PJAX Navigation Intercept
@@ -137,6 +140,12 @@
                         currentModals.forEach(m => m.remove());
                         const newModals = doc.querySelectorAll('.modal');
                         newModals.forEach(m => document.body.appendChild(m));
+                        
+                        // Replace internal styles
+                        const currentStyles = document.querySelectorAll('style');
+                        currentStyles.forEach(s => s.remove());
+                        const newStyles = doc.querySelectorAll('style');
+                        newStyles.forEach(s => document.head.appendChild(document.importNode(s, true)));
                         
                         document.title = doc.title;
                         document.body.className = doc.body.className;
