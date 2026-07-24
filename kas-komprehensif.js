@@ -15,6 +15,12 @@ const DETAIL_SHEETS = [
   'Bidang 4', 'Bidang 5', 'Syarikat Amil', 'Pengurus Harian',
   'Networking Nasional & Global', 'Enrichment Karyawan FOZ',
   'Global Sumud Flotilla', 'Perjalanan ke Surabaya - Persia',
+  'Raker Bidang 4', 'Tata Kelola FOZ', 'DANTIP SAI', 'Kampus Zakat',
+  'Kompartemen Halal', 'Research Hub', 'ZGTC',
+  'Kolaborasi Bantuan Sumatera', 'Leaders Talk Offline',
+  'Market Hub - Program Digizakat', 'UL 2', 'Cashbon',
+  'Detail251-Dana Titipan-Digizaka', 'Kolaborasi Bantuan Sumatera Cha',
+  'Riset Lumpur'
 ];
 
 const URL_KESEPAKATAN = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTaZXQznuc6ZSa-DKRcOsXH-UfmyvQsAp0TN4DYFC7a72ihr-Il6nAYnu7HlnzVx9nlXvPtUrKiOoBv/pub?output=csv&single=true&gid=71422965";
