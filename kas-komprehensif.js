@@ -516,17 +516,18 @@ function renderKompChart() {
     sub.sort((a, b) => b.v - a.v).slice(0, 5).forEach(x => { labels.push(x.label.replace('Dana Titipan ', '')); values.push(x.v); });
   }
 
-  document.getElementById('chart-komp-title').textContent = titleText;
+  const titleEl = document.getElementById('chart-komp-title');
+  if (titleEl) titleEl.textContent = titleText;
 
   chartKomp = new Chart(ctx, {
     type: 'doughnut',
     data: {
-      labels,
+      labels: labels,
       datasets: [{
         data: values,
         backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#ef4444', '#0d9488', '#ec4899'],
         borderWidth: 2,
-        borderColor: '#fff'
+        borderColor: '#ffffff'
       }]
     },
     options: {
@@ -534,17 +535,28 @@ function renderKompChart() {
       maintainAspectRatio: false,
       cutout: '60%',
       plugins: {
-        legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } },
-        tooltip: { callbacks: { label: ctx => ' ' + formatRp(ctx.raw) } }
+        legend: { position: 'right', labels: { boxWidth: 12, font: { size: 11 } } },
+        tooltip: {
+          callbacks: {
+            label: ctx => {
+              const val = ctx.raw || 0;
+              const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+              const pct = total > 0 ? ((val / total) * 100).toFixed(1) : 0;
+              return `${ctx.label}: ${formatRp(val)} (${pct}%)`;
+            }
+          }
+        }
       }
     }
   });
 }
 
 function renderTable() {
-  const CategorizedItems = categorizeItems();
   const thead = document.getElementById('detail-thead');
   const tbody = document.getElementById('detail-tbody');
+  if (!thead || !tbody) return;
+
+  const CategorizedItems = categorizeItems();
   const note  = document.getElementById('detail-note');
   const badge = document.getElementById('detail-panel-badge');
   const title = document.getElementById('detail-panel-title');
@@ -556,12 +568,12 @@ function renderTable() {
   if (activeCard) {
     filteredItems = sectionItems.filter(item => item.group === activeCard);
     const names = { bank: 'Kas di Bank', titipan: 'Dana Titipan', foz: 'Kas FOZ', piutang: 'Piutang' };
-    title.textContent = 'Rincian: ' + (names[activeCard] || activeCard);
-    badge.textContent = names[activeCard] || activeCard;
+    if (title) title.textContent = 'Rincian: ' + (names[activeCard] || activeCard);
+    if (badge) badge.textContent = names[activeCard] || activeCard;
   } else {
     filteredItems = sectionItems;
-    title.textContent = activeTab === 'posisi' ? 'Posisi Kas Lengkap' : 'Rincian Setelah Pencairan';
-    badge.textContent = 'Semua Pos';
+    if (title) title.textContent = activeTab === 'posisi' ? 'Posisi Kas Lengkap' : 'Rincian Setelah Pencairan';
+    if (badge) badge.textContent = 'Semua Pos';
   }
 
   // Warning for Dana Titipan
