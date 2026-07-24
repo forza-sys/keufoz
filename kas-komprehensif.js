@@ -112,22 +112,25 @@ async function loadPengeluaranData() {
   }
 }
 
-function updatePengeluaranKPI(selectedMonth) {
-    let total = 0;
-    let count = 0;
-    PENGELUARAN_DATA.trx.forEach(t => {
-        if (t.month === selectedMonth) {
-            total += t.val;
-            count++;
-        }
-    });
+function updatePengeluaranKPI() {
+  const data = PENGELUARAN_DATA;
+  if (!data || data.trx.length === 0) return;
+
+  let total = 0;
+  let count = 0;
+  
+  data.trx.forEach(t => {
+      total += t.val;
+      count++;
+  });
     
-    document.getElementById('kpi-total-pengeluaran').textContent = formatRp(total);
-    document.getElementById('kpi-pagu').textContent = formatRp(PENGELUARAN_DATA.paguBulanan);
-    document.getElementById('kpi-transaksi-out').textContent = count;
-    
-    const persen = PENGELUARAN_DATA.paguBulanan > 0 ? ((total / PENGELUARAN_DATA.paguBulanan) * 100).toFixed(1) : 0;
-    document.getElementById('kpi-persen').textContent = persen + '%';
+  document.getElementById('kpi-total-pengeluaran').textContent = formatRp(total);
+  document.getElementById('kpi-pagu').textContent = formatRp(PENGELUARAN_DATA.paguBulanan * 12);
+  document.getElementById('kpi-transaksi-out').textContent = count;
+  
+  const paguTahunan = PENGELUARAN_DATA.paguBulanan * 12;
+  const persen = paguTahunan > 0 ? ((total / paguTahunan) * 100).toFixed(1) : 0;
+  document.getElementById('kpi-persen').textContent = persen + '%';
 }
 
 
@@ -209,7 +212,7 @@ async function loadPendapatanData() {
   }
 }
 
-function updatePendapatanKPI(selectedMonth) {
+function updatePendapatanKPI() {
     let lembagaCount = 0;
     let totalTransaksi = 0;
     let totalNominal = 0;
@@ -221,7 +224,7 @@ function updatePendapatanKPI(selectedMonth) {
 
       m.monthlyStatus.forEach(st => {
         if (st.status !== 'na') isWajibAtAll = true;
-        if (st.trxMonth === selectedMonth) {
+        if (st.status === 'paid') {
           memberTransaksiBulanIni++;
         }
       });
@@ -721,26 +724,9 @@ async function initDashboard() {
       });
     }
 
-    // Populate month dropdown for Bulanan Data
-    const monthSelect = document.getElementById('month-select');
-    if (monthSelect) {
-      monthSelect.innerHTML = MONTH_NAMES.map((m, i) => `<option value="${i}">${m}</option>`).join('');
-      const currentMonth = new Date().getMonth();
-      monthSelect.value = currentMonth;
-      
-      const newMonthSel = monthSelect.cloneNode(true);
-      monthSelect.parentNode.replaceChild(newMonthSel, monthSelect);
-      
-      newMonthSel.addEventListener('change', () => {
-          const m = parseInt(newMonthSel.value);
-          updatePengeluaranKPI(m);
-          updatePendapatanKPI(m);
-      });
-      
-      // Trigger initial load for bulanan
-      updatePengeluaranKPI(currentMonth);
-      updatePendapatanKPI(currentMonth);
-    }
+    // Render initial data without month filter
+    updatePengeluaranKPI();
+    updatePendapatanKPI();
 
     if (loadingState) loadingState.style.display = 'none';
     if (dashboardContent) dashboardContent.style.display = 'block';

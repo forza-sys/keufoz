@@ -177,12 +177,6 @@
           <p id="page-subtitle">Posisi dan komposisi kas FOZ — data langsung dari Google Sheets</p>
         </div>
         <div class="top-nav-actions" style="display:flex; gap:10px; align-items:center;">
-          <!-- Month Selector -->
-          <div class="date-selector">
-            <i class="fas fa-calendar-alt" style="color:var(--blue); font-size:0.9rem;"></i>
-            <label for="month-select">Bulan:</label>
-            <select id="month-select"></select>
-          </div>
           <!-- Date Selector -->
           <div class="date-selector">
             <i class="fas fa-calendar-day" style="color:var(--green); font-size:0.9rem;"></i>
@@ -258,7 +252,7 @@
         </div>
 
         <!-- SECTION 2: PENGELUARAN FOZ -->
-        <h3 style="font-size:1.05rem; font-weight:700; color:var(--text-main); margin:28px 0 12px;">2. Kas FOZ & Pengeluaran <span style="font-size:0.8rem; font-weight:500; color:var(--text-muted);">(Akumulasi Bulanan)</span></h3>
+        <h3 style="font-size:1.05rem; font-weight:700; color:var(--text-main); margin:28px 0 12px;">2. Kas FOZ & Pengeluaran <span style="font-size:0.8rem; font-weight:500; color:var(--text-muted);">(Akumulasi Total)</span></h3>
         <div class="kpi-strip" style="grid-template-columns: repeat(4, 1fr);">
           <div class="kpi-card blue">
             <div class="kpi-label">Total Pengeluaran</div>
@@ -266,7 +260,7 @@
             <i class="fas fa-money-bill-wave kpi-icon"></i>
           </div>
           <div class="kpi-card green">
-            <div class="kpi-label">Pagu Bulanan</div>
+            <div class="kpi-label">Pagu Tahunan</div>
             <div class="kpi-value" id="kpi-pagu">—</div>
             <i class="fas fa-clipboard-list kpi-icon"></i>
           </div>
@@ -283,12 +277,12 @@
         </div>
 
         <!-- SECTION 3: PENDAPATAN IURAN -->
-        <h3 style="font-size:1.05rem; font-weight:700; color:var(--text-main); margin:28px 0 12px;">3. Pemasukan Iuran Anggota <span style="font-size:0.8rem; font-weight:500; color:var(--text-muted);">(Arus Kas Bulanan)</span></h3>
+        <h3 style="font-size:1.05rem; font-weight:700; color:var(--text-main); margin:28px 0 12px;">3. Pemasukan Iuran Anggota <span style="font-size:0.8rem; font-weight:500; color:var(--text-muted);">(Arus Kas Total)</span></h3>
         <div class="kpi-strip" style="grid-template-columns: repeat(4, 1fr);">
           <div class="kpi-card blue">
             <div class="kpi-label">Lembaga Membayar</div>
             <div class="kpi-value" id="kpi-lembaga-in">—</div>
-            <div class="kpi-sub">Transaksi bulan ini</div>
+            <div class="kpi-sub">Transaksi tahun ini</div>
             <i class="fas fa-users kpi-icon"></i>
           </div>
           <div class="kpi-card green">
