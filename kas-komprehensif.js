@@ -3,6 +3,22 @@
 // No Apps Script needed, avoids multi-account CORS issues
 // ===================================================
 
+// ---- BULANAN (Pengeluaran & Pendapatan) DATA SOURCES ----
+const SPREADSHEET_ID_FOZ = '181CZUA-74uh-8yLJO_iI5aMtaBYMl4p2IdnOOg38Cas';
+const GVIZ_BASE = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID_FOZ}/gviz/tq?tqx=out:json&sheet=`;
+const DETAIL_SHEETS = [
+  'Kas Kecil', 'Administrasi dan Umum', 'Overhead dan Tagihan',
+  'Pembelian Aset dan Peralatan', 'Pemeliharaan Kendaraan dan Bang',
+  'Donasi atau Bantuan', 'Bidang 1', 'Bidang 2', 'Bidang 3',
+  'Bidang 4', 'Bidang 5', 'Syarikat Amil', 'Pengurus Harian',
+  'Networking Nasional & Global', 'Enrichment Karyawan FOZ',
+  'Global Sumud Flotilla', 'Perjalanan ke Surabaya - Persia',
+];
+
+const URL_KESEPAKATAN = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTaZXQznuc6ZSa-DKRcOsXH-UfmyvQsAp0TN4DYFC7a72ihr-Il6nAYnu7HlnzVx9nlXvPtUrKiOoBv/pub?output=csv&single=true&gid=71422965";
+const URL_IURAN = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTaZXQznuc6ZSa-DKRcOsXH-UfmyvQsAp0TN4DYFC7a72ihr-Il6nAYnu7HlnzVx9nlXvPtUrKiOoBv/pub?output=csv&single=true&gid=885646170";
+const MONTH_NAMES = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
 const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSKL88ZG4XbFoYpEyPOOud0seaKiqJmzExGSFTikeDwFAeOc9i_uvcekq1Cfzh73fPfMQOmNULKVzTh/pub?output=csv";
 
 // ---- Globals ----
@@ -39,6 +55,193 @@ async function fetchTotalPagu() {
     return 136764793; // fallback to known total
   }
 }
+
+// =======================================================
+// BULANAN DATA LOADING & PROCESSING
+// =======================================================
+
+// --- PENGELUARAN FOZ ---
+let PENGELUARAN_DATA = { paguBulanan: 0, trx: [] };
+
+async function fetchGvizSheet(sheetName) {
+  try {
+    const res = await fetch(GVIZ_BASE + encodeURIComponent(sheetName));
+    const text = await res.text();
+    const start = text.indexOf('(');
+    const end = text.lastIndexOf(')');
+    const json = JSON.parse(text.substring(start + 1, end));
+    return json.table.rows;
+  } catch(e) {
+    return [];
+  }
+}
+
+async function loadPengeluaranData() {
+  const paguRows = await fetchGvizSheet('Pagu');
+  paguRows.forEach(r => {
+    const pos = r.c && r.c[0] ? r.c[0].v : null;
+    const nominal = r.c && r.c[1] ? r.c[1].v : null;
+    if (pos === 'Pagu Bulanan' && typeof nominal === 'number') {
+      PENGELUARAN_DATA.paguBulanan = nominal;
+    }
+  });
+
+  PENGELUARAN_DATA.trx = [];
+  
+  for (let i = 0; i < DETAIL_SHEETS.length; i += 8) {
+    const batch = DETAIL_SHEETS.slice(i, i + 8);
+    const results = await Promise.all(batch.map(name => fetchGvizSheet(name)));
+    results.forEach((rows) => {
+      for (let r = 0; r < rows.length; r++) {
+        const noVal = rows[r].c && rows[r].c[0] ? rows[r].c[0].v : null;
+        if (noVal !== null && typeof noVal === 'number') {
+           const dateVal = rows[r].c && rows[r].c[1] ? rows[r].c[1].v : null;
+           const hVal = rows[r].c && rows[r].c[7] ? rows[r].c[7].v : null; 
+           if (dateVal && typeof dateVal === 'string' && dateVal.startsWith('Date')) {
+              const match = dateVal.match(/Date\((\d+),(\d+),(\d+)\)/);
+              if (match && typeof hVal === 'number') {
+                  const m = parseInt(match[2]); // 0-indexed month
+                  PENGELUARAN_DATA.trx.push({ month: m, val: hVal });
+              }
+           }
+        }
+      }
+    });
+  }
+}
+
+function updatePengeluaranKPI(selectedMonth) {
+    let total = 0;
+    let count = 0;
+    PENGELUARAN_DATA.trx.forEach(t => {
+        if (t.month === selectedMonth) {
+            total += t.val;
+            count++;
+        }
+    });
+    
+    document.getElementById('kpi-total-pengeluaran').textContent = formatRp(total);
+    document.getElementById('kpi-pagu').textContent = formatRp(PENGELUARAN_DATA.paguBulanan);
+    document.getElementById('kpi-transaksi-out').textContent = count;
+    
+    const persen = PENGELUARAN_DATA.paguBulanan > 0 ? ((total / PENGELUARAN_DATA.paguBulanan) * 100).toFixed(1) : 0;
+    document.getElementById('kpi-persen').textContent = persen + '%';
+}
+
+
+// --- PENDAPATAN IURAN ---
+let PENDAPATAN_DATA = [];
+
+function parseCSVLine(line) {
+  let row = [];
+  let currentStr = "";
+  let inQuotes = false;
+  for (let c = 0; c < line.length; c++) {
+    const char = line[c];
+    if (char === '"' && line[c+1] === '"') {
+      currentStr += '"'; c++;
+    } else if (char === '"') {
+      inQuotes = !inQuotes;
+    } else if (char === ',' && !inQuotes) {
+      row.push(currentStr); currentStr = "";
+    } else {
+      currentStr += char;
+    }
+  }
+  row.push(currentStr);
+  return row;
+}
+
+function parseRpValue(str) {
+  if (!str || str.trim() === '-' || str.trim() === '') return 0;
+  return parseFloat(str.replace(/"/g, '').replace(/[Rp\s\.]/g, '').replace(/,/g, '.').trim()) || 0;
+}
+
+function parseTransactionMonth(val) {
+  if (!val || val === '-') return -1;
+  const lower = val.toLowerCase();
+  for (let m = 1; m <= 12; m++) {
+    const mm = String(m).padStart(2, '0');
+    if (lower.includes(`/${mm}/`) || lower.includes(`-${mm}-`)) {
+      return m - 1; 
+    }
+  }
+  return -1;
+}
+
+async function loadPendapatanData() {
+  const [resKes, resIuran] = await Promise.all([
+    fetch(URL_KESEPAKATAN).then(res => res.text()),
+    fetch(URL_IURAN).then(res => res.text())
+  ]);
+
+  const kesData = resKes.split('\n').map(parseCSVLine).slice(1);
+  const iuranData = resIuran.split('\n').map(parseCSVLine).slice(1);
+
+  PENDAPATAN_DATA = [];
+
+  for (let i = 0; i < iuranData.length; i++) {
+    const rowIuran = iuranData[i];
+    if (!rowIuran[1] || rowIuran[1].trim() === '') continue; 
+
+    const nama = rowIuran[1].trim();
+    const rowKes = kesData.find(r => r[1] && r[1].trim() === nama);
+    const iuranBulan = rowKes && rowKes[3] ? parseRpValue(rowKes[3]) : 0;
+
+    const monthlyStatus = [];
+    for (let m = 0; m < 12; m++) {
+      const statusStr = rowIuran[3 + m] ? rowIuran[3 + m].trim() : '';
+      let status = 'belum'; 
+      if (statusStr === '-') {
+        status = 'na';
+      } else if (statusStr !== '') {
+        status = 'lunas'; 
+      }
+      monthlyStatus.push({
+        status: status,
+        trxMonth: parseTransactionMonth(statusStr)
+      });
+    }
+
+    PENDAPATAN_DATA.push({ nama, iuranBulan, monthlyStatus });
+  }
+}
+
+function updatePendapatanKPI(selectedMonth) {
+    let lembagaCount = 0;
+    let totalTransaksi = 0;
+    let totalNominal = 0;
+    let totalAktif = 0;
+
+    PENDAPATAN_DATA.forEach(m => {
+      let isWajibAtAll = false;
+      let memberTransaksiBulanIni = 0;
+
+      m.monthlyStatus.forEach(st => {
+        if (st.status !== 'na') isWajibAtAll = true;
+        if (st.trxMonth === selectedMonth) {
+          memberTransaksiBulanIni++;
+        }
+      });
+
+      if (isWajibAtAll) totalAktif++;
+      if (memberTransaksiBulanIni > 0) {
+        lembagaCount++;
+        totalTransaksi += memberTransaksiBulanIni;
+        totalNominal += (m.iuranBulan * memberTransaksiBulanIni);
+      }
+    });
+
+    const persen = totalAktif > 0 ? (lembagaCount / totalAktif * 100).toFixed(1) : 0;
+
+    document.getElementById('kpi-lembaga-in').textContent = lembagaCount;
+    document.getElementById('kpi-transaksi-in').textContent = totalTransaksi + ' bln';
+    document.getElementById('kpi-partisipasi-in').textContent = persen + '%';
+    document.getElementById('kpi-pemasukan-in').textContent = formatRp(totalNominal);
+}
+
+// =======================================================
+
 
 // ---- Utility ----
 function formatRp(v) {
@@ -487,7 +690,12 @@ async function initDashboard() {
   if (dashboardContent) dashboardContent.style.display = 'none';
 
   try {
-    const [csvData, paguData] = await Promise.all([fetchCSVData(), fetchTotalPagu()]);
+    const [csvData, paguData] = await Promise.all([
+        fetchCSVData(), 
+        fetchTotalPagu(),
+        loadPengeluaranData(),
+        loadPendapatanData()
+    ]);
     ALL_DATA = csvData;
     DATES    = ALL_DATA.dates;
     ITEMS    = ALL_DATA.items;
@@ -509,6 +717,27 @@ async function initDashboard() {
         renderKompChart();
         renderTable();
       });
+    }
+
+    // Populate month dropdown for Bulanan Data
+    const monthSelect = document.getElementById('month-select');
+    if (monthSelect) {
+      monthSelect.innerHTML = MONTH_NAMES.map((m, i) => `<option value="${i}">${m}</option>`).join('');
+      const currentMonth = new Date().getMonth();
+      monthSelect.value = currentMonth;
+      
+      const newMonthSel = monthSelect.cloneNode(true);
+      monthSelect.parentNode.replaceChild(newMonthSel, monthSelect);
+      
+      newMonthSel.addEventListener('change', () => {
+          const m = parseInt(newMonthSel.value);
+          updatePengeluaranKPI(m);
+          updatePendapatanKPI(m);
+      });
+      
+      // Trigger initial load for bulanan
+      updatePengeluaranKPI(currentMonth);
+      updatePendapatanKPI(currentMonth);
     }
 
     if (loadingState) loadingState.style.display = 'none';
