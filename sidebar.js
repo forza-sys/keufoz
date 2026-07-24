@@ -58,12 +58,14 @@
                     <li><a href="${base}sekretariat/dashboard.html"><i class="fas fa-id-card"></i> <span>Data Keanggotaan</span></a></li>
                 </ul>
             `;
-        } else if (path.includes('/executive/') || path.includes('dashboard') || path.includes('kas-komprehensif') || path.includes('kas-foz') || path.includes('pendapatan-iuran') || path === '/' || path.endsWith('index.html')) {
+        } else if (path.includes('/executive/') || path.includes('dashboard') || path.includes('kas-komprehensif') || path.includes('kas-foz') || path.includes('pendapatan-iuran') || path.includes('psak45') || path.includes('nota-dinas') || path === '/' || path.endsWith('index.html')) {
              menuHTML = `
                 <ul class="sidebar-menu">
                     <li><a href="${base}dashboard.html"><i class="fas fa-th-large"></i> <span>Dashboard</span></a></li>
                     <li><a href="${base}kas-komprehensif.html"><i class="fas fa-wallet"></i> <span>Kas Komprehensif</span></a></li>
                     <li><a href="${base}kas-foz.html"><i class="fas fa-cash-register"></i> <span>Kas FOZ</span></a></li>
+                    <li><a href="${base}psak45.html"><i class="fas fa-file-invoice"></i> <span>Laporan PSAK 45</span></a></li>
+                    <li><a href="${base}nota-dinas.html"><i class="fas fa-file-signature"></i> <span>Nota Dinas</span></a></li>
                     <li><a href="${base}pendapatan-iuran.html"><i class="fas fa-hand-holding-usd"></i> <span>Pendapatan Iuran</span></a></li>
                 </ul>
                 <div style="position: absolute; bottom: 20px; left: 0; width: 100%; padding: 0 15px;">
@@ -161,7 +163,7 @@
                         scripts.forEach(oldScript => {
                             if (oldScript.src && !oldScript.src.includes('sidebar.js') && !oldScript.src.includes('auth.js') && !oldScript.src.includes('supabase-config.js')) {
                                 // Only load script if it's not already in the document (avoids reloading Chart.js etc)
-                                if (!existingScripts.includes(oldScript.src) || oldScript.src.includes('pendapatan-iuran.js') || oldScript.src.includes('kas-foz.js') || oldScript.src.includes('kas-komprehensif.js')) {
+                                if (!existingScripts.includes(oldScript.src) || oldScript.src.includes('pendapatan-iuran.js') || oldScript.src.includes('kas-foz.js') || oldScript.src.includes('kas-komprehensif.js') || oldScript.src.includes('psak45.js') || oldScript.src.includes('nota-dinas.js')) {
                                     scriptsToLoad.push(oldScript.src);
                                 }
                             }
