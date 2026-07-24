@@ -1,3 +1,5 @@
+(function() {
+
 // ===================================================
 // pendapatan-iuran.js — Live Data dari Google Sheets Publish to Web (CSV)
 // ===================================================
@@ -455,4 +457,6 @@ async function initDashboard() {
 }
 
 document.addEventListener('DOMContentLoaded', initDashboard);
-window.addEventListener('hazana:pjax-loaded', initDashboard);
+window.pjaxInitDashboard = initDashboard;
+})();
+

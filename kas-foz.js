@@ -1,3 +1,5 @@
+(function() {
+
 // =============================================
 // kas-foz.js — Data via Google Sheets Publish to Web (gviz API)
 // No Apps Script needed, no CORS issues
@@ -465,3 +467,5 @@ window.filterCategory = function(cat) {
 // ---- Event Listeners ----
 document.addEventListener('DOMContentLoaded', init);
 document.addEventListener('hazana:pjax-loaded', init);
+})();
+

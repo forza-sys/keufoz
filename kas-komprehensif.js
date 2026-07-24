@@ -1,3 +1,5 @@
+(function() {
+
 // ===================================================
 // kas-komprehensif.js — Live Data from Google Sheets Publish to Web (CSV)
 // No Apps Script needed, avoids multi-account CORS issues
@@ -760,4 +762,6 @@ async function initDashboard() {
 }
 
 document.addEventListener('DOMContentLoaded', initDashboard);
-window.addEventListener('hazana:pjax-loaded', initDashboard);
+window.pjaxInitDashboard = initDashboard;
+})();
+

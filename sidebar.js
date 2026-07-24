@@ -141,19 +141,40 @@
                         document.body.className = doc.body.className;
                         window.history.pushState({}, '', targetHref);
                         
+                        window.pjaxInitDashboard = null;
+                        
                         // Execute Scripts outside main content (specifically core JS)
                         const scripts = doc.querySelectorAll('script');
+                        let scriptsToLoad = [];
                         scripts.forEach(oldScript => {
                             if (oldScript.src && !oldScript.src.includes('sidebar.js') && !oldScript.src.includes('auth.js') && !oldScript.src.includes('supabase-config.js')) {
-                                // Re-inject script so browser executes it
-                                const s = document.createElement('script');
-                                s.src = oldScript.src;
-                                document.body.appendChild(s);
+                                scriptsToLoad.push(oldScript.src);
                             }
                         });
                         
-                        // Dispatch event to re-initialize page logic
-                        window.dispatchEvent(new CustomEvent('hazana:pjax-loaded'));
+                        const finishPjax = () => {
+                            window.dispatchEvent(new CustomEvent('hazana:pjax-loaded'));
+                            if (typeof window.pjaxInitDashboard === 'function') {
+                                window.pjaxInitDashboard();
+                            }
+                        };
+                        
+                        if (scriptsToLoad.length > 0) {
+                            let loadedCount = 0;
+                            scriptsToLoad.forEach(src => {
+                                const s = document.createElement('script');
+                                s.src = src;
+                                s.onload = s.onerror = () => {
+                                    loadedCount++;
+                                    if (loadedCount === scriptsToLoad.length) {
+                                        finishPjax();
+                                    }
+                                };
+                                document.body.appendChild(s);
+                            });
+                        } else {
+                            finishPjax();
+                        }
                         
                     } catch (error) {
                         console.error('PJAX Error:', error);
