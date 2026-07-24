@@ -211,7 +211,7 @@ async function loadPendapatanData() {
   }
 }
 
-function updatePendapatanKPI() {
+function updatePendapatanKPI(selectedMonth = 'total') {
     let lembagaCount = 0;
     let totalTransaksi = 0;
     let totalNominal = 0;
@@ -223,8 +223,10 @@ function updatePendapatanKPI() {
 
       m.monthlyStatus.forEach(st => {
         if (st.status !== 'na') isWajibAtAll = true;
-        if (st.status === 'paid') {
-          memberTransaksiBulanIni++;
+        if (st.status === 'lunas') {
+          if (selectedMonth === 'total' || st.trxMonth === parseInt(selectedMonth)) {
+            memberTransaksiBulanIni++;
+          }
         }
       });
 
@@ -723,9 +725,25 @@ async function initDashboard() {
       });
     }
 
+    // Populate Pendapatan month select
+    const pendMonthSelect = document.getElementById('pendapatan-month-select');
+    if (pendMonthSelect) {
+      const monthOptions = MONTH_NAMES.map((m, i) => `<option value="${i}">${m}</option>`).join('');
+      pendMonthSelect.innerHTML += monthOptions;
+      
+      pendMonthSelect.addEventListener('change', (e) => {
+        const val = e.target.value;
+        const subTitle = document.getElementById('pendapatan-title-sub');
+        if (subTitle) {
+           subTitle.textContent = val === 'total' ? '(Arus Kas Total)' : `(Arus Kas ${MONTH_NAMES[parseInt(val)]})`;
+        }
+        updatePendapatanKPI(val);
+      });
+    }
+
     // Render initial data without month filter
     updatePengeluaranKPI();
-    updatePendapatanKPI();
+    updatePendapatanKPI('total');
 
     if (loadingState) loadingState.style.display = 'none';
     if (dashboardContent) dashboardContent.style.display = 'block';
