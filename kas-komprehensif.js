@@ -166,9 +166,11 @@ function updateKPIs() {
 
   // 6. Financial Health Rate
   if (totalPaguOps > 0 && foz !== null) {
-    const healthMonths = (foz / totalPaguOps).toFixed(1);
-    document.getElementById('kpi-health').textContent = healthMonths + " bln";
-    document.getElementById('kpi-health-sub').innerHTML = 'Rasio Net FOZ : Pagu Ops';
+    const healthMonths = parseFloat((foz / totalPaguOps).toFixed(1));
+    document.getElementById('kpi-health').textContent = healthMonths + " Bulan";
+    const statusText = healthMonths >= 4 ? "Sehat" : "Tidak Sehat";
+    const statusColor = healthMonths >= 4 ? "var(--green)" : "var(--red)";
+    document.getElementById('kpi-health-sub').innerHTML = `Rasio Net FOZ : Pagu Ops <br/><span style="margin-top:4px; display:inline-block; font-weight:600; color:${statusColor}">${statusText}</span>`;
   }
 }
 
@@ -192,14 +194,6 @@ function renderTrenChart() {
           backgroundColor: 'rgba(16,185,129,0.08)',
           fill: true, tension: 0.4, borderWidth: 2.5,
           pointBackgroundColor: '#10b981', pointRadius: 5
-        },
-        {
-          label: 'Saldo Net + Piutang',
-          data: nettoData,
-          borderColor: '#0d9488',
-          backgroundColor: 'transparent',
-          fill: false, tension: 0.4, borderWidth: 2, borderDash: [5,4],
-          pointBackgroundColor: '#0d9488', pointRadius: 4
         }
       ]
     },
