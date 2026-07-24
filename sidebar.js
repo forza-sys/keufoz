@@ -127,8 +127,9 @@
                         // Replace main content
                         const newMc = doc.querySelector('.main-content');
                         if (newMc && currentMc) {
-                            currentMc.replaceWith(newMc);
-                            newMc.classList.remove('page-fade-out');
+                            const importedMc = document.importNode(newMc, true);
+                            currentMc.replaceWith(importedMc);
+                            importedMc.classList.remove('page-fade-out');
                         }
                         
                         // Replace modals (if any)
@@ -146,9 +147,13 @@
                         // Execute Scripts outside main content (specifically core JS)
                         const scripts = doc.querySelectorAll('script');
                         let scriptsToLoad = [];
+                        const existingScripts = Array.from(document.querySelectorAll('script')).map(s => s.src);
                         scripts.forEach(oldScript => {
                             if (oldScript.src && !oldScript.src.includes('sidebar.js') && !oldScript.src.includes('auth.js') && !oldScript.src.includes('supabase-config.js')) {
-                                scriptsToLoad.push(oldScript.src);
+                                // Only load script if it's not already in the document (avoids reloading Chart.js etc)
+                                if (!existingScripts.includes(oldScript.src) || oldScript.src.includes('pendapatan-iuran.js') || oldScript.src.includes('kas-foz.js') || oldScript.src.includes('kas-komprehensif.js')) {
+                                    scriptsToLoad.push(oldScript.src);
+                                }
                             }
                         });
                         
