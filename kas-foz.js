@@ -466,6 +466,6 @@ window.filterCategory = function(cat) {
 
 // ---- Event Listeners ----
 document.addEventListener('DOMContentLoaded', init);
-document.addEventListener('hazana:pjax-loaded', init);
+window.pjaxInitDashboard = init;
 })();
 
