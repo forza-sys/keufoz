@@ -66,9 +66,9 @@
                     <li><a href="${base}kas-foz.html"><i class="fas fa-cash-register"></i> <span>Kas FOZ</span></a></li>
                     <li><a href="${base}pendapatan-iuran.html"><i class="fas fa-hand-holding-usd"></i> <span>Pendapatan Iuran</span></a></li>
                 </ul>
-                <div style="position: absolute; bottom: 20px; left: 0; width: 100%; padding: 0 20px;">
-                    <a href="#" onclick="sessionStorage.removeItem('foz_auth'); window.location.href='login.html';" style="display: flex; align-items: center; gap: 15px; color: var(--red); text-decoration: none; font-weight: 500; font-size: 0.9rem; padding: 12px 15px; border-radius: 8px; transition: background 0.2s;">
-                        <i class="fas fa-sign-out-alt"></i> <span class="menu-text">Keluar</span>
+                <div style="position: absolute; bottom: 20px; left: 0; width: 100%; padding: 0 15px;">
+                    <a href="#" onclick="sessionStorage.removeItem('foz_auth'); window.location.href='login.html';" style="display: flex; align-items: center; gap: 15px; color: #ef4444; text-decoration: none; font-weight: 600; font-size: 0.9rem; padding: 12px 15px; border-radius: 8px; transition: background 0.2s;">
+                        <i class="fas fa-sign-out-alt" style="min-width: 24px; text-align: center; font-size: 1.1rem;"></i> <span class="sidebar-text">Keluar</span>
                     </a>
                 </div>
             `;

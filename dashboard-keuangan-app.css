@@ -1804,7 +1804,8 @@ body {
   transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.sidebar.collapsed .sidebar-menu li a span {
+.sidebar.collapsed .sidebar-menu li a span,
+.sidebar.collapsed .sidebar-text {
   opacity: 0;
   display: none;
 }
@@ -1845,7 +1846,8 @@ body {
     width: 40px;
   }
   
-  .sidebar.collapsed:hover .sidebar-menu li a span {
+  .sidebar.collapsed:hover .sidebar-menu li a span,
+  .sidebar.collapsed:hover .sidebar-text {
     opacity: 1;
     display: inline;
   }
