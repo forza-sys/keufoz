@@ -91,43 +91,72 @@ async function loadPengeluaranData() {
     }
   });
 
-  PENGELUARAN_DATA.trx = [];
+  PENGELUARAN_DATA.totalVal = 0;
+  PENGELUARAN_DATA.totalCount = 0;
   
+  const cellVal = (row, colIdx) => {
+    if (!row || !row.c || !row.c[colIdx]) return null;
+    return row.c[colIdx].v;
+  };
+
   for (let i = 0; i < DETAIL_SHEETS.length; i += 8) {
     const batch = DETAIL_SHEETS.slice(i, i + 8);
     const results = await Promise.all(batch.map(name => fetchGvizSheet(name)));
+    
     results.forEach((rows) => {
-      for (let r = 0; r < rows.length; r++) {
-        const noVal = rows[r].c && rows[r].c[0] ? rows[r].c[0].v : null;
-        if (noVal !== null && typeof noVal === 'number') {
-           const hVal = rows[r].c && rows[r].c[7] ? rows[r].c[7].v : null; 
-           if (typeof hVal === 'number' && hVal > 0) {
-               PENGELUARAN_DATA.trx.push({ val: hVal });
-           }
+      let sheetTotal = 0;
+      let sheetCount = 0;
+      
+      // Look for total in header first
+      for (let r = 0; r < Math.min(3, rows.length); r++) {
+        const fVal = cellVal(rows[r], 5);
+        const hVal = cellVal(rows[r], 7);
+        if (fVal && typeof fVal === 'string' && fVal.toLowerCase().includes('total')) {
+          if (typeof hVal === 'number') {
+            sheetTotal = hVal;
+          }
+          break;
+        }
+        if (typeof hVal === 'number' && hVal > 100 && r < 2) {
+          sheetTotal = hVal;
         }
       }
+
+      // Count transactions
+      for (let r = 0; r < rows.length; r++) {
+        const noVal = cellVal(rows[r], 0);
+        if (noVal !== null && typeof noVal === 'number') {
+          sheetCount++;
+        }
+      }
+
+      // Fallback summation if total not found in header
+      if (sheetTotal === 0) {
+        rows.forEach(row => {
+          const noVal = cellVal(row, 0);
+          const hVal = cellVal(row, 7);
+          if (noVal !== null && typeof noVal === 'number' && typeof hVal === 'number') {
+            sheetTotal += hVal;
+          }
+        });
+      }
+      
+      PENGELUARAN_DATA.totalVal += sheetTotal;
+      PENGELUARAN_DATA.totalCount += sheetCount;
     });
   }
 }
 
 function updatePengeluaranKPI() {
   const data = PENGELUARAN_DATA;
-  if (!data || data.trx.length === 0) return;
+  if (!data || data.totalCount === undefined) return;
 
-  let total = 0;
-  let count = 0;
+  document.getElementById('kpi-total-pengeluaran').textContent = formatRp(data.totalVal);
+  document.getElementById('kpi-pagu').textContent = formatRp(data.paguTahunan);
+  document.getElementById('kpi-transaksi-out').textContent = data.totalCount;
   
-  data.trx.forEach(t => {
-      total += t.val;
-      count++;
-  });
-    
-  document.getElementById('kpi-total-pengeluaran').textContent = formatRp(total);
-  document.getElementById('kpi-pagu').textContent = formatRp(PENGELUARAN_DATA.paguTahunan);
-  document.getElementById('kpi-transaksi-out').textContent = count;
-  
-  const paguTahunan = PENGELUARAN_DATA.paguTahunan;
-  const persen = paguTahunan > 0 ? ((total / paguTahunan) * 100).toFixed(1) : 0;
+  const paguTahunan = data.paguTahunan;
+  const persen = paguTahunan > 0 ? ((data.totalVal / paguTahunan) * 100).toFixed(1) : 0;
   document.getElementById('kpi-persen').textContent = persen + '%';
 }
 
