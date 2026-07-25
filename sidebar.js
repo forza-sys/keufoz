@@ -60,19 +60,24 @@
             `;
         } else if (path.includes('/executive/') || path.includes('dashboard') || path.includes('kas-komprehensif') || path.includes('kas-foz') || path.includes('pendapatan-iuran') || path.includes('psak45') || path.includes('nota-dinas') || path === '/' || path.endsWith('index.html')) {
              menuHTML = `
-                <ul class="sidebar-menu">
-                    <li><a href="${base}dashboard.html"><i class="fas fa-th-large"></i> <span>Dashboard</span></a></li>
-                    <li><a href="${base}kas-komprehensif.html"><i class="fas fa-wallet"></i> <span>Kas Komprehensif</span></a></li>
-                    <li><a href="${base}kas-foz.html"><i class="fas fa-cash-register"></i> <span>Kas FOZ</span></a></li>
-                    <li><a href="${base}pendapatan-iuran.html"><i class="fas fa-hand-holding-usd"></i> <span>Pendapatan & Iuran</span></a></li>
-                    <li><a href="${base}nota-dinas.html"><i class="fas fa-file-signature"></i> <span>Nota Dinas</span></a></li>
-                    <li><a href="${base}psak45.html"><i class="fas fa-file-invoice"></i> <span>Laporan PSAK 45</span></a></li>
-                </ul>
-                <div style="position: absolute; bottom: 20px; left: 0; width: 100%; padding: 0 15px;">
-                    <a href="#" onclick="sessionStorage.removeItem('foz_auth'); window.location.href='login.html';" style="display: flex; align-items: center; gap: 15px; color: #ef4444; text-decoration: none; font-weight: 600; font-size: 0.9rem; padding: 12px 15px; border-radius: 8px; transition: background 0.2s;">
-                        <i class="fas fa-sign-out-alt" style="min-width: 24px; text-align: center; font-size: 1.1rem;"></i> <span class="sidebar-text">Keluar</span>
-                    </a>
-                </div>
+                 <ul class="sidebar-menu">
+                     <li><a href="${base}dashboard.html"><i class="fas fa-th-large"></i> <span>Dashboard</span></a></li>
+                     <li><a href="${base}kas-komprehensif.html"><i class="fas fa-wallet"></i> <span>Kas Komprehensif</span></a></li>
+                     <li><a href="${base}kas-foz.html"><i class="fas fa-cash-register"></i> <span>Kas FOZ</span></a></li>
+                     <li><a href="${base}pendapatan-iuran.html"><i class="fas fa-hand-holding-usd"></i> <span>Pendapatan & Iuran</span></a></li>
+                     <li><a href="${base}nota-dinas.html"><i class="fas fa-file-signature"></i> <span>Nota Dinas</span></a></li>
+                     <li><a href="${base}cashbon.html"><i class="fas fa-money-bill-transfer"></i> <span>LPJ & Cashbon</span></a></li>
+                     <li><a href="${base}aset.html"><i class="fas fa-boxes-stacked"></i> <span>Aset & Inventaris</span></a></li>
+                     <li><a href="${base}utang-vendor.html"><i class="fas fa-file-circle-exclamation"></i> <span>Utang Vendor</span></a></li>
+                     <li><a href="${base}psak45.html"><i class="fas fa-file-invoice"></i> <span>Laporan PSAK 45</span></a></li>
+                     <li><a href="${base}arus-kas.html"><i class="fas fa-arrow-right-arrow-left"></i> <span>Laporan Arus Kas</span></a></li>
+                     <li><a href="${base}portal-anggota.html"><i class="fas fa-building-user"></i> <span>Portal OPZ Anggota</span></a></li>
+                 </ul>
+                 <div style="position: absolute; bottom: 20px; left: 0; width: 100%; padding: 0 15px;">
+                     <a href="#" onclick="sessionStorage.removeItem('foz_auth'); window.location.href='login.html';" style="display: flex; align-items: center; gap: 15px; color: #ef4444; text-decoration: none; font-weight: 600; font-size: 0.9rem; padding: 12px 15px; border-radius: 8px; transition: background 0.2s;">
+                         <i class="fas fa-sign-out-alt" style="min-width: 24px; text-align: center; font-size: 1.1rem;"></i> <span class="sidebar-text">Keluar</span>
+                     </a>
+                 </div>
             `;
         } else {
             // Default Admin Menu for /admin/
