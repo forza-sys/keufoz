@@ -9,7 +9,7 @@ const NOTA_DINAS_DATA = [
   { no: 'ND-2026/006', tgl: '12 Mar 2026', perihal: 'Sosialisasi Kurban Nasional OPZ 1447 H', nominal: 15500000, bidang: 'Keanggotaan', status: 'approved' },
   { no: 'ND-2026/007', tgl: '05 Apr 2026', perihal: 'Operational Support Rakernas FOZ 2026', nominal: 45000000, bidang: 'Sekretariat', status: 'approved' },
   { no: 'ND-2026/008', tgl: '20 Apr 2026', perihal: 'Konsolidasi Wilayah LAZ Sumatra & Jawa', nominal: 9800000, bidang: 'Keanggotaan', status: 'approved' },
-  { no: 'ND-2026/009', tgl: '10 Mei 2026', perihal: 'Audit Akuntabilitas NPO & Legal FOZ', nominal: 22000000, bidang: 'Advokasi', status: 'approved' },
+  { no: 'ND-2026/009', tgl: '10 Mei 2026', perihal: 'Audit Akuntabilitas Keuangan & Legal FOZ', nominal: 22000000, bidang: 'Advokasi', status: 'approved' },
   { no: 'ND-2026/010', tgl: '15 Mei 2026', perihal: 'Workshop Manajemen Risiko Organisasi Zakat', nominal: 10500000, bidang: 'Kapasitas', status: 'pending' },
   { no: 'ND-2026/011', tgl: '18 Mei 2026', perihal: 'Pengadaan Souvenir & Media Kit Anggota FOZ', nominal: 5000000, bidang: 'Keanggotaan', status: 'pending' }
 ];

@@ -1,4 +1,4 @@
-// --- PSAK 45 NPO Financial Report Module (Live Google Sheets Data) ---
+// --- PSAK 45 Financial Report Module (Live Google Sheets Data) ---
 
 const PSAK_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSKL88ZG4XbFoYpEyPOOud0seaKiqJmzExGSFTikeDwFAeOc9i_uvcekq1Cfzh73fPfMQOmNULKVzTh/pub?output=csv";
 
