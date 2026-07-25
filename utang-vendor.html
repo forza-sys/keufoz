@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Utang Mitra & Tagihan FOZ 2026</title>
+  <title>Utang & Piutang Mitra FOZ 2026</title>
   <script>
     if (sessionStorage.getItem('foz_auth') !== 'true') {
       window.location.href = 'login.html';
     }
   </script>
-  <meta name="description" content="Modul Utang Mitra & Tagihan Pihak Ketiga Forum Zakat 2026">
+  <meta name="description" content="Modul Utang & Piutang Mitra (Sponsor, Event, & Supplier) Forum Zakat 2026">
   <link rel="stylesheet" href="dashboard-keuangan-app.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -75,6 +75,22 @@
       align-items: center;
       gap: 8px;
     }
+
+    .tab-btn {
+      padding: 10px 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border: none;
+      background: none;
+      cursor: pointer;
+      color: var(--text-muted);
+      border-bottom: 3px solid transparent;
+      transition: all 0.15s;
+    }
+    .tab-btn.active {
+      color: var(--green);
+      border-bottom-color: var(--green);
+    }
   </style>
 </head>
 <body class="light-mode">
@@ -85,12 +101,12 @@
       <!-- Top Nav -->
       <div class="top-nav">
         <div class="page-title">
-          <h1>Utang Mitra & Tagihan Pihak Ketiga</h1>
-          <p id="page-subtitle">Pencatatan Invoice Mitra Event, Supplier, Jatuh Tempo, & Pelunasan Kas</p>
+          <h1>Utang & Piutang Mitra FOZ</h1>
+          <p id="page-subtitle">Kewajiban Tagihan Supplier/Vendor & Piutang Sponsor/Hibah Mitra</p>
         </div>
         <div class="top-nav-actions" style="display:flex; gap:10px; align-items:center;">
-          <button class="btn-create" onclick="alert('Form Input Tagihan Mitra Siap Dihubungkan!')">
-            <i class="fas fa-plus"></i> Input Invoice Tagihan
+          <button class="btn-create" onclick="alert('Form Input Transaksi Mitra Siap Dihubungkan!')">
+            <i class="fas fa-plus"></i> Input Transaksi Mitra
           </button>
           <button class="icon-btn" id="theme-toggle" title="Toggle Dark Mode">
             <i class="fas fa-moon"></i>
@@ -101,7 +117,7 @@
       <!-- Loading State -->
       <div id="loading-state" style="text-align:center; padding:60px; color:var(--text-muted);">
         <i class="fas fa-circle-notch fa-spin" style="font-size:2rem; color:var(--green);"></i>
-        <p style="margin-top:12px;">Memuat Daftar Tagihan Vendor...</p>
+        <p style="margin-top:12px;">Memuat Data Utang & Piutang Mitra...</p>
       </div>
 
       <!-- Main Content -->
@@ -110,54 +126,67 @@
         <!-- Header Section -->
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
           <h3 style="font-size:1.05rem; font-weight:700; color:var(--text-main); margin:0;">
-            Ringkasan Kewajiban Pembayaran Mitra (Accounts Payable)
+            Ringkasan Hak & Kewajiban Mitra Kerjasama FOZ
           </h3>
         </div>
 
         <!-- KPI Cards -->
         <div class="kpi-strip" style="grid-template-columns: repeat(4, 1fr);">
+          <!-- Utang -->
           <div class="kpi-card red">
-            <div class="kpi-label">Total Tagihan Belum Lunas</div>
+            <div class="kpi-label">Utang Mitra (Kewajiban FOZ)</div>
             <div class="kpi-value negative">Rp 34.500.000</div>
-            <div class="kpi-sub">Kewajiban mitra outstanding</div>
+            <div class="kpi-sub">Tagihan supplier/vendor outstanding</div>
             <i class="fas fa-file-circle-exclamation kpi-icon"></i>
           </div>
 
-          <div class="kpi-card amber">
-            <div class="kpi-label">Jatuh Tempo Bulan Ini</div>
-            <div class="kpi-value">Rp 12.000.000</div>
-            <div class="kpi-sub">2 invoice segera dibayar</div>
-            <i class="fas fa-clock-rotate-left kpi-icon"></i>
-          </div>
-
+          <!-- Piutang -->
           <div class="kpi-card green">
-            <div class="kpi-label">Pelunasan Mitra YTD</div>
-            <div class="kpi-value positive">Rp 118.200.000</div>
-            <div class="kpi-sub">Total invoice dilunasi</div>
-            <i class="fas fa-circle-check kpi-icon"></i>
+            <div class="kpi-label">Piutang Mitra (Hak FOZ)</div>
+            <div class="kpi-value positive">Rp 125.000.000</div>
+            <div class="kpi-sub">Tagihan sponsor & hibah belum cair</div>
+            <i class="fas fa-hand-holding-dollar kpi-icon"></i>
           </div>
 
+          <!-- Surplus Net -->
+          <div class="kpi-card teal">
+            <div class="kpi-label">Net Hak Mitra (Piutang - Utang)</div>
+            <div class="kpi-value positive">Rp 90.500.000</div>
+            <div class="kpi-sub">Proyeksi kas bersih dari mitra</div>
+            <i class="fas fa-scale-balanced kpi-icon"></i>
+          </div>
+
+          <!-- Total Mitra -->
           <div class="kpi-card blue">
             <div class="kpi-label">Total Mitra Terdaftar</div>
-            <div class="kpi-value">12 Mitra</div>
-            <div class="kpi-sub">Event organizer, media, & supplier</div>
+            <div class="kpi-value">16 Mitra</div>
+            <div class="kpi-sub">Sponsor, media, vendor, & donor</div>
             <i class="fas fa-handshake kpi-icon"></i>
           </div>
         </div>
 
-        <!-- Table Panel -->
-        <div class="detail-panel" style="margin-top: 24px;">
-          <div class="detail-panel-header">
-            <div class="detail-panel-title">Daftar Invoice & Tagihan Mitra FOZ</div>
-            <div class="detail-panel-badge">Showing 5 Invoices</div>
-          </div>
+        <!-- Section Tabs -->
+        <div style="display:flex; gap:10px; border-bottom:2px solid var(--border-color, #e5e7eb); margin-top:24px;">
+          <button class="tab-btn active" id="tab-btn-utang" onclick="switchMitraTab('utang')">
+            <i class="fas fa-file-invoice-dollar"></i> Utang Mitra (Tagihan Keluar)
+          </button>
+          <button class="tab-btn" id="tab-btn-piutang" onclick="switchMitraTab('piutang')">
+            <i class="fas fa-hand-holding-dollar"></i> Piutang Mitra (Tagihan Sponsor/Hibah Masuk)
+          </button>
+        </div>
 
+        <!-- Panel Utang Mitra -->
+        <div id="panel-utang" class="detail-panel" style="margin-top: 16px;">
+          <div class="detail-panel-header">
+            <div class="detail-panel-title">Utang Mitra (Kewajiban FOZ yang Belum Dibayar)</div>
+            <div class="detail-panel-badge">Accounts Payable</div>
+          </div>
           <div style="overflow-x: auto;">
             <table class="ap-table">
               <thead>
                 <tr>
                   <th>NO. INVOICE</th>
-                  <th>NAMA MITRA / VENDOR</th>
+                  <th>NAMA MITRA VENDOR</th>
                   <th>PERIHAL PEKERJAAN</th>
                   <th>JATUH TEMPO</th>
                   <th>NOMINAL (RP)</th>
@@ -165,7 +194,33 @@
                   <th style="text-align:center;">AKSI</th>
                 </tr>
               </thead>
-              <tbody id="ap-table-body">
+              <tbody id="utang-table-body">
+                <!-- Loaded by utang-vendor.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Panel Piutang Mitra -->
+        <div id="panel-piutang" class="detail-panel" style="margin-top: 16px; display: none;">
+          <div class="detail-panel-header">
+            <div class="detail-panel-title">Piutang Mitra (Sponsorship & Hibah yang Belum Cair ke FOZ)</div>
+            <div class="detail-panel-badge" style="background:rgba(16,185,129,0.15); color:var(--green);">Accounts Receivable</div>
+          </div>
+          <div style="overflow-x: auto;">
+            <table class="ap-table">
+              <thead>
+                <tr>
+                  <th>KODE AKAD/MOU</th>
+                  <th>NAMA MITRA / SPONSOR</th>
+                  <th>PROGRAM / PERIHAL KERJASAMA</th>
+                  <th>TARGET CAIR</th>
+                  <th>NOMINAL TAGIHAN (RP)</th>
+                  <th>STATUS</th>
+                  <th style="text-align:center;">AKSI</th>
+                </tr>
+              </thead>
+              <tbody id="piutang-table-body">
                 <!-- Loaded by utang-vendor.js -->
               </tbody>
             </table>
