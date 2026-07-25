@@ -71,6 +71,7 @@
                      <li><a href="${base}utang-vendor.html"><i class="fas fa-file-circle-exclamation"></i> <span>Utang & Piutang Mitra</span></a></li>
                      <li><a href="${base}psak45.html"><i class="fas fa-file-invoice"></i> <span>Laporan PSAK 45</span></a></li>
                      <li><a href="${base}arus-kas.html"><i class="fas fa-arrow-right-arrow-left"></i> <span>Laporan Arus Kas</span></a></li>
+                     <li><a href="${base}calk.html"><i class="fas fa-book-bookmark"></i> <span>CALK PSAK 45</span></a></li>
                      <li><a href="${base}portal-anggota.html"><i class="fas fa-building-user"></i> <span>Portal Anggota</span></a></li>
                  </ul>
                  <div style="position: absolute; bottom: 20px; left: 0; width: 100%; padding: 0 15px;">
