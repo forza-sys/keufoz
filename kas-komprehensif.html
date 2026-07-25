@@ -173,10 +173,13 @@
       <!-- Top Nav -->
       <div class="top-nav">
         <div class="page-title">
-          <h1>Kas Komprehensif</h1>
-          <p id="page-subtitle">Posisi dan komposisi kas FOZ — data langsung dari Google Sheets</p>
+          <h1>Kas & Bank</h1>
+          <p id="page-subtitle">Rincian Komposisi Kas Bebas Operasional vs Dana Titipan Terikat (PSAK 45)</p>
         </div>
         <div class="top-nav-actions" style="display:flex; gap:10px; align-items:center;">
+          <button onclick="window.print()" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 8px 14px; font-weight: 600; font-size: 0.82rem; cursor: pointer; color: var(--text-main); display: inline-flex; align-items: center; gap: 6px;">
+            <i class="fas fa-print"></i> Cetak Kas & Bank
+          </button>
           <button class="icon-btn" id="theme-toggle" title="Toggle Dark Mode">
             <i class="fas fa-moon"></i>
           </button>
@@ -191,6 +194,20 @@
 
       <!-- Main Content (hidden until data loads) -->
       <div id="dashboard-content" style="display:none;">
+
+        <!-- EXECUTIVE ALERT BANNER: DISCLAMIER KAS BEBAS VS TITIPAN -->
+        <div style="background: linear-gradient(135deg, rgba(59,130,246,0.12) 0%, rgba(37,99,235,0.06) 100%); border: 1.5px solid rgba(59,130,246,0.3); border-radius: 14px; padding: 16px 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <div style="width: 42px; height: 42px; background: var(--blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem; box-shadow: 0 4px 12px rgba(59,130,246,0.3);">
+              <i class="fas fa-vault"></i>
+            </div>
+            <div>
+              <div style="font-size: 0.76rem; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: 0.5px;">KAS & BANK EXECUTIVES ANALYSIS</div>
+              <div style="font-size: 1.05rem; font-weight: 800; color: var(--text-main); margin-top: 2px;">💼 TOTAL SALDO NET FOZ (KAS BEBAS): Rp 3.400.747.605</div>
+              <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">Dana Titipan Terikat (DANTIP) sebesar Rp 752.600.000 dikelola terpisah dan tidak dicampur ke operasional FOZ.</div>
+            </div>
+          </div>
+        </div>
 
         <!-- POSISI KAS -->
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">

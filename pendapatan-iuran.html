@@ -140,11 +140,14 @@
     <main class="main-content expanded" id="main-content">
       <div class="top-nav">
         <div class="page-title">
-          <h1>Pendapatan Iuran FOZ</h1>
-          <p id="page-subtitle">Pantau kepatuhan dan pencapaian target iuran anggota Forum Zakat 2026</p>
+          <h1>Pendapatan & Iuran</h1>
+          <p id="page-subtitle">Pantau Kepatuhan Pembayaran Iuran 136 OPZ Anggota & Penerimaan Surplus Kegiatan FOZ 2026</p>
         </div>
         
-        <div class="top-nav-actions">
+        <div class="top-nav-actions" style="display:flex; gap:10px; align-items:center;">
+          <button onclick="window.print()" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 8px 14px; font-weight: 600; font-size: 0.82rem; cursor: pointer; color: var(--text-main); display: inline-flex; align-items: center; gap: 6px;">
+            <i class="fas fa-print"></i> Cetak Laporan Iuran
+          </button>
           <div class="date-selector">
             <label for="month-select"><i class="fas fa-calendar-alt"></i> Bulan:</label>
             <select id="month-select">
@@ -172,6 +175,20 @@
 
       <!-- Main Content (hidden until data loads) -->
       <div id="dashboard-content" style="display:none;">
+
+        <!-- EXECUTIVE ALERT BANNER: KEPATUHAN IURAN OPZ -->
+        <div style="background: linear-gradient(135deg, rgba(16,185,129,0.12) 0%, rgba(5,150,105,0.06) 100%); border: 1.5px solid rgba(16,185,129,0.3); border-radius: 14px; padding: 16px 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <div style="width: 42px; height: 42px; background: var(--green); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem; box-shadow: 0 4px 12px rgba(16,185,129,0.3);">
+              <i class="fas fa-user-check"></i>
+            </div>
+            <div>
+              <div style="font-size: 0.76rem; font-weight: 700; color: var(--green); text-transform: uppercase; letter-spacing: 0.5px;">MEMBER DUES COMPLIANCE SUMMARY</div>
+              <div style="font-size: 1.05rem; font-weight: 800; color: var(--text-main); margin-top: 2px;">🟢 78 LEMBAGA OPZ ANGGOTA PATUH LUNAS (57% DARI TOTAL 136 OPZ)</div>
+              <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">Total Iuran Terkumpul: Rp 678.458.331 | Piutang Iuran Menunggak: Rp 471.541.669 (38 Kuning, 20 Merah).</div>
+            </div>
+          </div>
+        </div>
 
         <!-- KPI Strip -->
         <div class="kpi-strip">
