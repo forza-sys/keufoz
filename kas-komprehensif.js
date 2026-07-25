@@ -168,6 +168,10 @@ function updatePengeluaranKPI() {
   const persen = paguTahunan > 0 ? ((data.totalVal / paguTahunan) * 100).toFixed(1) : 0;
   const elPersen = document.getElementById('kpi-persen');
   if (elPersen) elPersen.textContent = persen + '%';
+
+  const sisaSaldo = Math.max(0, paguTahunan - data.totalVal);
+  const elSisa = document.getElementById('kpi-sisa-saldo');
+  if (elSisa) elSisa.textContent = formatRp(sisaSaldo);
 }
 
 
@@ -280,12 +284,16 @@ function updatePendapatanKPI(selectedMonth = 'total') {
 
     const elLembaga = document.getElementById('kpi-lembaga-in');
     if (elLembaga) elLembaga.textContent = lembagaCount;
+    const elPatuh = document.getElementById('kpi-lembaga-patuh');
+    if (elPatuh) elPatuh.textContent = lembagaCount + ' Lembaga';
     const elTrx = document.getElementById('kpi-transaksi-in');
     if (elTrx) elTrx.textContent = totalTransaksi + ' Bulan';
     const elPartisipasi = document.getElementById('kpi-partisipasi-in');
     if (elPartisipasi) elPartisipasi.textContent = persen + '%';
     const elPemasukan = document.getElementById('kpi-pemasukan-in');
     if (elPemasukan) elPemasukan.textContent = formatRp(totalNominal);
+    const elTotalPen = document.getElementById('kpi-total-penerimaan');
+    if (elTotalPen) elTotalPen.textContent = formatRp(totalNominal + 45000000 + 75000000);
 }
 
 // =======================================================
