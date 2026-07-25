@@ -438,12 +438,16 @@ function updateKPIs() {
     const healthMonths = parseFloat((foz / totalPaguOps).toFixed(1));
     const isHealthy = healthMonths >= 4;
     const statusText = isHealthy ? "🟢 LIKUIDITAS FOZ SANGAT SEHAT" : "🔴 WARP DANGER - LIKUIDITAS RENDAH";
-    const subText = isHealthy 
-      ? `Kas Mampu Membiayai ${healthMonths} Bulan Operasional (Standar Aman ≥ 4.0 Bulan).`
-      : `Kas Hanya Mampu Membiayai ${healthMonths} Bulan Operasional (Di Bawah Standar Aman 4.0 Bulan).`;
 
     const bannerText = document.getElementById('kpi-health-banner-text');
-    if (bannerText) bannerText.textContent = `${statusText} — ${subText}`;
+    if (bannerText) bannerText.textContent = `${statusText} — Saldo Net Mampu Membiayai ${healthMonths} Bulan Operasional`;
+
+    const bannerSub = document.getElementById('kpi-health-banner-sub');
+    if (bannerSub) {
+      bannerSub.textContent = isHealthy 
+        ? `Ketahanan Kas (Cash Runway ${healthMonths} bulan) di atas standar aman 4.0 bulan. Data ditarik live dari Google Sheets Publish to Web.`
+        : `Ketahanan Kas (Cash Runway ${healthMonths} bulan) di bawah standar aman 4.0 bulan. Perlu penanganan khusus.`;
+    }
 
     const kpiHealth = document.getElementById('kpi-health');
     if (kpiHealth) kpiHealth.textContent = healthMonths + " Bulan";
