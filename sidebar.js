@@ -61,9 +61,9 @@
         } else if (path.includes('/executive/') || path.includes('dashboard') || path.includes('kas-komprehensif') || path.includes('kas-foz') || path.includes('pendapatan-iuran') || path.includes('psak45') || path.includes('nota-dinas') || path === '/' || path.endsWith('index.html')) {
              menuHTML = `
                  <ul class="sidebar-menu">
-                     <li><a href="${base}dashboard.html"><i class="fas fa-th-large"></i> <span>Dashboard (Ringkasan Umum)</span></a></li>
-                     <li><a href="${base}kas-komprehensif.html"><i class="fas fa-wallet"></i> <span>Kas Komprehensif (Kas & Bank)</span></a></li>
-                     <li><a href="${base}kas-foz.html"><i class="fas fa-cash-register"></i> <span>Kas FOZ (Realisasi Anggaran)</span></a></li>
+                     <li><a href="${base}dashboard.html"><i class="fas fa-th-large"></i> <span>Ringkasan Umum</span></a></li>
+                     <li><a href="${base}kas-komprehensif.html"><i class="fas fa-wallet"></i> <span>Kas & Bank</span></a></li>
+                     <li><a href="${base}kas-foz.html"><i class="fas fa-cash-register"></i> <span>Realisasi Anggaran</span></a></li>
                      <li><a href="${base}pendapatan-iuran.html"><i class="fas fa-hand-holding-usd"></i> <span>Pendapatan & Iuran</span></a></li>
                      <li><a href="${base}nota-dinas.html"><i class="fas fa-file-signature"></i> <span>Nota Dinas</span></a></li>
                      <li><a href="${base}cashbon.html"><i class="fas fa-money-bill-transfer"></i> <span>Uang Muka & LPJ</span></a></li>
