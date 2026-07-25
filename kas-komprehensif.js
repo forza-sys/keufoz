@@ -413,6 +413,16 @@ function updateKPIs() {
   document.getElementById('kpi-foz').textContent = formatRp(foz);
   if (prev !== null) renderChange(foz, getVal('Saldo Net FOZ', prev), 'kpi-foz-sub');
 
+  // Update Top Banner with exact live numbers
+  const elBannerNet = document.getElementById('banner-saldo-net');
+  if (elBannerNet && foz !== null) {
+    elBannerNet.textContent = `💼 TOTAL SALDO NET FOZ (KAS BEBAS): ${formatRp(foz)}`;
+  }
+  const elBannerTitipan = document.getElementById('banner-dantip-sub');
+  if (elBannerTitipan && titipan !== null) {
+    elBannerTitipan.textContent = `Dana Titipan Terikat (DANTIP) sebesar ${formatRp(Math.abs(titipan))} dikelola terpisah dan tidak dicampur ke operasional FOZ.`;
+  }
+
   // 4. Piutang
   const piutang = getVal('Total Piutang', idx);
   document.getElementById('kpi-piutang').textContent = formatRp(piutang);
