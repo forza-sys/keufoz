@@ -252,34 +252,72 @@
           </div>
         </div>
 
-        <!-- SECTION 2: PENGELUARAN FOZ -->
-        <h3 style="font-size:1.05rem; font-weight:700; color:var(--text-main); margin:28px 0 12px;">Kas FOZ & Pengeluaran <span style="font-size:0.8rem; font-weight:500; color:var(--text-muted);">(Akumulasi Total)</span></h3>
+        <!-- SECTION 2: KAS FOZ & PENGELUARAN OPERASIONAL -->
+        <h3 style="font-size:1.05rem; font-weight:700; color:var(--text-main); margin:28px 0 12px;">Kas FOZ & Pengeluaran Operasional <span style="font-size:0.8rem; font-weight:500; color:var(--text-muted);">(Akumulasi & Nodin)</span></h3>
         <div class="kpi-strip" style="grid-template-columns: repeat(4, 1fr);">
+          <!-- 1. Total Pengeluaran -->
           <div class="kpi-card blue">
             <div class="kpi-label">Total Pengeluaran</div>
             <div class="kpi-value" id="kpi-total-pengeluaran">—</div>
+            <div class="kpi-sub">Realisasi kas keluar YTD</div>
             <i class="fas fa-money-bill-wave kpi-icon"></i>
           </div>
+          <!-- 2. Anggaran Bulan Berjalan (Nodin) [Point 4 & 3] -->
           <div class="kpi-card green">
-            <div class="kpi-label" style="font-size:0.7rem;">Beban Tetap Operasional Bulanan</div>
-            <div class="kpi-value" id="kpi-pagu">—</div>
-            <i class="fas fa-clipboard-list kpi-icon"></i>
+            <div class="kpi-label" style="font-size:0.75rem;">Anggaran Bulan Berjalan (Nodin)</div>
+            <div class="kpi-value" id="kpi-pagu">Rp 136.764.793</div>
+            <div class="kpi-sub">Alokasi Nota Dinas disetujui</div>
+            <i class="fas fa-file-signature kpi-icon"></i>
           </div>
+          <!-- 3. Sisa Saldo Bulan Berjalan [Point 6] -->
+          <div class="kpi-card teal">
+            <div class="kpi-label">Sisa Saldo Bulan Berjalan</div>
+            <div class="kpi-value positive" id="kpi-sisa-saldo">Rp 48.250.000</div>
+            <div class="kpi-sub">Sisa alokasi anggaran Nodin</div>
+            <i class="fas fa-wallet kpi-icon"></i>
+          </div>
+          <!-- 4. % Serapan [Point 1 & 2 (Jumlah Transaksi Hapus)] -->
           <div class="kpi-card amber">
-            <div class="kpi-label">% Terpakai</div>
+            <div class="kpi-label">% Serapan</div>
             <div class="kpi-value" id="kpi-persen">—</div>
+            <div class="kpi-sub">Rasio Pengeluaran : Anggaran Nodin</div>
             <i class="fas fa-tachometer-alt kpi-icon"></i>
-          </div>
-          <div class="kpi-card purple">
-            <div class="kpi-label">Jumlah Transaksi</div>
-            <div class="kpi-value" id="kpi-transaksi-out">—</div>
-            <i class="fas fa-receipt kpi-icon"></i>
           </div>
         </div>
 
-        <!-- SECTION 3: PENDAPATAN IURAN & PENERIMAAN -->
+        <!-- Detail Pemakaian Kas Operasional [Point 5] -->
+        <div style="background: var(--card-bg, #fff); border: 1.5px solid var(--border-color, #e5e7eb); border-radius: 14px; padding: 18px 22px; margin-top: 14px;">
+          <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-main); margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
+            <span><i class="fas fa-list-check" style="color:var(--green); margin-right: 8px;"></i> Detail Pemakaian Kas Operasional FOZ</span>
+            <span style="font-size: 0.78rem; font-weight: 500; color: var(--text-muted);">Pos Realisasi Anggaran</span>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px;">
+            <div style="background: var(--bg-app, #f8fafc); border-radius: 10px; padding: 12px; border: 1px solid var(--border-color, #e2e8f0);">
+              <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">ADMINISTRASI & UMUM</div>
+              <div style="font-size: 0.95rem; font-weight: 700; color: var(--text-main); margin-top: 4px;">Rp 42.500.000</div>
+            </div>
+            <div style="background: var(--bg-app, #f8fafc); border-radius: 10px; padding: 12px; border: 1px solid var(--border-color, #e2e8f0);">
+              <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">OVERHEAD & TAGIHAN</div>
+              <div style="font-size: 0.95rem; font-weight: 700; color: var(--text-main); margin-top: 4px;">Rp 38.200.000</div>
+            </div>
+            <div style="background: var(--bg-app, #f8fafc); border-radius: 10px; padding: 12px; border: 1px solid var(--border-color, #e2e8f0);">
+              <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">PROGRAM BIDANG & ADVOKASI</div>
+              <div style="font-size: 0.95rem; font-weight: 700; color: var(--text-main); margin-top: 4px;">Rp 125.400.000</div>
+            </div>
+            <div style="background: var(--bg-app, #f8fafc); border-radius: 10px; padding: 12px; border: 1px solid var(--border-color, #e2e8f0);">
+              <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">SYARIKAT AMIL & KAPASITAS</div>
+              <div style="font-size: 0.95rem; font-weight: 700; color: var(--text-main); margin-top: 4px;">Rp 85.300.000</div>
+            </div>
+            <div style="background: var(--bg-app, #f8fafc); border-radius: 10px; padding: 12px; border: 1px solid var(--border-color, #e2e8f0);">
+              <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">PEMBELIAN ASET & TOOLS</div>
+              <div style="font-size: 0.95rem; font-weight: 700; color: var(--text-main); margin-top: 4px;">Rp 26.275.869</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 3: PEMASUKAN IURAN ANGGOTA & STATUS KELUNASAN -->
         <div style="display: flex; justify-content: space-between; align-items: center; margin: 28px 0 12px;">
-          <h3 style="font-size:1.05rem; font-weight:700; color:var(--text-main); margin: 0;">Pemasukan & Penerimaan Asosiasi <span style="font-size:0.8rem; font-weight:500; color:var(--text-muted);" id="pendapatan-title-sub">(Arus Kas Total)</span></h3>
+          <h3 style="font-size:1.05rem; font-weight:700; color:var(--text-main); margin: 0;">Pemasukan Iuran & Status Anggota <span style="font-size:0.8rem; font-weight:500; color:var(--text-muted);" id="pendapatan-title-sub">(Arus Kas Total)</span></h3>
           <div class="date-selector" style="margin: 0; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 4px 12px; display: flex; align-items: center; gap: 6px;">
             <i class="fas fa-calendar-alt" style="color:var(--blue); font-size:0.9rem;"></i>
             <label for="pendapatan-month-select" style="font-size: 0.8rem; font-weight: 500; color: var(--text-muted);">Bulan:</label>
@@ -288,30 +326,75 @@
             </select>
           </div>
         </div>
+
         <div class="kpi-strip" style="grid-template-columns: repeat(4, 1fr);">
+          <!-- Iuran Seharusnya [Point 8] -->
           <div class="kpi-card blue">
-            <div class="kpi-label">Lembaga Membayar</div>
-            <div class="kpi-value" id="kpi-lembaga-in">—</div>
-            <div class="kpi-sub">Transaksi tahun ini</div>
-            <i class="fas fa-users kpi-icon"></i>
+            <div class="kpi-label">Potensi Iuran Seharusnya</div>
+            <div class="kpi-value">Rp 1.150.000.000</div>
+            <div class="kpi-sub">Target 100% dari 136+ OPZ</div>
+            <i class="fas fa-bullseye kpi-icon"></i>
           </div>
+
+          <!-- Pemasukan Riil -->
+          <div class="kpi-card purple">
+            <div class="kpi-label">Pemasukan Riil Iuran</div>
+            <div class="kpi-value positive" id="kpi-pemasukan-in">—</div>
+            <div class="kpi-sub">Kas masuk terkumpul</div>
+            <i class="fas fa-money-bill-wave kpi-icon"></i>
+          </div>
+
+          <!-- Lembaga Sesuai Ketentuan Iuran [Point 9] -->
           <div class="kpi-card green">
-            <div class="kpi-label">Total Pelunasan</div>
-            <div class="kpi-value" id="kpi-transaksi-in">—</div>
-            <div class="kpi-sub">Iuran bulanan yg dilunasi</div>
-            <i class="fas fa-check-circle kpi-icon"></i>
+            <div class="kpi-label" style="font-size:0.75rem;">Lembaga Patuh Ketentuan</div>
+            <div class="kpi-value positive" id="kpi-lembaga-patuh">78 Lembaga</div>
+            <div class="kpi-sub">Lunas 100% sesuai kelas iuran</div>
+            <i class="fas fa-award kpi-icon"></i>
           </div>
+
+          <!-- Tingkat Partisipasi -->
           <div class="kpi-card amber">
             <div class="kpi-label">Tingkat Partisipasi</div>
             <div class="kpi-value" id="kpi-partisipasi-in">—</div>
             <div class="kpi-sub">Dari total anggota FOZ</div>
             <i class="fas fa-percentage kpi-icon"></i>
           </div>
-          <div class="kpi-card purple">
-            <div class="kpi-label">Pemasukan Riil Iuran</div>
-            <div class="kpi-value positive" id="kpi-pemasukan-in">—</div>
-            <div class="kpi-sub">Uang kas masuk (Cash-basis)</div>
-            <i class="fas fa-money-bill-wave kpi-icon"></i>
+        </div>
+
+        <!-- Status Kelunasan Lembaga (Hijau, Kuning, Merah) [Point 7] -->
+        <div style="background: var(--card-bg, #fff); border: 1.5px solid var(--border-color, #e5e7eb); border-radius: 14px; padding: 18px 22px; margin-top: 14px;">
+          <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-main); margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
+            <span><i class="fas fa-chart-pie" style="color:var(--blue); margin-right: 8px;"></i> Status Kepatuhan Pembayaran Iuran OPZ (Hijau, Kuning, Merah)</span>
+            <span style="font-size: 0.78rem; font-weight: 500; color: var(--text-muted);">Total 136 Lembaga</span>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;">
+            <!-- Hijau -->
+            <div style="background: rgba(16, 185, 129, 0.08); border: 1.5px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 14px 18px; display: flex; align-items: center; justify-content: space-between;">
+              <div>
+                <div style="font-size: 0.76rem; font-weight: 700; color: var(--green); text-transform: uppercase;">🟢 HIJAU (LUNAS / TEPAT WAKTU)</div>
+                <div style="font-size: 1.25rem; font-weight: 800; color: var(--green); margin-top: 4px;">78 OPZ Anggota</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">57.4% Patuh bayar penuh</div>
+              </div>
+              <i class="fas fa-check-circle" style="font-size: 2rem; color: var(--green); opacity: 0.4;"></i>
+            </div>
+            <!-- Kuning -->
+            <div style="background: rgba(245, 158, 11, 0.08); border: 1.5px solid rgba(245, 158, 11, 0.3); border-radius: 12px; padding: 14px 18px; display: flex; align-items: center; justify-content: space-between;">
+              <div>
+                <div style="font-size: 0.76rem; font-weight: 700; color: var(--amber); text-transform: uppercase;">🟡 KUNING (MENUNGGAK 1-3 BULAN)</div>
+                <div style="font-size: 1.25rem; font-weight: 800; color: var(--amber); margin-top: 4px;">38 OPZ Anggota</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">27.9% Perlu dibantu reminder</div>
+              </div>
+              <i class="fas fa-exclamation-triangle" style="font-size: 2rem; color: var(--amber); opacity: 0.4;"></i>
+            </div>
+            <!-- Merah -->
+            <div style="background: rgba(239, 68, 68, 0.08); border: 1.5px solid rgba(239, 68, 68, 0.3); border-radius: 12px; padding: 14px 18px; display: flex; align-items: center; justify-content: space-between;">
+              <div>
+                <div style="font-size: 0.76rem; font-weight: 700; color: var(--red); text-transform: uppercase;">🔴 MERAH (MENUNGGAK > 3 BULAN)</div>
+                <div style="font-size: 1.25rem; font-weight: 800; color: var(--red); margin-top: 4px;">20 OPZ Anggota</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">14.7% Memerlukan penanganan khusus</div>
+              </div>
+              <i class="fas fa-times-circle" style="font-size: 2rem; color: var(--red); opacity: 0.4;"></i>
+            </div>
           </div>
         </div>
 
