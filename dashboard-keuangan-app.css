@@ -2000,3 +2000,99 @@ body {
     display: flex !important;
   }
 }
+
+/* Unified KPI & Card Component System */
+.kpi-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.kpi-card {
+  background: var(--bg-card, #ffffff);
+  border-radius: 16px;
+  padding: 20px 20px 16px;
+  border: 1.5px solid var(--border-color, #e2e8f0);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.kpi-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  border-radius: 16px 16px 0 0;
+}
+
+.kpi-card.green::before  { background: linear-gradient(90deg, #10b981, #059669); }
+.kpi-card.blue::before   { background: linear-gradient(90deg, #3b82f6, #2563eb); }
+.kpi-card.amber::before  { background: linear-gradient(90deg, #f59e0b, #d97706); }
+.kpi-card.purple::before { background: linear-gradient(90deg, #8b5cf6, #7c3aed); }
+.kpi-card.teal::before   { background: linear-gradient(90deg, #0d9488, #0f766e); }
+
+.kpi-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px -4px rgba(16, 185, 129, 0.12);
+  border-color: var(--primary);
+}
+
+.kpi-label {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.kpi-value {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-top: 6px;
+  line-height: 1.25;
+  white-space: nowrap;
+  letter-spacing: -0.02em;
+  color: var(--text-main);
+}
+
+.kpi-value.negative { color: var(--accent, #ef4444); }
+.kpi-value.positive { color: var(--primary, #10b981); }
+
+.kpi-sub {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.kpi-icon {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  font-size: 2rem;
+  opacity: 0.08;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.kpi-card:hover .kpi-icon {
+  opacity: 0.18;
+  transform: scale(1.1);
+}
+
+body.dark-mode .kpi-card {
+  background: var(--bg-card, #1e293b);
+  border-color: var(--border-color, #334155);
+}
+body.dark-mode .kpi-value {
+  color: #f8fafc;
+}
+body.dark-mode .kpi-label,
+body.dark-mode .kpi-sub {
+  color: #94a3b8;
+}
