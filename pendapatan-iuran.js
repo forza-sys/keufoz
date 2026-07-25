@@ -199,7 +199,7 @@ function updateKPIs() {
     const persen = totalAktif > 0 ? (lembagaCount / totalAktif * 100).toFixed(1) : 0;
 
     document.getElementById('kpi1-value').textContent = lembagaCount;
-    document.getElementById('kpi2-value').textContent = totalTransaksi + ' bln';
+    document.getElementById('kpi2-value').textContent = totalTransaksi + ' Bulan';
     document.getElementById('kpi3-value').textContent = persen + '%';
     document.getElementById('kpi4-value').textContent = formatRp(totalNominal);
 
@@ -264,7 +264,7 @@ function renderTable() {
       
       if (trxs > 0) {
         badgeClass = 'lunas';
-        badgeText = `<i class="fas fa-check"></i> ${trxs} bln lunas (${dates.join(', ')})`;
+        badgeText = `<i class="fas fa-check"></i> ${trxs} Bulan lunas (${dates.join(', ')})`;
       } else {
         const isNa = m.monthlyStatus[activeMonthIdx].status === 'na';
         if (isNa) {

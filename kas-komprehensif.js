@@ -281,7 +281,7 @@ function updatePendapatanKPI(selectedMonth = 'total') {
     const elLembaga = document.getElementById('kpi-lembaga-in');
     if (elLembaga) elLembaga.textContent = lembagaCount;
     const elTrx = document.getElementById('kpi-transaksi-in');
-    if (elTrx) elTrx.textContent = totalTransaksi + ' bln';
+    if (elTrx) elTrx.textContent = totalTransaksi + ' Bulan';
     const elPartisipasi = document.getElementById('kpi-partisipasi-in');
     if (elPartisipasi) elPartisipasi.textContent = persen + '%';
     const elPemasukan = document.getElementById('kpi-pemasukan-in');
@@ -421,7 +421,7 @@ function updateKPIs() {
     document.getElementById('kpi-health').textContent = healthMonths + " Bulan";
     const statusText = healthMonths >= 4 ? "Sehat" : "Tidak Sehat";
     const statusColor = healthMonths >= 4 ? "var(--green)" : "var(--red)";
-    document.getElementById('kpi-health-sub').innerHTML = `Rasio Net FOZ : Pagu Ops <br/><span style="margin-top:4px; display:inline-block; font-weight:600; color:${statusColor}">${statusText}</span>`;
+    document.getElementById('kpi-health-sub').innerHTML = `Rasio Net FOZ : Pagu Operasional <br/><span style="margin-top:4px; display:inline-block; font-weight:600; color:${statusColor}">${statusText}</span>`;
   }
 }
 
