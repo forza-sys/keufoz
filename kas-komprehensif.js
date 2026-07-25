@@ -418,10 +418,24 @@ function updateKPIs() {
   // 6. Financial Health Rate
   if (totalPaguOps > 0 && foz !== null) {
     const healthMonths = parseFloat((foz / totalPaguOps).toFixed(1));
-    document.getElementById('kpi-health').textContent = healthMonths + " Bulan";
-    const statusText = healthMonths >= 4 ? "Sehat" : "Tidak Sehat";
-    const statusColor = healthMonths >= 4 ? "var(--green)" : "var(--red)";
-    document.getElementById('kpi-health-sub').innerHTML = `Rasio Net FOZ : Pagu Operasional <br/><span style="margin-top:4px; display:inline-block; font-weight:600; color:${statusColor}">${statusText}</span>`;
+    const isHealthy = healthMonths >= 4;
+    const statusText = isHealthy ? "🟢 LIKUIDITAS FOZ SANGAT SEHAT" : "🔴 WARP DANGER - LIKUIDITAS RENDAH";
+    const subText = isHealthy 
+      ? `Kas Mampu Membiayai ${healthMonths} Bulan Operasional (Standar Aman ≥ 4.0 Bulan).`
+      : `Kas Hanya Mampu Membiayai ${healthMonths} Bulan Operasional (Di Bawah Standar Aman 4.0 Bulan).`;
+
+    const bannerText = document.getElementById('kpi-health-banner-text');
+    if (bannerText) bannerText.textContent = `${statusText} — ${subText}`;
+
+    const kpiHealth = document.getElementById('kpi-health');
+    if (kpiHealth) kpiHealth.textContent = healthMonths + " Bulan";
+
+    const kpiHealthSub = document.getElementById('kpi-health-sub');
+    if (kpiHealthSub) {
+      const statusColor = isHealthy ? "var(--green)" : "var(--red)";
+      const statusLabel = isHealthy ? "Sehat" : "Perlu Perhatian";
+      kpiHealthSub.innerHTML = `Rasio Net FOZ : Pagu Operasional <br/><span style="margin-top:4px; display:inline-block; font-weight:600; color:${statusColor}">${statusLabel}</span>`;
+    }
   }
 }
 
