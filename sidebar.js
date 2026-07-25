@@ -64,9 +64,9 @@
                     <li><a href="${base}dashboard.html"><i class="fas fa-th-large"></i> <span>Dashboard</span></a></li>
                     <li><a href="${base}kas-komprehensif.html"><i class="fas fa-wallet"></i> <span>Kas Komprehensif</span></a></li>
                     <li><a href="${base}kas-foz.html"><i class="fas fa-cash-register"></i> <span>Kas FOZ</span></a></li>
-                    <li><a href="${base}psak45.html"><i class="fas fa-file-invoice"></i> <span>Laporan PSAK 45</span></a></li>
+                    <li><a href="${base}pendapatan-iuran.html"><i class="fas fa-hand-holding-usd"></i> <span>Pendapatan & Iuran</span></a></li>
                     <li><a href="${base}nota-dinas.html"><i class="fas fa-file-signature"></i> <span>Nota Dinas</span></a></li>
-                    <li><a href="${base}pendapatan-iuran.html"><i class="fas fa-hand-holding-usd"></i> <span>Pendapatan Iuran</span></a></li>
+                    <li><a href="${base}psak45.html"><i class="fas fa-file-invoice"></i> <span>Laporan PSAK 45</span></a></li>
                 </ul>
                 <div style="position: absolute; bottom: 20px; left: 0; width: 100%; padding: 0 15px;">
                     <a href="#" onclick="sessionStorage.removeItem('foz_auth'); window.location.href='login.html';" style="display: flex; align-items: center; gap: 15px; color: #ef4444; text-decoration: none; font-weight: 600; font-size: 0.9rem; padding: 12px 15px; border-radius: 8px; transition: background 0.2s;">

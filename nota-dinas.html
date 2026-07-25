@@ -240,20 +240,36 @@
               <div class="form-group">
                 <label>Bidang Pemohon</label>
                 <select class="form-control" id="nd-bidang">
-                  <option value="Sekretariat">Sekretariat FOZ</option>
-                  <option value="Advokasi">Bidang Advokasi</option>
-                  <option value="Kapasitas">Bidang Kapasitas</option>
-                  <option value="Keanggotaan">Bidang Keanggotaan</option>
+                  <option value="Sekretariat FOZ">Sekretariat FOZ</option>
+                  <option value="Bidang Advokasi">Bidang Advokasi & Kebijakan</option>
+                  <option value="Bidang Kapasitas">Bidang Kapasitas & SDM</option>
+                  <option value="Bidang Keanggotaan">Bidang Keanggotaan & Network</option>
                 </select>
               </div>
               <div class="form-group">
-                <label>Nominal (Rp)</label>
+                <label>Pos Anggaran / Pagu</label>
+                <select class="form-control" id="nd-pagu">
+                  <option value="Administrasi dan Umum">Administrasi & Umum</option>
+                  <option value="Overhead dan Tagihan">Overhead & Tagihan</option>
+                  <option value="Program Bidang">Program Bidang & Advokasi</option>
+                  <option value="Syarikat Amil">Syarikat Amil & Kapasitas</option>
+                  <option value="Pembelian Aset">Pembelian Aset & Peralatan</option>
+                </select>
+              </div>
+            </div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+              <div class="form-group">
+                <label>Nominal Pengajuan (Rp)</label>
                 <input type="number" class="form-control" id="nd-nominal" placeholder="10000000" required>
+              </div>
+              <div class="form-group">
+                <label>Target Tanggal Pencairan</label>
+                <input type="date" class="form-control" id="nd-tgl-target">
               </div>
             </div>
             <div class="form-group">
               <label>Keterangan / Catatan Usulan</label>
-              <textarea class="form-control" id="nd-ket" rows="3" placeholder="Rincian kebutuhan dana..."></textarea>
+              <textarea class="form-control" id="nd-ket" rows="2" placeholder="Rincian kebutuhan dana & justifikasi pengajuan..."></textarea>
             </div>
             <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
               <button type="button" onclick="closeNdModal()" style="padding:8px 16px; border-radius:8px; border:1px solid var(--border-color); background:transparent; cursor:pointer;">Batal</button>

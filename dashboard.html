@@ -277,9 +277,9 @@
           </div>
         </div>
 
-        <!-- SECTION 3: PENDAPATAN IURAN -->
+        <!-- SECTION 3: PENDAPATAN IURAN & PENERIMAAN -->
         <div style="display: flex; justify-content: space-between; align-items: center; margin: 28px 0 12px;">
-          <h3 style="font-size:1.05rem; font-weight:700; color:var(--text-main); margin: 0;">Pemasukan Iuran Anggota <span style="font-size:0.8rem; font-weight:500; color:var(--text-muted);" id="pendapatan-title-sub">(Arus Kas Total)</span></h3>
+          <h3 style="font-size:1.05rem; font-weight:700; color:var(--text-main); margin: 0;">Pemasukan & Penerimaan Asosiasi <span style="font-size:0.8rem; font-weight:500; color:var(--text-muted);" id="pendapatan-title-sub">(Arus Kas Total)</span></h3>
           <div class="date-selector" style="margin: 0; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 4px 12px; display: flex; align-items: center; gap: 6px;">
             <i class="fas fa-calendar-alt" style="color:var(--blue); font-size:0.9rem;"></i>
             <label for="pendapatan-month-select" style="font-size: 0.8rem; font-weight: 500; color: var(--text-muted);">Bulan:</label>
@@ -308,10 +308,40 @@
             <i class="fas fa-percentage kpi-icon"></i>
           </div>
           <div class="kpi-card purple">
-            <div class="kpi-label">Pemasukan Riil</div>
+            <div class="kpi-label">Pemasukan Riil Iuran</div>
             <div class="kpi-value positive" id="kpi-pemasukan-in">—</div>
             <div class="kpi-sub">Uang kas masuk (Cash-basis)</div>
             <i class="fas fa-money-bill-wave kpi-icon"></i>
+          </div>
+        </div>
+
+        <!-- Additional Income Breakdown: Surplus Event & Hibah -->
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 14px;">
+          <div style="background: var(--card-bg, #fff); border: 1.5px solid var(--border-color, #e5e7eb); border-radius: 14px; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between;">
+            <div>
+              <div style="font-size: 0.78rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Surplus Event & Kegiatan</div>
+              <div style="font-size: 1.2rem; font-weight: 700; color: var(--green); margin-top: 4px;">Rp 45.000.000</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">Munas, Rakernas, & Pelatihan</div>
+            </div>
+            <i class="fas fa-trophy" style="font-size: 1.8rem; color: var(--green); opacity: 0.25;"></i>
+          </div>
+
+          <div style="background: var(--card-bg, #fff); border: 1.5px solid var(--border-color, #e5e7eb); border-radius: 14px; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between;">
+            <div>
+              <div style="font-size: 0.78rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Hibah & Sponsorship</div>
+              <div style="font-size: 1.2rem; font-weight: 700; color: var(--blue); margin-top: 4px;">Rp 75.000.000</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">Mitra Non-Terikat (YTD)</div>
+            </div>
+            <i class="fas fa-handshake" style="font-size: 1.8rem; color: var(--blue); opacity: 0.25;"></i>
+          </div>
+
+          <div style="background: var(--card-bg, #fff); border: 1.5px solid var(--border-color, #e5e7eb); border-radius: 14px; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between;">
+            <div>
+              <div style="font-size: 0.78rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Total Penerimaan NPO</div>
+              <div style="font-size: 1.2rem; font-weight: 700; color: var(--purple); margin-top: 4px;">Rp 798.458.331</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">Akumulasi Penerimaan FOZ</div>
+            </div>
+            <i class="fas fa-vault" style="font-size: 1.8rem; color: var(--purple); opacity: 0.25;"></i>
           </div>
         </div>
       </div><!-- end dashboard-content -->
