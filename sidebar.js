@@ -68,7 +68,7 @@
                      <li><a href="${base}nota-dinas.html"><i class="fas fa-file-signature"></i> <span>Nota Dinas</span></a></li>
                      <li><a href="${base}cashbon.html"><i class="fas fa-money-bill-transfer"></i> <span>Uang Muka & LPJ</span></a></li>
                      <li><a href="${base}aset.html"><i class="fas fa-boxes-stacked"></i> <span>Aset & Inventaris</span></a></li>
-                     <li><a href="${base}utang-vendor.html"><i class="fas fa-file-circle-exclamation"></i> <span>Utang Vendor</span></a></li>
+                     <li><a href="${base}utang-vendor.html"><i class="fas fa-file-circle-exclamation"></i> <span>Utang Mitra</span></a></li>
                      <li><a href="${base}psak45.html"><i class="fas fa-file-invoice"></i> <span>Laporan PSAK 45</span></a></li>
                      <li><a href="${base}arus-kas.html"><i class="fas fa-arrow-right-arrow-left"></i> <span>Laporan Arus Kas</span></a></li>
                      <li><a href="${base}portal-anggota.html"><i class="fas fa-building-user"></i> <span>Portal Anggota</span></a></li>

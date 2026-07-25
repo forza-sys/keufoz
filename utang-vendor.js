@@ -1,4 +1,4 @@
-// --- Utang Vendor & Tagihan Pihak Ketiga Module ---
+// --- Utang Mitra & Tagihan Pihak Ketiga Module ---
 
 const VENDOR_DATA = [
   { no: 'INV-2026/088', vendor: 'PT Media Zakat Nusantara', perihal: 'Publikasi Media Kit & Press Release Munas', due: '15 Jul 2026', nominal: 12500000, status: 'Belum Lunas' },

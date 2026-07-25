@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Utang Vendor & Tagihan FOZ 2026</title>
+  <title>Utang Mitra & Tagihan FOZ 2026</title>
   <script>
     if (sessionStorage.getItem('foz_auth') !== 'true') {
       window.location.href = 'login.html';
     }
   </script>
-  <meta name="description" content="Modul Utang Vendor & Tagihan Pihak Ketiga Forum Zakat 2026">
+  <meta name="description" content="Modul Utang Mitra & Tagihan Pihak Ketiga Forum Zakat 2026">
   <link rel="stylesheet" href="dashboard-keuangan-app.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -85,11 +85,11 @@
       <!-- Top Nav -->
       <div class="top-nav">
         <div class="page-title">
-          <h1>Utang Vendor & Tagihan Pihak Ketiga</h1>
-          <p id="page-subtitle">Pencatatan Invoice Vendor Event, Supplier, Jatuh Tempo, & Pelunasan Kas</p>
+          <h1>Utang Mitra & Tagihan Pihak Ketiga</h1>
+          <p id="page-subtitle">Pencatatan Invoice Mitra Event, Supplier, Jatuh Tempo, & Pelunasan Kas</p>
         </div>
         <div class="top-nav-actions" style="display:flex; gap:10px; align-items:center;">
-          <button class="btn-create" onclick="alert('Form Input Tagihan Vendor Siap Dihubungkan!')">
+          <button class="btn-create" onclick="alert('Form Input Tagihan Mitra Siap Dihubungkan!')">
             <i class="fas fa-plus"></i> Input Invoice Tagihan
           </button>
           <button class="icon-btn" id="theme-toggle" title="Toggle Dark Mode">
@@ -110,7 +110,7 @@
         <!-- Header Section -->
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
           <h3 style="font-size:1.05rem; font-weight:700; color:var(--text-main); margin:0;">
-            Ringkasan Kewajiban Pembayaran Vendor (Accounts Payable)
+            Ringkasan Kewajiban Pembayaran Mitra (Accounts Payable)
           </h3>
         </div>
 
@@ -119,7 +119,7 @@
           <div class="kpi-card red">
             <div class="kpi-label">Total Tagihan Belum Lunas</div>
             <div class="kpi-value negative">Rp 34.500.000</div>
-            <div class="kpi-sub">Kewajiban vendor outstanding</div>
+            <div class="kpi-sub">Kewajiban mitra outstanding</div>
             <i class="fas fa-file-circle-exclamation kpi-icon"></i>
           </div>
 
@@ -131,15 +131,15 @@
           </div>
 
           <div class="kpi-card green">
-            <div class="kpi-label">Pelunasan Vendor YTD</div>
+            <div class="kpi-label">Pelunasan Mitra YTD</div>
             <div class="kpi-value positive">Rp 118.200.000</div>
             <div class="kpi-sub">Total invoice dilunasi</div>
             <i class="fas fa-circle-check kpi-icon"></i>
           </div>
 
           <div class="kpi-card blue">
-            <div class="kpi-label">Total Mitra Vendor</div>
-            <div class="kpi-value">12 Vendor</div>
+            <div class="kpi-label">Total Mitra Terdaftar</div>
+            <div class="kpi-value">12 Mitra</div>
             <div class="kpi-sub">Event organizer, media, & supplier</div>
             <i class="fas fa-handshake kpi-icon"></i>
           </div>
@@ -148,7 +148,7 @@
         <!-- Table Panel -->
         <div class="detail-panel" style="margin-top: 24px;">
           <div class="detail-panel-header">
-            <div class="detail-panel-title">Daftar Invoice & Tagihan Vendor FOZ</div>
+            <div class="detail-panel-title">Daftar Invoice & Tagihan Mitra FOZ</div>
             <div class="detail-panel-badge">Showing 5 Invoices</div>
           </div>
 
@@ -157,7 +157,7 @@
               <thead>
                 <tr>
                   <th>NO. INVOICE</th>
-                  <th>NAMA VENDOR / MITRA</th>
+                  <th>NAMA MITRA / VENDOR</th>
                   <th>PERIHAL PEKERJAAN</th>
                   <th>JATUH TEMPO</th>
                   <th>NOMINAL (RP)</th>
