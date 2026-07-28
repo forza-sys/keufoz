@@ -65,6 +65,22 @@
                     <li><a href="${base}sekretariat/dashboard.html"><i class="ph-light ph-identification-card"></i> <span>Data Keanggotaan</span></a></li>
                 </ul>
             `;
+        } else if (path.includes('/monitoring-program/')) {
+            menuHTML = `
+                <div style="padding: 12px 20px 8px 20px; font-size: 0.7rem; font-weight: 700; color: rgba(255,255,255,0.45); letter-spacing: 0.8px; text-transform: uppercase;">MONITORING PROGRAM</div>
+                <ul class="sidebar-menu">
+                    <li><a href="${base}monitoring-program/program.html"><i class="ph-light ph-kanban"></i> <span>Program Kerja</span></a></li>
+                    <li><a href="${base}monitoring-program/timeline.html"><i class="ph-light ph-calendar-blank"></i> <span>Timeline Event</span></a></li>
+                </ul>
+                <div style="position: absolute; bottom: 20px; left: 0; width: 100%; padding: 0 15px;">
+                    <a href="${base}dashboard.html" style="display: flex; align-items: center; gap: 12px; color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.82rem; font-weight: 600; padding: 10px 15px; border-radius: 8px; margin-bottom: 8px; background: rgba(255,255,255,0.08); transition: background 0.2s;">
+                        <i class="ph-light ph-arrow-left" style="min-width: 24px; text-align: center; font-size: 1.1rem;"></i> <span class="sidebar-text">Kembali ke Keuangan</span>
+                    </a>
+                    <a href="#" onclick="sessionStorage.removeItem('foz_auth'); window.location.href='${base}login.html';" style="display: flex; align-items: center; gap: 15px; color: #ef4444; text-decoration: none; font-weight: 600; font-size: 0.9rem; padding: 12px 15px; border-radius: 8px; transition: background 0.2s;">
+                        <i class="ph-light ph-sign-out" style="min-width: 24px; text-align: center; font-size: 1.1rem;"></i> <span class="sidebar-text">Keluar</span>
+                    </a>
+                </div>
+            `;
         } else if (path.includes('/admin/')) {
             // Default Admin Menu for /admin/
             menuHTML = `
