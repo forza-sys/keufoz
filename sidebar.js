@@ -19,8 +19,7 @@
             <aside class="sidebar collapsed" id="main-sidebar">
                 <div class="sidebar-logo">
                     <button id="desktop-menu-btn" class="menu-btn"><i class="fas fa-bars"></i></button>
-                    <div class="logo-icon"><i class="fas fa-cube"></i></div>
-                    <span style="display: flex; flex-direction: column; justify-content: center; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; white-space: nowrap;">
+                    <span style="display: flex; flex-direction: column; justify-content: center; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; white-space: nowrap; margin-left: 10px;">
                         KEUANGAN FOZ
                     </span>
                 </div>
@@ -37,8 +36,16 @@
         // Mock user role to allow rendering without auth.js
         const user = window.HAZANA_USER || { role: 'SUPER_ADMIN' };
 
-        const isSubFolder = window.location.pathname.split('/').some(p => ['admin', 'member', 'sekretariat', 'executive', 'unit-layanan-1'].includes(p));
+        const isSubFolder = window.location.pathname.split('/').some(p => ['admin', 'member', 'sekretariat', 'executive', 'unit-layanan-1', 'monitoring-program'].includes(p));
         const base = isSubFolder ? '../' : './';
+
+        // Inject Phosphor Icons if not present
+        if (!document.getElementById('phosphor-icons')) {
+            const phScript = document.createElement('script');
+            phScript.id = 'phosphor-icons';
+            phScript.src = 'https://unpkg.com/@phosphor-icons/web';
+            document.head.appendChild(phScript);
+        }
 
         const path = window.location.pathname;
 
@@ -48,39 +55,17 @@
         if (path.includes('/unit-layanan-1/')) {
             menuHTML = `
                 <ul class="sidebar-menu">
-                    <li><a href="${base}unit-layanan-1/iuran-anggota.html"><i class="fas fa-file-invoice-dollar"></i> <span>Iuran Anggota</span></a></li>
+                    <li><a href="${base}unit-layanan-1/iuran-anggota.html"><i class="ph-light ph-file-text"></i> <span>Iuran Anggota</span></a></li>
                 </ul>
             `;
         } else if (path.includes('/sekretariat/')) {
             menuHTML = `
                 <div class="menu-label">SEKRETARIAT FOZ</div>
                 <ul class="sidebar-menu">
-                    <li><a href="${base}sekretariat/dashboard.html"><i class="fas fa-id-card"></i> <span>Data Keanggotaan</span></a></li>
+                    <li><a href="${base}sekretariat/dashboard.html"><i class="ph-light ph-identification-card"></i> <span>Data Keanggotaan</span></a></li>
                 </ul>
             `;
-        } else if (path.includes('/executive/') || path.includes('dashboard') || path.includes('kas-komprehensif') || path.includes('kas-foz') || path.includes('pendapatan-iuran') || path.includes('psak45') || path.includes('nota-dinas') || path === '/' || path.endsWith('index.html')) {
-             menuHTML = `
-                 <ul class="sidebar-menu">
-                     <li><a href="${base}dashboard.html"><i class="fas fa-th-large"></i> <span>Ringkasan Umum</span></a></li>
-                     <li><a href="${base}kas-komprehensif.html"><i class="fas fa-wallet"></i> <span>Kas & Bank</span></a></li>
-                     <li><a href="${base}kas-foz.html"><i class="fas fa-cash-register"></i> <span>Realisasi Anggaran</span></a></li>
-                     <li><a href="${base}pendapatan-iuran.html"><i class="fas fa-hand-holding-usd"></i> <span>Pendapatan & Iuran</span></a></li>
-                     <li><a href="${base}nota-dinas.html"><i class="fas fa-file-signature"></i> <span>Nota Dinas</span></a></li>
-                     <li><a href="${base}cashbon.html"><i class="fas fa-money-bill-transfer"></i> <span>Uang Muka & LPJ</span></a></li>
-                     <li><a href="${base}aset.html"><i class="fas fa-boxes-stacked"></i> <span>Aset & Inventaris</span></a></li>
-                     <li><a href="${base}utang-vendor.html"><i class="fas fa-file-circle-exclamation"></i> <span>Utang & Piutang Mitra</span></a></li>
-                     <li><a href="${base}psak45.html"><i class="fas fa-file-invoice"></i> <span>Laporan PSAK 45</span></a></li>
-                     <li><a href="${base}arus-kas.html"><i class="fas fa-arrow-right-arrow-left"></i> <span>Laporan Arus Kas</span></a></li>
-                     <li><a href="${base}calk.html"><i class="fas fa-book-bookmark"></i> <span>CALK PSAK 45</span></a></li>
-                     <li><a href="${base}portal-anggota.html"><i class="fas fa-building-user"></i> <span>Portal Anggota</span></a></li>
-                 </ul>
-                 <div style="position: absolute; bottom: 20px; left: 0; width: 100%; padding: 0 15px;">
-                     <a href="#" onclick="sessionStorage.removeItem('foz_auth'); window.location.href='login.html';" style="display: flex; align-items: center; gap: 15px; color: #ef4444; text-decoration: none; font-weight: 600; font-size: 0.9rem; padding: 12px 15px; border-radius: 8px; transition: background 0.2s;">
-                         <i class="fas fa-sign-out-alt" style="min-width: 24px; text-align: center; font-size: 1.1rem;"></i> <span class="sidebar-text">Keluar</span>
-                     </a>
-                 </div>
-            `;
-        } else {
+        } else if (path.includes('/admin/')) {
             // Default Admin Menu for /admin/
             menuHTML = `
                 <ul class="sidebar-menu">
@@ -88,6 +73,32 @@
                     <li><a href="${base}admin/dashboard.html"><i class="fas fa-users-cog"></i> <span>Akun</span></a></li>
                     <li><a href="${base}admin/portal.html"><i class="fas fa-th-large"></i> <span>Modul</span></a></li>
                 </ul>
+            `;
+        } else {
+             menuHTML = `
+                 <ul class="sidebar-menu">
+                     <li><a href="${base}dashboard.html"><i class="ph-light ph-squares-four"></i> <span>Ringkasan Umum</span></a></li>
+                     <li><a href="${base}kas-komprehensif.html"><i class="ph-light ph-wallet"></i> <span>Kas & Bank</span></a></li>
+                     <li><a href="${base}kas-foz.html"><i class="ph-light ph-receipt"></i> <span>Realisasi Anggaran</span></a></li>
+                     <li><a href="${base}pendapatan-iuran.html"><i class="ph-light ph-hand-coins"></i> <span>Pendapatan & Iuran</span></a></li>
+                     <li><a href="${base}nota-dinas.html"><i class="ph-light ph-file-text"></i> <span>Nota Dinas</span></a></li>
+                     <li><a href="${base}cashbon.html"><i class="ph-light ph-money"></i> <span>Uang Muka & LPJ</span></a></li>
+                     <li><a href="${base}aset.html"><i class="ph-light ph-archive"></i> <span>Aset & Inventaris</span></a></li>
+                     <li><a href="${base}utang-vendor.html"><i class="ph-light ph-handshake"></i> <span>Utang & Piutang Mitra</span></a></li>
+                     <li><a href="${base}psak45.html"><i class="ph-light ph-file-doc"></i> <span>Laporan PSAK 45</span></a></li>
+                     <li><a href="${base}arus-kas.html"><i class="ph-light ph-arrows-left-right"></i> <span>Laporan Arus Kas</span></a></li>
+                     <li><a href="${base}calk.html"><i class="ph-light ph-book-open"></i> <span>CALK PSAK 45</span></a></li>
+                     <li><a href="${base}portal-anggota.html"><i class="ph-light ph-buildings"></i> <span>Portal Anggota</span></a></li>
+                     
+                     <li style="margin-top: 12px; margin-bottom: 4px; padding-left: 20px; font-size: 0.68rem; font-weight: 700; color: rgba(255,255,255,0.45); letter-spacing: 0.8px; text-transform: uppercase;">MONITORING PROGRAM</li>
+                     <li><a href="${base}monitoring-program/program.html"><i class="ph-light ph-kanban"></i> <span>Program Kerja</span></a></li>
+                     <li><a href="${base}monitoring-program/timeline.html"><i class="ph-light ph-calendar-blank"></i> <span>Timeline Event</span></a></li>
+                 </ul>
+                 <div style="position: absolute; bottom: 20px; left: 0; width: 100%; padding: 0 15px;">
+                     <a href="#" onclick="sessionStorage.removeItem('foz_auth'); window.location.href='${base}login.html';" style="display: flex; align-items: center; gap: 15px; color: #ef4444; text-decoration: none; font-weight: 600; font-size: 0.9rem; padding: 12px 15px; border-radius: 8px; transition: background 0.2s;">
+                         <i class="ph-light ph-sign-out" style="min-width: 24px; text-align: center; font-size: 1.1rem;"></i> <span class="sidebar-text">Keluar</span>
+                     </a>
+                 </div>
             `;
         }
 

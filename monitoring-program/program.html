@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monitoring Program Kerja — HAZANA FOZ</title>
+  <link rel="stylesheet" href="../dashboard-keuangan-app.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .cat-tab-btn {
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: 1.5px solid var(--border-color, #e5e7eb);
+      background: var(--card-bg, #ffffff);
+      color: var(--text-color, #374151);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+    .cat-tab-btn:hover {
+      border-color: #10b981;
+      color: #10b981;
+    }
+    .cat-tab-btn.active {
+      background: #10b981;
+      color: #ffffff;
+      border-color: #10b981;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+    }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .status-selesai { background: rgba(16, 185, 129, 0.15); color: #059669; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .status-process { background: rgba(59, 130, 246, 0.15); color: #2563eb; border: 1px solid rgba(59, 130, 246, 0.3); }
+    .status-direncanakan { background: rgba(245, 158, 11, 0.15); color: #d97706; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .status-belum { background: rgba(107, 114, 128, 0.15); color: #4b5563; border: 1px solid rgba(107, 114, 128, 0.3); }
+    
+    .progress-bar-bg {
+      width: 100%;
+      height: 8px;
+      background: rgba(229, 231, 235, 0.8);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #10b981, #059669);
+      border-radius: 4px;
+      transition: width 0.4s ease;
+    }
+
+    .program-card {
+      background: var(--card-bg, #ffffff);
+      border: 1px solid var(--border-color, #e5e7eb);
+      border-radius: 14px;
+      padding: 16px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .program-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+    }
+  </style>
+</head>
+<body>
+  <div id="sidebar-container"></div>
+
+  <main class="main-content">
+    <div style="padding: 24px;">
+      <!-- Page Header -->
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+        <div>
+          <h1 style="font-size: 1.5rem; font-weight: 800; color: var(--heading-color, #111827); margin: 0;">Monitoring Program Kerja FOZ</h1>
+          <p style="font-size: 0.88rem; color: #6b7280; margin-top: 4px; margin-bottom: 0;">Rekapitalisasi real-time & pencapaian Program Kerja FOZ 2024-2027</p>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <a href="timeline.html" style="display: inline-flex; align-items: center; gap: 8px; background: rgba(16,185,129,0.1); color: #10b981; border: 1.5px solid rgba(16,185,129,0.3); padding: 8px 16px; border-radius: 10px; font-size: 0.85rem; font-weight: 600; text-decoration: none; transition: all 0.2s;">
+            <i class="ph-light ph-calendar-blank" style="font-size: 1.1rem;"></i> View Timeline Event (16:9)
+          </a>
+        </div>
+      </div>
+
+      <!-- KPI Overview Strip -->
+      <div class="kpi-strip" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: 24px;">
+        <div class="kpi-card blue">
+          <div class="kpi-label">Total Program</div>
+          <div class="kpi-value" id="kpi-total-proker">0</div>
+          <div class="kpi-sub">Program Kerja Terdaftar</div>
+        </div>
+        <div class="kpi-card green">
+          <div class="kpi-label">Selesai / Berjalan</div>
+          <div class="kpi-value" id="kpi-selesai-proker">0</div>
+          <div class="kpi-sub" id="kpi-selesai-pct">0% dari total</div>
+        </div>
+        <div class="kpi-card teal">
+          <div class="kpi-label">On Process</div>
+          <div class="kpi-value" id="kpi-process-proker">0</div>
+          <div class="kpi-sub" id="kpi-process-pct">0% dari total</div>
+        </div>
+        <div class="kpi-card amber">
+          <div class="kpi-label">Direncanakan</div>
+          <div class="kpi-value" id="kpi-rencana-proker">0</div>
+          <div class="kpi-sub" id="kpi-rencana-pct">0% dari total</div>
+        </div>
+        <div class="kpi-card purple">
+          <div class="kpi-label">Rata-rata Capaian</div>
+          <div class="kpi-value" id="kpi-avg-progress">0%</div>
+          <div class="kpi-sub">Persentase Keseluruhan</div>
+        </div>
+      </div>
+
+      <!-- Filter Categories Bar -->
+      <div style="background: var(--card-bg, #ffffff); border: 1.5px solid var(--border-color, #e5e7eb); border-radius: 16px; padding: 16px; margin-bottom: 24px;">
+        <div style="font-size: 0.78rem; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;">Filter Bidang & Organisasi</div>
+        <div id="category-tabs-container" style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: thin;">
+          <!-- Category buttons dynamically rendered -->
+        </div>
+      </div>
+
+      <!-- Main Layout: Grid of Programs & Charts -->
+      <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; align-items: start;">
+        <!-- Left Side: Search & Program List -->
+        <div>
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; gap: 12px; flex-wrap: wrap;">
+            <div style="position: relative; flex: 1; min-width: 200px;">
+              <i class="ph-light ph-magnifying-glass" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #9ca3af;"></i>
+              <input type="text" id="search-program-input" placeholder="Cari nama program, acuan, keterangan..." style="width: 100%; padding: 9px 12px 9px 36px; border-radius: 10px; border: 1.5px solid var(--border-color, #e5e7eb); font-size: 0.85rem; outline: none; background: var(--card-bg, #fff); color: var(--text-color, #111827);">
+            </div>
+            <select id="status-filter-select" style="padding: 9px 12px; border-radius: 10px; border: 1.5px solid var(--border-color, #e5e7eb); font-size: 0.85rem; outline: none; background: var(--card-bg, #fff); color: var(--text-color, #111827);">
+              <option value="ALL">Semua Status</option>
+              <option value="Selesai/Berjalan">Selesai / Berjalan</option>
+              <option value="On Process">On Process</option>
+              <option value="Direncanakan">Direncanakan</option>
+              <option value="Belum Terdefinisi">Belum Terdefinisi</option>
+            </select>
+          </div>
+
+          <!-- Cards List -->
+          <div id="program-cards-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px;">
+            <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #9ca3af;">
+              <i class="ph-light ph-spinner spinner-rotate" style="font-size: 2rem; display: block; margin-bottom: 10px;"></i>
+              Memuat data program kerja dari Google Sheets...
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Side: Donut Charts Overview -->
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+          <!-- Chart 1: Status Distribution -->
+          <div style="background: var(--card-bg, #ffffff); border: 1.5px solid var(--border-color, #e5e7eb); border-radius: 16px; padding: 20px;">
+            <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--heading-color, #111827); margin-top: 0; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+              <i class="ph-light ph-chart-pie-slice" style="color: #10b981;"></i> Distribusi Status Program
+            </h3>
+            <div style="position: relative; height: 220px; display: flex; align-items: center; justify-content: center;">
+              <canvas id="statusDonutChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Chart 2: Capaian per Bidang -->
+          <div style="background: var(--card-bg, #ffffff); border: 1.5px solid var(--border-color, #e5e7eb); border-radius: 16px; padding: 20px;">
+            <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--heading-color, #111827); margin-top: 0; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+              <i class="ph-light ph-chart-bar" style="color: #3b82f6;"></i> Jumlah Program per Bidang
+            </h3>
+            <div style="position: relative; height: 220px;">
+              <canvas id="bidangBarChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="../sidebar.js"></script>
+  <script src="./program.js"></script>
+</body>
+</html>
