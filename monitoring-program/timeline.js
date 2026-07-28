@@ -3,7 +3,7 @@
   const TIMELINE_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTPLWmWrZXEFFUxR6gmForZ-FgPCc1ePG_AxNRnac3RApPSPKi9oLH8AKGk3BdChAFZ5rbv6Mg2KQkd/pub?gid=1437698506&single=true&output=csv';
 
   let rawTimelineEvents = [];
-  let currentSelectedYear = '2026';
+  let currentSelectedStatus = 'TERLAKSANA'; // TERLAKSANA, BELUM
 
   const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
 
@@ -67,20 +67,24 @@
   }
 
   function parseEventDates(waktuStr) {
-    if (!waktuStr) return { year: '2026', startMonth: 0, endMonth: 0, isRange: false };
+    if (!waktuStr) return { startYear: 2026, startMonth: 0, endYear: 2026, endMonth: 0, isRange: false };
 
     const yearMatch = waktuStr.match(/\b(202[0-9])\b/);
-    const year = yearMatch ? yearMatch[1] : '2026';
+    const year = yearMatch ? parseInt(yearMatch[1], 10) : 2026;
 
     const parts = waktuStr.split('-').map(p => p.trim());
     if (parts.length === 2 && parts[0].match(/[a-zA-Z]/) && parts[1].match(/[a-zA-Z]/)) {
-      const startMonth = parseMonthIndex(parts[0]);
-      const endMonth = parseMonthIndex(parts[1]);
-      return { year, startMonth, endMonth, isRange: true };
+      const sMonth = parseMonthIndex(parts[0]);
+      const eMonth = parseMonthIndex(parts[1]);
+      return { 
+        startYear: year, startMonth: sMonth, 
+        endYear: year, endMonth: eMonth, 
+        isRange: true 
+      };
     }
 
-    const startMonth = parseMonthIndex(waktuStr);
-    return { year, startMonth, endMonth: startMonth, isRange: false };
+    const sMonth = parseMonthIndex(waktuStr);
+    return { startYear: year, startMonth: sMonth, endYear: year, endMonth: sMonth, isRange: false };
   }
 
   async function loadData() {
@@ -101,16 +105,21 @@
       rawTimelineEvents = rows.slice(1).map(row => {
         const waktu = idxWaktu !== -1 ? row[idxWaktu] : '';
         const parsedDate = parseEventDates(waktu);
+        const status = idxStatus !== -1 ? (row[idxStatus] || 'Akan Dilaksanakan').trim() : 'Akan Dilaksanakan';
+        const isTerlaksana = status.toLowerCase().includes('sudah') || status.toLowerCase().includes('terlaksana');
+        
         return {
           waktu: waktu,
-          year: parsedDate.year,
+          startYear: parsedDate.startYear,
           startMonth: parsedDate.startMonth,
+          endYear: parsedDate.endYear,
           endMonth: parsedDate.endMonth,
           isRange: parsedDate.isRange,
           nama: idxNama !== -1 ? row[idxNama] : '',
           tema: idxTema !== -1 ? row[idxTema] : '',
           bahasan: idxBahasan !== -1 ? row[idxBahasan] : '',
-          status: idxStatus !== -1 ? (row[idxStatus] || 'Akan Dilaksanakan').trim() : 'Akan Dilaksanakan'
+          status: status,
+          isTerlaksana: isTerlaksana
         };
       }).filter(e => e.nama);
 
@@ -122,15 +131,17 @@
   }
 
   function initTabEvents() {
-    document.querySelectorAll('.year-tab-btn').forEach(btn => {
+    document.querySelectorAll('.status-tab-btn').forEach(btn => {
       btn.addEventListener('click', () => {
-        document.querySelectorAll('.year-tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.status-tab-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        currentSelectedYear = btn.getAttribute('data-year');
+        currentSelectedStatus = btn.getAttribute('data-status');
 
-        const activeDisplay = document.getElementById('active-year-display');
+        const activeDisplay = document.getElementById('active-status-display');
         if (activeDisplay) {
-          activeDisplay.textContent = currentSelectedYear === 'ALL' ? 'Semua Tahun (2024-2027)' : `Tahun ${currentSelectedYear}`;
+          if (currentSelectedStatus === 'ALL') activeDisplay.textContent = 'Semua Status';
+          else if (currentSelectedStatus === 'TERLAKSANA') activeDisplay.textContent = 'Sudah Terlaksana';
+          else if (currentSelectedStatus === 'BELUM') activeDisplay.textContent = 'Belum Terlaksana';
         }
 
         renderDiagram();
@@ -138,48 +149,115 @@
     });
   }
 
+  function getTimelineRange() {
+    // Generate absolute months list for the entire possible range
+    const allMonths = [];
+    for (let y = 2024; y <= 2027; y++) {
+      for (let m = 0; m < 12; m++) {
+        allMonths.push({
+          year: y,
+          month: m,
+          label: `${MONTH_NAMES[m]} '${y.toString().substring(2)}`,
+          absIndex: (y - 2024) * 12 + m
+        });
+      }
+    }
+
+    // Jul 2024 (idx 6) to Jun 2027 (idx 6+35 = 41)
+    let startIdx = 6;
+    let endIdx = 41;
+
+    if (currentSelectedStatus === 'TERLAKSANA') {
+      startIdx = 6;  // Jul 2024
+      endIdx = 30;   // Jul 2026
+    } else if (currentSelectedStatus === 'BELUM') {
+      startIdx = 30; // Jul 2026
+      endIdx = 41;   // Jun 2027
+    }
+
+    return allMonths.slice(startIdx, endIdx + 1);
+  }
+
   function renderDiagram() {
     const axisContainer = document.getElementById('axis-nodes-container');
     if (!axisContainer) return;
 
-    // Filter events by selected year
-    const filteredEvents = rawTimelineEvents.filter(e => {
-      return currentSelectedYear === 'ALL' || e.year === currentSelectedYear;
+    // Determine Axis Range based on filter
+    const timelineMonths = getTimelineRange();
+    const nodeCount = timelineMonths.length;
+    const startAbs = timelineMonths[0].absIndex;
+    const endAbs = timelineMonths[nodeCount - 1].absIndex;
+
+    // Filter events by selected status and clamp them to view
+    let filteredEvents = rawTimelineEvents.filter(e => {
+      if (currentSelectedStatus === 'ALL') return true;
+      if (currentSelectedStatus === 'TERLAKSANA') return e.isTerlaksana;
+      if (currentSelectedStatus === 'BELUM') return !e.isTerlaksana;
+      return true;
+    });
+
+    // Map events to current timeline axis indices
+    filteredEvents = filteredEvents.map(e => {
+      const eStartAbs = (e.startYear - 2024) * 12 + e.startMonth;
+      const eEndAbs = (e.endYear - 2024) * 12 + e.endMonth;
+      
+      return {
+        ...e,
+        renderStartIdx: Math.max(0, Math.min(nodeCount - 1, eStartAbs - startAbs)),
+        renderEndIdx: Math.max(0, Math.min(nodeCount - 1, eEndAbs - startAbs))
+      };
     });
 
     // Update Stats Badge
     const statsBadge = document.getElementById('event-stats-badge');
     if (statsBadge) {
-      const terlaksana = filteredEvents.filter(e => e.status.toLowerCase().includes('sudah') || e.status.toLowerCase().includes('terlaksana')).length;
+      const terlaksana = filteredEvents.filter(e => e.isTerlaksana).length;
       statsBadge.textContent = `${filteredEvents.length} Event (${terlaksana} Terlaksana, ${filteredEvents.length - terlaksana} Akan Datang)`;
     }
 
     // Build Axis Nodes HTML
     let axisHTML = '';
-    const nodeCount = 12;
 
     for (let i = 0; i < nodeCount; i++) {
       const leftPct = (i / (nodeCount - 1)) * 100;
       axisHTML += `
         <div class="axis-node" style="position: absolute; left: ${leftPct}%; top: 50%; transform: translate(-50%, -50%);" data-month="${i}">
-          <div class="axis-label">${MONTH_NAMES[i]}</div>
+          <div class="axis-label" style="font-size: 0.65rem; white-space: nowrap; transform: rotate(-45deg); margin-top: 10px; margin-left: -5px; text-align: right;">${timelineMonths[i].label}</div>
         </div>
       `;
     }
 
-    // Single / Point Events (Rendered Above Axis)
+    // Group single events by render index to prevent overlap ("bertumpuk")
     const pointEvents = filteredEvents.filter(e => !e.isRange);
-    let heightTiers = [110, 160, 210, 130, 180]; // Stagger heights to prevent overlap
+    const monthGroups = {};
+    pointEvents.forEach(ev => {
+      if (!monthGroups[ev.renderStartIdx]) monthGroups[ev.renderStartIdx] = [];
+      monthGroups[ev.renderStartIdx].push(ev);
+    });
+
+    let heightTiers = [110, 160, 210, 130, 180, 230];
     let tierIdx = 0;
 
     pointEvents.forEach(ev => {
-      const mIdx = ev.startMonth;
-      const leftPct = (mIdx / (nodeCount - 1)) * 100;
+      const mIdx = ev.renderStartIdx;
+      const group = monthGroups[mIdx];
+      const groupIdx = group.indexOf(ev);
+      const groupSize = group.length;
+
+      // Base percentage
+      let leftPct = (mIdx / (nodeCount - 1)) * 100;
+      
+      // If multiple events on the exact same month, offset them horizontally slightly
+      if (groupSize > 1) {
+        // Offset by 1.5% for each item to separate their lines
+        const offsetPct = (groupIdx - (groupSize - 1) / 2) * 1.5;
+        leftPct += offsetPct;
+      }
+
       const connectorHeight = heightTiers[tierIdx % heightTiers.length];
       tierIdx++;
 
-      const isTerlaksana = ev.status.toLowerCase().includes('sudah') || ev.status.toLowerCase().includes('terlaksana');
-      const badgeCls = isTerlaksana ? 'terlaksana' : 'akan';
+      const badgeCls = ev.isTerlaksana ? 'terlaksana' : 'akan';
 
       axisHTML += `
         <div class="event-pin" style="left: ${leftPct}%; bottom: 6px;" onclick="showTooltip('${encodeURIComponent(JSON.stringify(ev))}', event)">
@@ -195,23 +273,22 @@
 
     // Range Events (Rendered Below Axis)
     const rangeEvents = filteredEvents.filter(e => e.isRange);
-    let rangeTopOffset = 36;
+    let rangeTopOffset = 65; // Push down to avoid overlapping with slanted axis labels
 
     rangeEvents.forEach(ev => {
-      const startPct = (ev.startMonth / (nodeCount - 1)) * 100;
-      const endPct = (ev.endMonth / (nodeCount - 1)) * 100;
-      const widthPct = Math.max(5, endPct - startPct);
-      const isTerlaksana = ev.status.toLowerCase().includes('sudah') || ev.status.toLowerCase().includes('terlaksana');
+      const startPct = (ev.renderStartIdx / (nodeCount - 1)) * 100;
+      const endPct = (ev.renderEndIdx / (nodeCount - 1)) * 100;
+      const widthPct = Math.max(3, endPct - startPct);
 
       axisHTML += `
-        <div class="range-bar-item ${isTerlaksana ? 'terlaksana' : ''}" style="left: ${startPct}%; width: ${widthPct}%; top: ${rangeTopOffset}px;" onclick="showTooltip('${encodeURIComponent(JSON.stringify(ev))}', event)">
+        <div class="range-bar-item" style="left: ${startPct}%; width: ${widthPct}%; top: ${rangeTopOffset}px;" onclick="showTooltip('${encodeURIComponent(JSON.stringify(ev))}', event)">
           <div class="range-dot"></div>
           <div class="range-text">${ev.nama} (${ev.waktu})</div>
           <div class="range-dot"></div>
         </div>
       `;
 
-      rangeTopOffset += 34; // Stack downward for multiple range bars
+      rangeTopOffset += 42; // Stack downward for multiple range bars (taller box + gap)
     });
 
     axisContainer.innerHTML = axisHTML;
@@ -227,11 +304,10 @@
       document.getElementById('tooltip-date').textContent = ev.waktu;
       document.getElementById('tooltip-title').textContent = ev.nama;
 
-      const isTerlaksana = ev.status.toLowerCase().includes('sudah') || ev.status.toLowerCase().includes('terlaksana');
       const statusEl = document.getElementById('tooltip-status');
       statusEl.textContent = ev.status;
-      statusEl.style.background = isTerlaksana ? 'rgba(16, 185, 129, 0.15)' : 'rgba(59, 130, 246, 0.15)';
-      statusEl.style.color = isTerlaksana ? '#059669' : '#2563eb';
+      statusEl.style.background = ev.isTerlaksana ? 'rgba(16, 185, 129, 0.15)' : 'rgba(59, 130, 246, 0.15)';
+      statusEl.style.color = ev.isTerlaksana ? '#059669' : '#2563eb';
 
       let desc = '';
       if (ev.tema) desc += `<strong>Tema:</strong> ${ev.tema}<br>`;

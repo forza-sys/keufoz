@@ -5,6 +5,9 @@
         const container = document.getElementById('sidebar-container');
         if (!container || container.dataset.injected) return;
         
+        const isProgram = window.location.pathname.includes('/monitoring-program/');
+        const logoText = isProgram ? 'PROGRAM FOZ' : 'KEUANGAN FOZ';
+
         container.dataset.injected = 'true';
         container.innerHTML = `
             <div class="rotate-screen-warning">
@@ -14,13 +17,13 @@
             </div>
             <div class="mobile-header">
                 <button id="mobile-menu-btn" class="menu-btn"><i class="fas fa-bars"></i></button>
-                <div class="mobile-logo">KEUANGAN FOZ</div>
+                <div class="mobile-logo">${logoText}</div>
             </div>
             <aside class="sidebar collapsed" id="main-sidebar">
                 <div class="sidebar-logo">
                     <button id="desktop-menu-btn" class="menu-btn"><i class="fas fa-bars"></i></button>
-                    <span style="display: flex; flex-direction: column; justify-content: center; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; white-space: nowrap; margin-left: 10px;">
-                        KEUANGAN FOZ
+                    <span style="display: flex; flex-direction: column; justify-content: center; font-size: 1.05rem; font-weight: 800; text-transform: uppercase; white-space: nowrap; margin-left: 1px; letter-spacing: 0.5px;">
+                        ${logoText}
                     </span>
                 </div>
                 <div id="sidebar-menu-container"></div>
@@ -67,19 +70,10 @@
             `;
         } else if (path.includes('/monitoring-program/')) {
             menuHTML = `
-                <div style="padding: 12px 20px 8px 20px; font-size: 0.7rem; font-weight: 700; color: rgba(255,255,255,0.45); letter-spacing: 0.8px; text-transform: uppercase;">MONITORING PROGRAM</div>
                 <ul class="sidebar-menu">
                     <li><a href="${base}monitoring-program/program.html"><i class="ph-light ph-kanban"></i> <span>Program Kerja</span></a></li>
                     <li><a href="${base}monitoring-program/timeline.html"><i class="ph-light ph-calendar-blank"></i> <span>Timeline Event</span></a></li>
                 </ul>
-                <div style="position: absolute; bottom: 20px; left: 0; width: 100%; padding: 0 15px;">
-                    <a href="${base}dashboard.html" style="display: flex; align-items: center; gap: 12px; color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.82rem; font-weight: 600; padding: 10px 15px; border-radius: 8px; margin-bottom: 8px; background: rgba(255,255,255,0.08); transition: background 0.2s;">
-                        <i class="ph-light ph-arrow-left" style="min-width: 24px; text-align: center; font-size: 1.1rem;"></i> <span class="sidebar-text">Kembali ke Keuangan</span>
-                    </a>
-                    <a href="#" onclick="sessionStorage.removeItem('foz_auth'); window.location.href='${base}login.html';" style="display: flex; align-items: center; gap: 15px; color: #ef4444; text-decoration: none; font-weight: 600; font-size: 0.9rem; padding: 12px 15px; border-radius: 8px; transition: background 0.2s;">
-                        <i class="ph-light ph-sign-out" style="min-width: 24px; text-align: center; font-size: 1.1rem;"></i> <span class="sidebar-text">Keluar</span>
-                    </a>
-                </div>
             `;
         } else if (path.includes('/admin/')) {
             // Default Admin Menu for /admin/
@@ -283,5 +277,6 @@
     document.addEventListener('DOMContentLoaded', () => {
         injectSkeleton(); // In case container wasn't ready earlier
         renderMenu();
+        updateMainContentState();
     });
 })();

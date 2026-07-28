@@ -216,31 +216,24 @@
       const pctDisplay = hasPct ? p.pct + '%' : '-';
 
       html += `
-        <div class="program-card">
-          <div>
-            <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 8px;">
-              <span style="font-size: 0.72rem; font-weight: 700; color: #10b981; background: rgba(16,185,129,0.1); padding: 2px 8px; border-radius: 6px;">${p.bidang || 'Lainnya'}</span>
-              <span class="status-badge ${badgeInfo.cls}"><i class="ph ${badgeInfo.icon}"></i> ${p.status}</span>
-            </div>
-            <h4 style="font-size: 0.92rem; font-weight: 700; color: var(--heading-color, #111827); margin: 0 0 10px 0; line-height: 1.4;">${p.nama}</h4>
-            
-            ${p.acuan ? `<div style="font-size: 0.78rem; color: #6b7280; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;"><i class="ph-light ph-bookmark" style="color: #9ca3af;"></i> ${p.acuan}</div>` : ''}
+        <div class="program-card" style="flex-wrap: wrap;">
+          <div style="display: flex; align-items: center; gap: 16px; flex: 1; min-width: 300px; flex-wrap: wrap;">
+            <span style="font-size: 0.72rem; font-weight: 700; color: #10b981; background: rgba(16,185,129,0.1); padding: 4px 10px; border-radius: 6px; white-space: nowrap;">${p.bidang || 'Lainnya'}</span>
+            <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--heading-color, #111827); margin: 0;">${p.nama}</h4>
+            ${p.acuan ? `<span style="font-size: 0.78rem; color: #6b7280; display: flex; align-items: center; gap: 4px; border-left: 1.5px solid #e5e7eb; padding-left: 12px; white-space: nowrap;"><i class="ph-light ph-bookmark"></i> ${p.acuan}</span>` : ''}
+            ${p.ket ? `<span style="font-size: 0.78rem; color: #6b7280; display: flex; align-items: center; gap: 4px; border-left: 1.5px solid #e5e7eb; padding-left: 12px; white-space: nowrap;"><i class="ph-light ph-info"></i> ${p.ket}</span>` : ''}
           </div>
 
-          <div>
+          <div style="display: flex; align-items: center; gap: 24px; flex-wrap: wrap;">
             ${hasPct ? `
-              <div style="margin-top: 10px;">
-                <div style="display: flex; justify-content: space-between; font-size: 0.76rem; font-weight: 600; color: #4b5563; margin-bottom: 4px;">
-                  <span>Capaian Progress</span>
-                  <span style="color: #10b981; font-weight: 700;">${pctDisplay}</span>
-                </div>
-                <div class="progress-bar-bg">
+              <div style="display: flex; align-items: center; gap: 8px; width: 140px;">
+                <span style="font-size: 0.76rem; font-weight: 700; color: #10b981;">${pctDisplay}</span>
+                <div class="progress-bar-bg" style="flex: 1; margin: 0;">
                   <div class="progress-bar-fill" style="width: ${Math.min(100, Math.max(0, p.pct))}%;"></div>
                 </div>
               </div>
             ` : ''}
-
-            ${p.ket ? `<div style="margin-top: 10px; font-size: 0.75rem; color: #6b7280; background: rgba(243, 244, 246, 0.6); padding: 6px 10px; border-radius: 8px;">ℹ️ ${p.ket}</div>` : ''}
+            <span class="status-badge ${badgeInfo.cls}" style="white-space: nowrap;"><i class="ph ${badgeInfo.icon}"></i> ${p.status}</span>
           </div>
         </div>
       `;

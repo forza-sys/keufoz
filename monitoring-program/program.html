@@ -68,8 +68,10 @@
       padding: 16px;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
+      align-items: center;
       justify-content: space-between;
+      gap: 16px;
     }
     .program-card:hover {
       transform: translateY(-2px);
@@ -80,18 +82,13 @@
 <body>
   <div id="sidebar-container"></div>
 
-  <main class="main-content">
+  <main class="main-content expanded">
     <div style="padding: 24px;">
       <!-- Page Header -->
       <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
         <div>
           <h1 style="font-size: 1.5rem; font-weight: 800; color: var(--heading-color, #111827); margin: 0;">Monitoring Program Kerja FOZ</h1>
           <p style="font-size: 0.88rem; color: #6b7280; margin-top: 4px; margin-bottom: 0;">Rekapitalisasi real-time & pencapaian Program Kerja FOZ 2024-2027</p>
-        </div>
-        <div style="display: flex; gap: 10px; align-items: center;">
-          <a href="timeline.html" style="display: inline-flex; align-items: center; gap: 8px; background: rgba(16,185,129,0.1); color: #10b981; border: 1.5px solid rgba(16,185,129,0.3); padding: 8px 16px; border-radius: 10px; font-size: 0.85rem; font-weight: 600; text-decoration: none; transition: all 0.2s;">
-            <i class="ph-light ph-calendar-blank" style="font-size: 1.1rem;"></i> View Timeline Event (16:9)
-          </a>
         </div>
       </div>
 
@@ -124,6 +121,29 @@
         </div>
       </div>
 
+      <!-- Top Charts Layer -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-bottom: 24px;">
+        <!-- Chart 1: Status Distribution -->
+        <div style="background: var(--card-bg, #ffffff); border: 1.5px solid var(--border-color, #e5e7eb); border-radius: 16px; padding: 20px;">
+          <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--heading-color, #111827); margin-top: 0; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+            <i class="ph-light ph-chart-pie-slice" style="color: #10b981;"></i> Distribusi Status Program
+          </h3>
+          <div style="position: relative; height: 220px; display: flex; align-items: center; justify-content: center;">
+            <canvas id="statusDonutChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Chart 2: Capaian per Bidang -->
+        <div style="background: var(--card-bg, #ffffff); border: 1.5px solid var(--border-color, #e5e7eb); border-radius: 16px; padding: 20px;">
+          <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--heading-color, #111827); margin-top: 0; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+            <i class="ph-light ph-chart-bar" style="color: #3b82f6;"></i> Jumlah Program per Bidang
+          </h3>
+          <div style="position: relative; height: 220px;">
+            <canvas id="bidangBarChart"></canvas>
+          </div>
+        </div>
+      </div>
+
       <!-- Filter Categories Bar -->
       <div style="background: var(--card-bg, #ffffff); border: 1.5px solid var(--border-color, #e5e7eb); border-radius: 16px; padding: 16px; margin-bottom: 24px;">
         <div style="font-size: 0.78rem; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;">Filter Bidang & Organisasi</div>
@@ -132,53 +152,27 @@
         </div>
       </div>
 
-      <!-- Main Layout: Grid of Programs & Charts -->
-      <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; align-items: start;">
-        <!-- Left Side: Search & Program List -->
-        <div>
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; gap: 12px; flex-wrap: wrap;">
-            <div style="position: relative; flex: 1; min-width: 200px;">
-              <i class="ph-light ph-magnifying-glass" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #9ca3af;"></i>
-              <input type="text" id="search-program-input" placeholder="Cari nama program, acuan, keterangan..." style="width: 100%; padding: 9px 12px 9px 36px; border-radius: 10px; border: 1.5px solid var(--border-color, #e5e7eb); font-size: 0.85rem; outline: none; background: var(--card-bg, #fff); color: var(--text-color, #111827);">
-            </div>
-            <select id="status-filter-select" style="padding: 9px 12px; border-radius: 10px; border: 1.5px solid var(--border-color, #e5e7eb); font-size: 0.85rem; outline: none; background: var(--card-bg, #fff); color: var(--text-color, #111827);">
-              <option value="ALL">Semua Status</option>
-              <option value="Selesai/Berjalan">Selesai / Berjalan</option>
-              <option value="On Process">On Process</option>
-              <option value="Direncanakan">Direncanakan</option>
-              <option value="Belum Terdefinisi">Belum Terdefinisi</option>
-            </select>
+      <!-- Main Layout: Search & Program List -->
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+          <div style="position: relative; flex: 1; min-width: 200px;">
+            <i class="ph-light ph-magnifying-glass" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #9ca3af;"></i>
+            <input type="text" id="search-program-input" placeholder="Cari nama program, acuan, keterangan..." style="width: 100%; padding: 9px 12px 9px 36px; border-radius: 10px; border: 1.5px solid var(--border-color, #e5e7eb); font-size: 0.85rem; outline: none; background: var(--card-bg, #fff); color: var(--text-color, #111827);">
           </div>
-
-          <!-- Cards List -->
-          <div id="program-cards-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px;">
-            <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #9ca3af;">
-              <i class="ph-light ph-spinner spinner-rotate" style="font-size: 2rem; display: block; margin-bottom: 10px;"></i>
-              Memuat data program kerja dari Google Sheets...
-            </div>
-          </div>
+          <select id="status-filter-select" style="padding: 9px 12px; border-radius: 10px; border: 1.5px solid var(--border-color, #e5e7eb); font-size: 0.85rem; outline: none; background: var(--card-bg, #fff); color: var(--text-color, #111827);">
+            <option value="ALL">Semua Status</option>
+            <option value="Selesai/Berjalan">Selesai / Berjalan</option>
+            <option value="On Process">On Process</option>
+            <option value="Direncanakan">Direncanakan</option>
+            <option value="Belum Terdefinisi">Belum Terdefinisi</option>
+          </select>
         </div>
 
-        <!-- Right Side: Donut Charts Overview -->
-        <div style="display: flex; flex-direction: column; gap: 20px;">
-          <!-- Chart 1: Status Distribution -->
-          <div style="background: var(--card-bg, #ffffff); border: 1.5px solid var(--border-color, #e5e7eb); border-radius: 16px; padding: 20px;">
-            <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--heading-color, #111827); margin-top: 0; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-              <i class="ph-light ph-chart-pie-slice" style="color: #10b981;"></i> Distribusi Status Program
-            </h3>
-            <div style="position: relative; height: 220px; display: flex; align-items: center; justify-content: center;">
-              <canvas id="statusDonutChart"></canvas>
-            </div>
-          </div>
-
-          <!-- Chart 2: Capaian per Bidang -->
-          <div style="background: var(--card-bg, #ffffff); border: 1.5px solid var(--border-color, #e5e7eb); border-radius: 16px; padding: 20px;">
-            <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--heading-color, #111827); margin-top: 0; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-              <i class="ph-light ph-chart-bar" style="color: #3b82f6;"></i> Jumlah Program per Bidang
-            </h3>
-            <div style="position: relative; height: 220px;">
-              <canvas id="bidangBarChart"></canvas>
-            </div>
+        <!-- Cards List (Single Column) -->
+        <div id="program-cards-list" style="display: grid; grid-template-columns: 1fr; gap: 16px;">
+          <div style="text-align: center; padding: 40px; color: #9ca3af;">
+            <i class="ph-light ph-spinner spinner-rotate" style="font-size: 2rem; display: block; margin-bottom: 10px;"></i>
+            Memuat data program kerja dari Google Sheets...
           </div>
         </div>
       </div>
