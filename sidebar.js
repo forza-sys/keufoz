@@ -68,15 +68,6 @@
                     <li><a href="${base}sekretariat/dashboard.html"><i class="ph-light ph-identification-card"></i> <span>Data Keanggotaan</span></a></li>
                 </ul>
             `;
-        } else if (path.includes('/monitoring-program/')) {
-            menuHTML = `
-                <ul class="sidebar-menu">
-                    <li><a href="${base}dashboard.html"><i class="ph-light ph-arrow-left"></i> <span>Dashboard Utama</span></a></li>
-                    <li style="margin-top: 12px; margin-bottom: 4px; padding-left: 20px; font-size: 0.68rem; font-weight: 700; color: rgba(255,255,255,0.45); letter-spacing: 0.8px; text-transform: uppercase;">MONITORING</li>
-                    <li><a href="${base}monitoring-program/program.html"><i class="ph-light ph-kanban"></i> <span>Program Kerja</span></a></li>
-                    <li><a href="${base}monitoring-program/timeline.html"><i class="ph-light ph-calendar-blank"></i> <span>Timeline Event</span></a></li>
-                </ul>
-            `;
         } else if (path.includes('/admin/')) {
             // Default Admin Menu for /admin/
             menuHTML = `
@@ -101,10 +92,6 @@
                      <li><a href="${base}arus-kas.html"><i class="ph-light ph-arrows-left-right"></i> <span>Laporan Arus Kas</span></a></li>
                      <li><a href="${base}calk.html"><i class="ph-light ph-book-open"></i> <span>CALK PSAK 45</span></a></li>
                      <li><a href="${base}portal-anggota.html"><i class="ph-light ph-buildings"></i> <span>Portal Anggota</span></a></li>
-                     
-                     <li style="margin-top: 12px; margin-bottom: 4px; padding-left: 20px; font-size: 0.68rem; font-weight: 700; color: rgba(255,255,255,0.45); letter-spacing: 0.8px; text-transform: uppercase;">MONITORING PROGRAM</li>
-                     <li><a href="${base}monitoring-program/program.html"><i class="ph-light ph-kanban"></i> <span>Program Kerja</span></a></li>
-                     <li><a href="${base}monitoring-program/timeline.html"><i class="ph-light ph-calendar-blank"></i> <span>Timeline Event</span></a></li>
                  </ul>
                  <div style="position: absolute; bottom: 20px; left: 0; width: 100%; padding: 0 15px;">
                      <a href="#" onclick="sessionStorage.removeItem('foz_auth'); window.location.href='${base}login.html';" style="display: flex; align-items: center; gap: 15px; color: #ef4444; text-decoration: none; font-weight: 600; font-size: 0.9rem; padding: 12px 15px; border-radius: 8px; transition: background 0.2s;">
