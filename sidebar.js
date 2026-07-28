@@ -71,6 +71,8 @@
         } else if (path.includes('/monitoring-program/')) {
             menuHTML = `
                 <ul class="sidebar-menu">
+                    <li><a href="${base}dashboard.html"><i class="ph-light ph-arrow-left"></i> <span>Dashboard Utama</span></a></li>
+                    <li style="margin-top: 12px; margin-bottom: 4px; padding-left: 20px; font-size: 0.68rem; font-weight: 700; color: rgba(255,255,255,0.45); letter-spacing: 0.8px; text-transform: uppercase;">MONITORING</li>
                     <li><a href="${base}monitoring-program/program.html"><i class="ph-light ph-kanban"></i> <span>Program Kerja</span></a></li>
                     <li><a href="${base}monitoring-program/timeline.html"><i class="ph-light ph-calendar-blank"></i> <span>Timeline Event</span></a></li>
                 </ul>
