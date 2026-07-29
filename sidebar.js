@@ -106,7 +106,7 @@
                      <li class="coming-soon-menu"><a href="#"><i class="ph-light ph-buildings"></i> <span>Portal Anggota</span></a></li>
                  </ul>
                  <div style="position: absolute; bottom: 20px; left: 0; width: 100%; padding: 0 15px;">
-                     <a href="#" onclick="sessionStorage.removeItem('foz_auth'); window.location.href='${base}login.html';" style="display: flex; align-items: center; gap: 15px; color: #ef4444; text-decoration: none; font-weight: 600; font-size: 0.9rem; padding: 12px 15px; border-radius: 8px; transition: background 0.2s;">
+                     <a href="#" onclick="sessionStorage.removeItem('foz_auth'); window.location.href='${base}login.html';" style="display: flex; align-items: center; gap: 15px; color: #064e3b; text-decoration: none; font-weight: 600; font-size: 0.9rem; padding: 12px 15px; border-radius: 8px; transition: background 0.2s;">
                          <i class="ph-light ph-sign-out" style="min-width: 24px; text-align: center; font-size: 1.1rem;"></i> <span class="sidebar-text">Keluar</span>
                      </a>
                  </div>
