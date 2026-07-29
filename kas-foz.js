@@ -280,7 +280,8 @@ function renderKPIs(data) {
   document.getElementById('kpi-total-pengeluaran').textContent = formatRp(totalPeng);
   document.getElementById('kpi-pagu').textContent = formatRp(totalPagu);
   document.getElementById('kpi-persen').textContent = persen.toFixed(1) + '%';
-  document.getElementById('kpi-transaksi').textContent = totalTrans.toLocaleString('id-ID');
+  const elSisa = document.getElementById('kpi-sisa-saldo');
+  if (elSisa) elSisa.textContent = formatRp(totalPagu - totalPeng);
 
   const cardPersen = document.getElementById('kpi-card-persen');
   if (cardPersen) {
