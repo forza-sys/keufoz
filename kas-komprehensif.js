@@ -83,17 +83,7 @@ async function fetchGvizSheet(sheetName) {
 }
 
 async function loadPengeluaranData() {
-  const paguRows = await fetchGvizSheet('Pagu');
-  PENGELUARAN_DATA.paguTahunan = 0;
-  paguRows.forEach(r => {
-    const pos = r.c && r.c[0] ? r.c[0].v : null;
-    const nominal = r.c && r.c[1] ? r.c[1].v : null;
-    if (pos && typeof pos === 'string' && !pos.toLowerCase().startsWith('total')) {
-      if (typeof nominal === 'number' && nominal > 0) {
-        PENGELUARAN_DATA.paguTahunan += nominal;
-      }
-    }
-  });
+  PENGELUARAN_DATA.paguTahunan = await fetchTotalPagu();
 
   PENGELUARAN_DATA.totalVal = 0;
   PENGELUARAN_DATA.totalCount = 0;
