@@ -41,26 +41,24 @@ let chartKomp    = null;
 let totalPaguOps = 136764793; // fallback
 
 const PAGU_URL = "https://docs.google.com/spreadsheets/d/181CZUA-74uh-8yLJO_iI5aMtaBYMl4p2IdnOOg38Cas/gviz/tq?tqx=out:json&sheet=Pagu";
+const URL_NOTA_DINAS_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS6bK94e2YFxJ8SwWfE9eHH6IncZ6LDw5BSRhGDKk8HX9oEVHYBCMPgZPEEJFDEqfj-1NJ9pyGLqNRD/pub?output=csv";
 
 async function fetchTotalPagu() {
   try {
-    const res = await fetch(PAGU_URL);
+    const res = await fetch(URL_NOTA_DINAS_CSV);
     const text = await res.text();
-    const start = text.indexOf('(');
-    const end = text.lastIndexOf(')');
-    const json = JSON.parse(text.substring(start + 1, end));
-    let total = 0;
-    json.table.rows.forEach(r => {
-      const pos = r.c && r.c[0] ? r.c[0].v : null;
-      const nominal = r.c && r.c[1] ? r.c[1].v : null;
-      if (typeof pos === 'string' && !pos.toLowerCase().startsWith('total') && typeof nominal === 'number') {
-        total += nominal;
+    const lines = text.split('\n');
+    for (let i = 0; i < lines.length; i++) {
+      const cols = lines[i].split(',');
+      if (cols.length >= 4 && cols[2].trim() === 'TOTAL NOTA DINAS') {
+        const val = parseFloat(cols[3].replace(/"/g, '').replace(/[Rp\s\.]/g, '').replace(/,/g, '.').trim());
+        if (val > 0) return val;
       }
-    });
-    return total > 0 ? total : 136764793;
+    }
+    return 384259107; // fallback
   } catch (e) {
-    console.error('Failed to fetch Pagu', e);
-    return 136764793; // fallback to known total
+    console.error('Failed to fetch Nota Dinas', e);
+    return 384259107; // fallback
   }
 }
 

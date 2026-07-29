@@ -226,7 +226,7 @@ async function init() {
     if (loadingState) loadingState.style.display = 'none';
     if (dashboardContent) dashboardContent.style.display = 'block';
 
-    renderKPIs(ALL_DATA);
+    await renderKPIs(ALL_DATA);
     renderHealthTable(ALL_DATA, activeFilter);
     renderCharts(ALL_DATA);
   } catch (err) {
@@ -259,9 +259,25 @@ function findPaguForSheet(sheetName, paguLookup) {
 }
 
 // ---- Render KPIs ----
-function renderKPIs(data) {
+async function fetchTotalNotaDinas() {
+  const URL_NOTA_DINAS_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS6bK94e2YFxJ8SwWfE9eHH6IncZ6LDw5BSRhGDKk8HX9oEVHYBCMPgZPEEJFDEqfj-1NJ9pyGLqNRD/pub?output=csv";
+  try {
+    const res = await fetch(URL_NOTA_DINAS_CSV);
+    const text = await res.text();
+    const lines = text.split('\n');
+    for (let i = 0; i < lines.length; i++) {
+      const cols = lines[i].split(',');
+      if (cols.length >= 4 && cols[2].trim() === 'TOTAL NOTA DINAS') {
+        const val = parseFloat(cols[3].replace(/"/g, '').replace(/[Rp\s\.]/g, '').replace(/,/g, '.').trim());
+        if (val > 0) return val;
+      }
+    }
+  } catch(e) { console.error(e); }
+  return 384259107;
+}
+
+async function renderKPIs(data) {
   let totalPeng = 0;
-  let totalPagu = 0;
   let totalTrans = 0;
 
   if (data.sheets) {
@@ -271,9 +287,7 @@ function renderKPIs(data) {
     });
   }
 
-  if (data.pagu && Array.isArray(data.pagu)) {
-    data.pagu.forEach(p => { totalPagu += p.nominal || 0; });
-  }
+  const totalPagu = await fetchTotalNotaDinas();
 
   const persen = totalPagu > 0 ? (totalPeng / totalPagu) * 100 : 0;
 
