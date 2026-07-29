@@ -55,16 +55,16 @@
             style.id = 'sidebar-custom-styles';
             style.innerHTML = `
                 .coming-soon-menu { cursor: not-allowed; }
-                .coming-soon-menu a { pointer-events: none; }
-                .coming-soon-menu a i, .coming-soon-menu a span { opacity: 0.3; transition: opacity 0.2s; }
+                .coming-soon-menu a { pointer-events: none; opacity: 1 !important; }
+                .coming-soon-menu a i, .coming-soon-menu a span { opacity: 0.3 !important; transition: opacity 0.2s; }
                 .coming-soon-menu:hover a span { display: none !important; }
                 .coming-soon-menu:hover a::after { 
                     content: "Coming Soon"; 
                     margin-left: 10px; 
                     font-weight: 700; 
                     font-style: italic; 
-                    opacity: 0.9;
-                    color: #ffffff;
+                    opacity: 1 !important;
+                    color: #ffffff !important;
                 }
             `;
             document.head.appendChild(style);
