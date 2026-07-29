@@ -50,6 +50,18 @@
             document.head.appendChild(phScript);
         }
 
+        if (!document.getElementById('sidebar-custom-styles')) {
+            const style = document.createElement('style');
+            style.id = 'sidebar-custom-styles';
+            style.innerHTML = `
+                .coming-soon-menu { cursor: not-allowed; }
+                .coming-soon-menu a { opacity: 0.3; pointer-events: none; }
+                .coming-soon-menu:hover a span { display: none; }
+                .coming-soon-menu:hover a::after { content: "Coming Soon"; margin-left: 10px; font-weight: 600; font-style: italic; }
+            `;
+            document.head.appendChild(style);
+        }
+
         const path = window.location.pathname;
 
         let menuHTML = '';
@@ -84,14 +96,14 @@
                      <li><a href="${base}kas-komprehensif.html"><i class="ph-light ph-wallet"></i> <span>Kas & Bank</span></a></li>
                      <li><a href="${base}kas-foz.html"><i class="ph-light ph-receipt"></i> <span>Realisasi Anggaran</span></a></li>
                      <li><a href="${base}pendapatan-iuran.html"><i class="ph-light ph-hand-coins"></i> <span>Pendapatan & Iuran</span></a></li>
-                     <li><a href="${base}nota-dinas.html"><i class="ph-light ph-file-text"></i> <span>Nota Dinas</span></a></li>
-                     <li><a href="${base}cashbon.html"><i class="ph-light ph-money"></i> <span>Uang Muka & LPJ</span></a></li>
-                     <li><a href="${base}aset.html"><i class="ph-light ph-archive"></i> <span>Aset & Inventaris</span></a></li>
-                     <li><a href="${base}utang-vendor.html"><i class="ph-light ph-handshake"></i> <span>Utang & Piutang Mitra</span></a></li>
-                     <li><a href="${base}psak45.html"><i class="ph-light ph-file-doc"></i> <span>Laporan PSAK 45</span></a></li>
-                     <li><a href="${base}arus-kas.html"><i class="ph-light ph-arrows-left-right"></i> <span>Laporan Arus Kas</span></a></li>
-                     <li><a href="${base}calk.html"><i class="ph-light ph-book-open"></i> <span>CALK PSAK 45</span></a></li>
-                     <li><a href="${base}portal-anggota.html"><i class="ph-light ph-buildings"></i> <span>Portal Anggota</span></a></li>
+                     <li class="coming-soon-menu"><a href="#"><i class="ph-light ph-file-text"></i> <span>Nota Dinas</span></a></li>
+                     <li class="coming-soon-menu"><a href="#"><i class="ph-light ph-money"></i> <span>Uang Muka & LPJ</span></a></li>
+                     <li class="coming-soon-menu"><a href="#"><i class="ph-light ph-archive"></i> <span>Aset & Inventaris</span></a></li>
+                     <li class="coming-soon-menu"><a href="#"><i class="ph-light ph-handshake"></i> <span>Utang & Piutang Mitra</span></a></li>
+                     <li class="coming-soon-menu"><a href="#"><i class="ph-light ph-file-doc"></i> <span>Laporan PSAK 45</span></a></li>
+                     <li class="coming-soon-menu"><a href="#"><i class="ph-light ph-arrows-left-right"></i> <span>Laporan Arus Kas</span></a></li>
+                     <li class="coming-soon-menu"><a href="#"><i class="ph-light ph-book-open"></i> <span>CALK PSAK 45</span></a></li>
+                     <li class="coming-soon-menu"><a href="#"><i class="ph-light ph-buildings"></i> <span>Portal Anggota</span></a></li>
                  </ul>
                  <div style="position: absolute; bottom: 20px; left: 0; width: 100%; padding: 0 15px;">
                      <a href="#" onclick="sessionStorage.removeItem('foz_auth'); window.location.href='${base}login.html';" style="display: flex; align-items: center; gap: 15px; color: #ef4444; text-decoration: none; font-weight: 600; font-size: 0.9rem; padding: 12px 15px; border-radius: 8px; transition: background 0.2s;">
