@@ -55,9 +55,17 @@
             style.id = 'sidebar-custom-styles';
             style.innerHTML = `
                 .coming-soon-menu { cursor: not-allowed; }
-                .coming-soon-menu a { opacity: 0.3; pointer-events: none; }
-                .coming-soon-menu:hover a span { display: none; }
-                .coming-soon-menu:hover a::after { content: "Coming Soon"; margin-left: 10px; font-weight: 600; font-style: italic; }
+                .coming-soon-menu a { pointer-events: none; }
+                .coming-soon-menu a i, .coming-soon-menu a span { opacity: 0.3; transition: opacity 0.2s; }
+                .coming-soon-menu:hover a span { display: none !important; }
+                .coming-soon-menu:hover a::after { 
+                    content: "Coming Soon"; 
+                    margin-left: 10px; 
+                    font-weight: 700; 
+                    font-style: italic; 
+                    opacity: 0.9;
+                    color: #ffffff;
+                }
             `;
             document.head.appendChild(style);
         }
