@@ -783,7 +783,6 @@ async function initDashboard() {
     ALL_DATA = csvData;
     DATES    = ALL_DATA.dates;
     ITEMS    = ALL_DATA.items;
-    totalPaguOps = paguData;
     activeDateIdx = DATES.length - 1;
 
     // Populate date dropdown
