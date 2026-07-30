@@ -148,12 +148,7 @@
           <button onclick="window.print()" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 8px 14px; font-weight: 600; font-size: 0.82rem; cursor: pointer; color: var(--text-main); display: inline-flex; align-items: center; gap: 6px;">
             <i class="fas fa-print"></i> Cetak Laporan Iuran
           </button>
-          <div class="date-selector">
-            <label for="month-select"><i class="fas fa-calendar-alt"></i> Bulan:</label>
-            <select id="month-select">
-              <!-- Will be populated dynamically -->
-            </select>
-          </div>
+
         </div>
       </div>
 
@@ -188,6 +183,11 @@
               <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">Total Iuran Terkumpul: Rp 678.458.331 | Piutang Iuran Menunggak: Rp 471.541.669 (38 Kuning, 20 Merah).</div>
             </div>
           </div>
+        </div>
+
+        <!-- Month Filter Bar -->
+        <div class="filter-bar" id="month-filter-bar" style="margin-bottom: 16px; overflow-x: auto; white-space: nowrap;">
+          <!-- Populated dynamically via JS -->
         </div>
 
         <!-- KPI Strip -->

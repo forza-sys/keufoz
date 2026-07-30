@@ -10,7 +10,7 @@ const URL_IURAN = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTaZXQznuc6ZS
 const MONTHS = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
 
 let membersData = []; // Gabungan Kesepakatan & Iuran
-let activeMonthIdx = 0; // 0 for Januari, etc. (Default to current month or latest)
+let activeMonthIdx = 'all'; // 'all' or 0-11
 let activeTab = 'pemasukan'; // 'pemasukan' | 'kepatuhan'
 let chartTren = null;
 
@@ -117,8 +117,7 @@ async function fetchAllData() {
   }
 
   const d = new Date();
-  activeMonthIdx = 0; 
-}
+  activeMonthIdx = 'all';
 
 // ---- Tab Switching ----
 window.switchTab = function(tabId) {
@@ -162,6 +161,16 @@ window.switchTab = function(tabId) {
   updateDashboard();
 };
 
+window.filterMonth = function(val) {
+  activeMonthIdx = val;
+  document.querySelectorAll('.filter-btn-month').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  const id = val === 'all' ? 'btn-month-all' : `btn-month-${val}`;
+  const activeBtn = document.getElementById(id);
+  if (activeBtn) activeBtn.classList.add('active');
+  updateDashboard();
+};
 
 // ---- UI Updates ----
 function updateDashboard() {
@@ -183,8 +192,14 @@ function updateKPIs() {
 
       m.monthlyStatus.forEach(st => {
         if (st.status !== 'na') isWajibAtAll = true;
-        if (st.trxMonth === activeMonthIdx) {
-          memberTransaksiBulanIni++;
+        if (activeMonthIdx === 'all') {
+          if (st.status === 'lunas') {
+            memberTransaksiBulanIni++;
+          }
+        } else {
+          if (st.trxMonth === activeMonthIdx) {
+            memberTransaksiBulanIni++;
+          }
         }
       });
 
@@ -199,7 +214,7 @@ function updateKPIs() {
     const persen = totalAktif > 0 ? (lembagaCount / totalAktif * 100).toFixed(1) : 0;
 
     document.getElementById('kpi1-value').textContent = lembagaCount;
-    document.getElementById('kpi2-value').textContent = totalTransaksi + ' Bulan';
+    document.getElementById('kpi2-value').textContent = totalTransaksi + ' Trx';
     document.getElementById('kpi3-value').textContent = persen + '%';
     document.getElementById('kpi4-value').textContent = formatRp(totalNominal);
 
@@ -210,13 +225,26 @@ function updateKPIs() {
     let potensi = 0;
 
     membersData.forEach(m => {
-      const st = m.monthlyStatus[activeMonthIdx];
-      if (st.status !== 'na') {
-        wajib++;
-        potensi += m.iuranBulan;
-        if (st.status === 'lunas') {
-          lunas++;
-          nominal += m.iuranBulan;
+      if (activeMonthIdx === 'all') {
+        m.monthlyStatus.forEach(st => {
+          if (st.status !== 'na') {
+            wajib++;
+            potensi += m.iuranBulan;
+            if (st.status === 'lunas') {
+              lunas++;
+              nominal += m.iuranBulan;
+            }
+          }
+        });
+      } else {
+        const st = m.monthlyStatus[activeMonthIdx];
+        if (st.status !== 'na') {
+          wajib++;
+          potensi += m.iuranBulan;
+          if (st.status === 'lunas') {
+            lunas++;
+            nominal += m.iuranBulan;
+          }
         }
       }
     });
@@ -249,24 +277,42 @@ function renderTable() {
       let dates = [];
       let trxs = 0;
       m.monthlyStatus.forEach(st => {
-        if (st.trxMonth === activeMonthIdx) {
-          trxs++;
-          if (!dates.includes(st.raw)) dates.push(st.raw);
+        if (activeMonthIdx === 'all') {
+          if (st.status === 'lunas') {
+            trxs++;
+            if (!dates.includes(st.raw)) dates.push(st.raw);
+          }
+        } else {
+          if (st.trxMonth === activeMonthIdx) {
+            trxs++;
+            if (!dates.includes(st.raw)) dates.push(st.raw);
+          }
         }
       });
       
       if (filterSt === 'lunas' && trxs === 0) return;
       if (filterSt === 'belum' && trxs > 0) return;
       if (filterSt === 'na') {
-        const isNa = m.monthlyStatus[activeMonthIdx].status === 'na';
-        if (!isNa) return;
+        if (activeMonthIdx === 'all') {
+          const allNa = m.monthlyStatus.every(s => s.status === 'na');
+          if (!allNa) return;
+        } else {
+          const isNa = m.monthlyStatus[activeMonthIdx].status === 'na';
+          if (!isNa) return;
+        }
       }
       
       if (trxs > 0) {
         badgeClass = 'lunas';
-        badgeText = `<i class="fas fa-check"></i> ${trxs} Bulan lunas (${dates.join(', ')})`;
+        badgeText = `<i class="fas fa-check"></i> ${trxs} Trx (${dates.slice(0,2).join(', ')}${dates.length > 2 ? ', dst' : ''})`;
       } else {
-        const isNa = m.monthlyStatus[activeMonthIdx].status === 'na';
+        let isNa = false;
+        if (activeMonthIdx === 'all') {
+          isNa = m.monthlyStatus.every(s => s.status === 'na');
+        } else {
+          isNa = m.monthlyStatus[activeMonthIdx].status === 'na';
+        }
+
         if (isNa) {
           badgeClass = 'na';
           badgeText = '-';
@@ -276,18 +322,44 @@ function renderTable() {
         }
       }
     } else {
-      const st = m.monthlyStatus[activeMonthIdx];
-      if (filterSt !== 'all' && st.status !== filterSt) return;
+      if (activeMonthIdx === 'all') {
+        let w = 0, l = 0;
+        m.monthlyStatus.forEach(st => {
+          if (st.status !== 'na') w++;
+          if (st.status === 'lunas') l++;
+        });
+        
+        if (filterSt === 'lunas' && l < w) return;
+        if (filterSt === 'belum' && l > 0) return;
+        if (filterSt === 'na' && w > 0) return;
 
-      if (st.status === 'lunas') {
-        badgeClass = 'lunas';
-        badgeText = '<i class="fas fa-check"></i> Lunas (' + st.raw + ')';
-      } else if (st.status === 'belum') {
-        badgeClass = 'belum';
-        badgeText = '<i class="fas fa-times"></i> Belum Bayar';
+        if (w === 0) {
+          badgeClass = 'na';
+          badgeText = '-';
+        } else if (l === w) {
+          badgeClass = 'lunas';
+          badgeText = `<i class="fas fa-check"></i> Lunas Penuh (${l}/${w})`;
+        } else if (l > 0) {
+          badgeClass = 'belum';
+          badgeText = `<i class="fas fa-exclamation-triangle"></i> Sebagian (${l}/${w})`;
+        } else {
+          badgeClass = 'belum';
+          badgeText = '<i class="fas fa-times"></i> Belum Bayar';
+        }
       } else {
-        badgeClass = 'na';
-        badgeText = '-';
+        const st = m.monthlyStatus[activeMonthIdx];
+        if (filterSt !== 'all' && st.status !== filterSt) return;
+
+        if (st.status === 'lunas') {
+          badgeClass = 'lunas';
+          badgeText = '<i class="fas fa-check"></i> Lunas (' + st.raw + ')';
+        } else if (st.status === 'belum') {
+          badgeClass = 'belum';
+          badgeText = '<i class="fas fa-times"></i> Belum Bayar';
+        } else {
+          badgeClass = 'na';
+          badgeText = '-';
+        }
       }
     }
 
@@ -425,14 +497,14 @@ async function initDashboard() {
   try {
     await fetchAllData();
 
-    // Populate month dropdown
-    const sel = document.getElementById('month-select');
-    if (sel) {
-      sel.innerHTML = MONTHS.map((m, i) => `<option value="${i}">${m}</option>`).join('');
-      sel.addEventListener('change', (e) => {
-        activeMonthIdx = parseInt(e.target.value);
-        updateDashboard();
+    // Build month pill filters
+    const fBar = document.getElementById('month-filter-bar');
+    if (fBar) {
+      let html = `<button class="filter-btn active filter-btn-month" id="btn-month-all" onclick="window.filterMonth('all')">Semua / Total</button>`;
+      MONTHS.forEach((m, i) => {
+        html += `<button class="filter-btn filter-btn-month" id="btn-month-${i}" onclick="window.filterMonth(${i})">${m}</button>`;
       });
+      fBar.innerHTML = html;
     }
 
     // Attach filter listeners
