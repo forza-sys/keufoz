@@ -118,6 +118,7 @@ async function fetchAllData() {
 
   const d = new Date();
   activeMonthIdx = 'all';
+}
 
 // ---- Tab Switching ----
 window.switchTab = function(tabId) {
