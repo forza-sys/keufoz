@@ -215,7 +215,7 @@ function updateKPIs() {
     const persen = totalAktif > 0 ? (lembagaCount / totalAktif * 100).toFixed(1) : 0;
 
     document.getElementById('kpi1-value').textContent = lembagaCount;
-    document.getElementById('kpi2-value').textContent = totalTransaksi + ' Trx';
+    document.getElementById('kpi2-value').textContent = totalTransaksi;
     document.getElementById('kpi3-value').textContent = persen + '%';
     document.getElementById('kpi4-value').textContent = formatRp(totalNominal);
 
