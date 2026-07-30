@@ -140,8 +140,6 @@ window.switchTab = function(tabId) {
   if (activeTab === 'pemasukan') {
     document.getElementById('kpi1-label').textContent = 'Lembaga Membayar';
     document.getElementById('kpi1-sub').textContent = 'Melakukan transaksi bulan ini';
-    document.getElementById('kpi2-label').textContent = 'Jumlah Transaksi';
-    document.getElementById('kpi2-sub').textContent = 'Total pelunasan iuran bulanan';
     document.getElementById('kpi3-label').textContent = 'Tingkat Partisipasi';
     document.getElementById('kpi3-sub').textContent = 'Persentase lembaga aktif';
     document.getElementById('kpi4-label').textContent = 'Pemasukan Riil';
