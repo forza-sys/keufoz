@@ -90,7 +90,15 @@ async function fetchAllData() {
     // Find matching Kesepakatan row
     const rowKes = kesData.find(r => r[1] && r[1].trim() === nama);
     const iuranBulanStr = rowKes ? rowKes[3] : '0';
-    const iuranBulan = parseRp(iuranBulanStr);
+    const iuranSeharusnyaStr = rowKes && rowKes[8] ? rowKes[8] : '0';
+    
+    let iuranBulan = parseRp(iuranBulanStr);
+    const iuranSeharusnyaBase = parseRp(iuranSeharusnyaStr);
+    
+    // Fallback if Iuran/Bulan was wrongly typed (like "Anwar")
+    if (iuranBulan === 0 && iuranSeharusnyaBase > 0) {
+      iuranBulan = iuranSeharusnyaBase;
+    }
 
     const monthlyStatus = [];
     for (let m = 0; m < 12; m++) {
