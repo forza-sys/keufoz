@@ -150,8 +150,6 @@ window.switchTab = function(tabId) {
   } else {
     document.getElementById('kpi1-label').textContent = 'Anggota Wajib Bayar';
     document.getElementById('kpi1-sub').textContent = 'Lembaga aktif di bulan ini';
-    document.getElementById('kpi2-label').textContent = 'Total Lunas';
-    document.getElementById('kpi2-sub').textContent = 'Sudah lunas kewajiban bulan ini';
     document.getElementById('kpi3-label').textContent = 'Tingkat Kepatuhan';
     document.getElementById('kpi3-sub').textContent = 'Rasio lunas terhadap wajib bayar';
     document.getElementById('kpi4-label').textContent = 'Nominal Terkumpul';
@@ -215,7 +213,6 @@ function updateKPIs() {
     const persen = totalAktif > 0 ? (lembagaCount / totalAktif * 100).toFixed(1) : 0;
 
     document.getElementById('kpi1-value').textContent = lembagaCount;
-    document.getElementById('kpi2-value').textContent = totalTransaksi;
     document.getElementById('kpi3-value').textContent = persen + '%';
     document.getElementById('kpi4-value').textContent = formatRp(totalNominal);
 
@@ -253,7 +250,6 @@ function updateKPIs() {
     const persen = wajib > 0 ? (lunas / wajib * 100).toFixed(1) : 0;
 
     document.getElementById('kpi1-value').textContent = wajib;
-    document.getElementById('kpi2-value').textContent = lunas;
     document.getElementById('kpi3-value').textContent = persen + '%';
     document.getElementById('kpi4-value').textContent = formatRp(nominal);
     document.getElementById('kpi4-sub').textContent = 'Potensi: ' + formatRp(potensi);
