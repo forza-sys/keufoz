@@ -270,6 +270,37 @@ function renderTable() {
     let badgeClass = '';
     let badgeText = '';
 
+    let wajibCount = 0;
+    let actualTrxCount = 0;
+
+    if (activeMonthIdx === 'all') {
+      m.monthlyStatus.forEach(st => {
+        if (st.status !== 'na') wajibCount++;
+        if (st.status === 'lunas') actualTrxCount++;
+      });
+    } else {
+      if (m.monthlyStatus[activeMonthIdx].status !== 'na') wajibCount = 1;
+      if (activeTab === 'pemasukan') {
+        m.monthlyStatus.forEach(st => {
+          if (st.trxMonth === activeMonthIdx) actualTrxCount++;
+        });
+      } else {
+        if (m.monthlyStatus[activeMonthIdx].status === 'lunas') actualTrxCount = 1;
+      }
+    }
+
+    let iuranSeharusnya = wajibCount * m.iuranBulan;
+    let iuranAktual = actualTrxCount * m.iuranBulan;
+    
+    let kesesuaianBadge = '';
+    if (wajibCount === 0) {
+      kesesuaianBadge = '-';
+    } else if (iuranAktual >= iuranSeharusnya) {
+      kesesuaianBadge = '<i class="fas fa-check-circle" style="color: #10b981; font-size: 1.2rem;"></i>';
+    } else {
+      kesesuaianBadge = '<i class="fas fa-times-circle" style="color: #ef4444; font-size: 1.2rem;"></i>';
+    }
+
     if (activeTab === 'pemasukan') {
       let dates = [];
       let trxs = 0;
@@ -366,7 +397,9 @@ function renderTable() {
       <td style="font-weight:500;">${m.nama}</td>
       <td>${m.skala}</td>
       <td>${formatRp(m.iuranBulan)}</td>
+      <td style="font-weight:600;">${formatRp(iuranSeharusnya)}</td>
       <td><span class="badge ${badgeClass}">${badgeText}</span></td>
+      <td style="text-align:center;">${kesesuaianBadge}</td>
     `;
     tbody.appendChild(tr);
   });
