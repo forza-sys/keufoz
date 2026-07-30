@@ -144,7 +144,6 @@ window.switchTab = function(tabId) {
     document.getElementById('kpi3-sub').textContent = 'Persentase lembaga aktif';
     document.getElementById('kpi4-label').textContent = 'Pemasukan Riil';
     document.getElementById('kpi4-sub').textContent = 'Uang kas masuk (Cash-basis)';
-    document.getElementById('th-status').textContent = 'Total Transaksi & Tanggal';
   } else {
     document.getElementById('kpi1-label').textContent = 'Anggota Wajib Bayar';
     document.getElementById('kpi1-sub').textContent = 'Lembaga aktif di bulan ini';
@@ -152,7 +151,6 @@ window.switchTab = function(tabId) {
     document.getElementById('kpi3-sub').textContent = 'Rasio lunas terhadap wajib bayar';
     document.getElementById('kpi4-label').textContent = 'Nominal Terkumpul';
     document.getElementById('kpi4-sub').textContent = 'Berdasarkan bulan kewajiban';
-    document.getElementById('th-status').textContent = 'Status Bulan Ini';
   }
 
   updateDashboard();
@@ -396,7 +394,6 @@ function renderTable() {
       <td>${m.skala}</td>
       <td>${formatRp(m.iuranBulan)}</td>
       <td style="font-weight:600;">${formatRp(iuranSeharusnya)}</td>
-      <td><span class="badge ${badgeClass}">${badgeText}</span></td>
       <td style="text-align:center;">${kesesuaianBadge}</td>
     `;
     tbody.appendChild(tr);
