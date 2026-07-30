@@ -501,7 +501,7 @@ async function initDashboard() {
     // Build month pill filters
     const fBar = document.getElementById('month-filter-bar');
     if (fBar) {
-      let html = `<button class="filter-btn active filter-btn-month" id="btn-month-all" onclick="window.filterMonth('all')">Semua / Total</button>`;
+      let html = `<button class="filter-btn active filter-btn-month" id="btn-month-all" onclick="window.filterMonth('all')">Semua</button>`;
       MONTHS.forEach((m, i) => {
         html += `<button class="filter-btn filter-btn-month" id="btn-month-${i}" onclick="window.filterMonth(${i})">${m}</button>`;
       });
