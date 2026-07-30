@@ -152,6 +152,15 @@ window.switchTab = function(tabId) {
     document.getElementById('kpi4-label').textContent = 'Nominal Terkumpul';
     document.getElementById('kpi4-sub').textContent = 'Berdasarkan bulan kewajiban';
   }
+  
+  const tblContainer = document.querySelector('.table-container');
+  if (tblContainer) {
+    if (activeTab === 'pemasukan') {
+      tblContainer.style.display = 'none';
+    } else {
+      tblContainer.style.display = 'block';
+    }
+  }
 
   updateDashboard();
 };
@@ -534,7 +543,20 @@ async function initDashboard() {
 
     // Attach filter listeners
     document.getElementById('search-input')?.addEventListener('input', renderTable);
-    document.getElementById('status-filter')?.addEventListener('change', renderTable);
+    const sel = document.getElementById('status-filter');
+    if (sel) {
+      sel.addEventListener('change', (e) => {
+        filterSt = e.target.value;
+        renderTable();
+      });
+    }
+
+    const tblContainer = document.querySelector('.table-container');
+    if (tblContainer && activeTab === 'pemasukan') {
+      tblContainer.style.display = 'none';
+    }
+
+    updateDashboard();
 
     if (loadingState) loadingState.style.display = 'none';
     if (dashboardContent) dashboardContent.style.display = 'block';
