@@ -2166,3 +2166,46 @@ body.dark-mode .kpi-icon {
     color: #ffffff !important;
 }
 
+/* ==============================================
+   FILTER PILLS (e.g. Month Filter, Category Filter)
+   ============================================== */
+.filter-bar {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.filter-btn {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1.5px solid var(--border-color, #e5e7eb);
+  background: transparent;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  color: var(--text-muted, #6b7280);
+}
+.filter-btn:hover {
+  border-color: var(--green, #10b981);
+  color: var(--green, #10b981);
+}
+.filter-btn.active {
+  background: var(--green, #10b981);
+  color: #fff;
+  border-color: var(--green, #10b981);
+}
+
+body.dark-mode .filter-btn {
+  border-color: #374151;
+  color: #9ca3af;
+}
+body.dark-mode .filter-btn:hover {
+  border-color: #10b981;
+  color: #10b981;
+}
+body.dark-mode .filter-btn.active {
+  background: #10b981;
+  color: #fff;
+  border-color: #10b981;
+}
