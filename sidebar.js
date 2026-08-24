@@ -84,7 +84,7 @@
                      <li><a href="${base}kas-komprehensif.html"><i class="ph-light ph-wallet"></i> <span>Kas & Bank</span></a></li>
                      <li><a href="${base}kas-foz.html"><i class="ph-light ph-receipt"></i> <span>Realisasi Anggaran</span></a></li>
                      <li><a href="${base}pendapatan.html"><i class="ph-light ph-trend-up"></i> <span>Arus Kas Pemasukan</span></a></li>
-                     <li><a href="${base}iuran.html"><i class="ph-light ph-hand-coins"></i> <span>Kepatuhan Iuran</span></a></li>
+                     <li><a href="${base}iuran.html"><i class="ph-light ph-hand-coins"></i> <span>Iuran Anggota</span></a></li>
                      <li class="coming-soon-menu"><a href="#"><i class="ph-light ph-file-text"></i> <span>Nota Dinas</span></a></li>
                      <li class="coming-soon-menu"><a href="#"><i class="ph-light ph-money"></i> <span>Uang Muka & LPJ</span></a></li>
                      <li class="coming-soon-menu"><a href="#"><i class="ph-light ph-archive"></i> <span>Aset & Inventaris</span></a></li>
