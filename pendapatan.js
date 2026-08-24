@@ -11,7 +11,7 @@ const MONTHS = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 
 
 let membersData = []; // Gabungan Kesepakatan & Iuran
 let activeMonthIdx = 'all'; // 'all' or 0-11
-let activeTab = 'pemasukan'; // 'pemasukan' | 'kepatuhan'
+const activeTab = 'pemasukan';
 let chartTren = null;
 
 // ---- Utility ----
@@ -132,49 +132,6 @@ async function fetchAllData() {
 }
 
 // ---- Tab Switching ----
-window.switchTab = function(tabId) {
-  activeTab = tabId;
-  
-  // Update UI styles
-  document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.style.color = 'var(--text-muted)';
-    btn.style.borderBottomColor = 'transparent';
-    btn.classList.remove('active');
-  });
-  
-  const activeBtn = document.getElementById('tab-' + tabId);
-  activeBtn.style.color = 'var(--green)';
-  activeBtn.style.borderBottomColor = 'var(--green)';
-  activeBtn.classList.add('active');
-  
-  // Update Table headers and labels based on mode
-  if (activeTab === 'pemasukan') {
-    document.getElementById('kpi1-label').textContent = 'Lembaga Membayar';
-    document.getElementById('kpi1-sub').textContent = 'Melakukan transaksi bulan ini';
-    document.getElementById('kpi3-label').textContent = 'Tingkat Partisipasi';
-    document.getElementById('kpi3-sub').textContent = 'Persentase lembaga aktif';
-    document.getElementById('kpi4-label').textContent = 'Pemasukan Riil';
-    document.getElementById('kpi4-sub').textContent = 'Uang kas masuk (Cash-basis)';
-  } else {
-    document.getElementById('kpi1-label').textContent = 'Anggota Wajib Bayar';
-    document.getElementById('kpi1-sub').textContent = 'Lembaga aktif di bulan ini';
-    document.getElementById('kpi3-label').textContent = 'Tingkat Kepatuhan';
-    document.getElementById('kpi3-sub').textContent = 'Rasio lunas terhadap wajib bayar';
-    document.getElementById('kpi4-label').textContent = 'Nominal Terkumpul';
-    document.getElementById('kpi4-sub').textContent = 'Berdasarkan bulan kewajiban';
-  }
-  
-  const tblContainer = document.querySelector('.table-container');
-  if (tblContainer) {
-    if (activeTab === 'pemasukan') {
-      tblContainer.style.display = 'none';
-    } else {
-      tblContainer.style.display = 'block';
-    }
-  }
-
-  updateDashboard();
-};
 
 window.filterMonth = function(val) {
   activeMonthIdx = val;
@@ -273,6 +230,7 @@ function updateKPIs() {
 }
 
 function renderTable() {
+  return;
   const tbody = document.querySelector('#rincian-table tbody');
   const searchQ = document.getElementById('search-input').value.toLowerCase();
   const filterSt = document.getElementById('status-filter').value;

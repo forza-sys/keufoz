@@ -83,7 +83,8 @@
                      <li><a href="${base}dashboard.html"><i class="ph-light ph-squares-four"></i> <span>Ringkasan Umum</span></a></li>
                      <li><a href="${base}kas-komprehensif.html"><i class="ph-light ph-wallet"></i> <span>Kas & Bank</span></a></li>
                      <li><a href="${base}kas-foz.html"><i class="ph-light ph-receipt"></i> <span>Realisasi Anggaran</span></a></li>
-                     <li><a href="${base}pendapatan-iuran.html"><i class="ph-light ph-hand-coins"></i> <span>Pendapatan & Iuran</span></a></li>
+                     <li><a href="${base}pendapatan.html"><i class="ph-light ph-trend-up"></i> <span>Arus Kas Pemasukan</span></a></li>
+                     <li><a href="${base}iuran.html"><i class="ph-light ph-hand-coins"></i> <span>Kepatuhan Iuran</span></a></li>
                      <li class="coming-soon-menu"><a href="#"><i class="ph-light ph-file-text"></i> <span>Nota Dinas</span></a></li>
                      <li class="coming-soon-menu"><a href="#"><i class="ph-light ph-money"></i> <span>Uang Muka & LPJ</span></a></li>
                      <li class="coming-soon-menu"><a href="#"><i class="ph-light ph-archive"></i> <span>Aset & Inventaris</span></a></li>
@@ -178,8 +179,7 @@
                         const existingScripts = Array.from(document.querySelectorAll('script')).map(s => s.src);
                         scripts.forEach(oldScript => {
                             if (oldScript.src && !oldScript.src.includes('sidebar.js') && !oldScript.src.includes('auth.js') && !oldScript.src.includes('supabase-config.js')) {
-                                // Only load script if it's not already in the document (avoids reloading Chart.js etc)
-                                if (!existingScripts.includes(oldScript.src) || oldScript.src.includes('pendapatan-iuran.js') || oldScript.src.includes('kas-foz.js') || oldScript.src.includes('kas-komprehensif.js') || oldScript.src.includes('psak45.js') || oldScript.src.includes('nota-dinas.js')) {
+                                if (!existingScripts.includes(oldScript.src) || oldScript.src.includes('pendapatan-iuran.js') || oldScript.src.includes('pendapatan.js') || oldScript.src.includes('iuran.js') || oldScript.src.includes('kas-foz.js') || oldScript.src.includes('kas-komprehensif.js') || oldScript.src.includes('psak45.js') || oldScript.src.includes('nota-dinas.js')) {
                                     scriptsToLoad.push(oldScript.src);
                                 }
                             }
