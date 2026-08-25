@@ -176,40 +176,48 @@
           </div>
         </div>
 
-        <!-- Month Filter Bar -->
-        <div class="filter-bar" id="month-filter-bar" style="margin-bottom: 16px; overflow-x: auto; white-space: nowrap;">
-          <!-- Populated dynamically via JS -->
-        </div>
-
         <!-- KPI Strip -->
-        <div class="kpi-strip" style="grid-template-columns: repeat(3, 1fr);">
-          <!-- 1. Card 1 -->
-          <div class="kpi-card blue">
-            <div class="kpi-label" id="kpi1-label">Lembaga Membayar</div>
+        <div class="kpi-strip" style="grid-template-columns: repeat(4, 1fr);">
+          <!-- 1. Total Anggota -->
+          <div class="kpi-card" style="background: var(--blue); color: #fff; border: none; box-shadow: 0 10px 25px rgba(59,130,246,0.3);">
+            <div class="kpi-label" style="color: rgba(255,255,255,0.85);" id="kpi1-label">Total Anggota</div>
             <div class="kpi-value" id="kpi1-value">—</div>
-            <div class="kpi-sub" id="kpi1-sub">Melakukan transaksi bulan ini</div>
-            <i class="fas fa-users kpi-icon"></i>
+            <div class="kpi-sub" style="color: rgba(255,255,255,0.7);" id="kpi1-sub">dari total lembaga anggota foz</div>
+            <i class="fas fa-users kpi-icon" style="color: rgba(255,255,255,0.2);"></i>
           </div>
-          <!-- 3. Card 3 -->
-          <div class="kpi-card amber">
-            <div class="kpi-label" id="kpi3-label">Tingkat Partisipasi</div>
-            <div class="kpi-value" id="kpi3-value">—</div>
-            <div class="kpi-sub" id="kpi3-sub">Persentase dari total anggota</div>
-            <i class="fas fa-percentage kpi-icon"></i>
+          <!-- 2. Total Iuran -->
+          <div class="kpi-card" style="background: #fff; border: 1px solid #e5e7eb;">
+            <div class="kpi-label" style="color: #6b7280;" id="kpi2-label">Total Iuran</div>
+            <div class="kpi-value" style="color: #111827;" id="kpi2-value">—</div>
+            <div class="kpi-sub" style="color: #9ca3af;" id="kpi2-sub">Akumulasi iuran seharusnya</div>
+            <i class="fas fa-file-invoice-dollar kpi-icon" style="color: rgba(0,0,0,0.05); font-size: 1.5rem;"></i>
           </div>
-          <!-- 4. Card 4 -->
-          <div class="kpi-card purple">
-            <div class="kpi-label" id="kpi4-label">Pemasukan Riil</div>
-            <div class="kpi-value" id="kpi4-value">—</div>
-            <div class="kpi-sub" id="kpi4-sub">Uang kas masuk (Cash-basis)</div>
-            <i class="fas fa-money-bill-wave kpi-icon"></i>
+          <!-- 3. Lunas -->
+          <div class="kpi-card" style="background: #fff; border: 1px solid #e5e7eb;">
+            <div class="kpi-label" style="color: #6b7280;" id="kpi3-label">Lunas</div>
+            <div class="kpi-value" style="color: #111827;" id="kpi3-value">—</div>
+            <div class="kpi-sub" style="color: #9ca3af;" id="kpi3-sub">Telah melakukan pembayaran</div>
+            <i class="fas fa-check-circle kpi-icon" style="color: rgba(0,0,0,0.05); font-size: 1.5rem;"></i>
+          </div>
+          <!-- 4. Belum Bayar -->
+          <div class="kpi-card" style="background: #fff; border: 1px solid #e5e7eb;">
+            <div class="kpi-label" style="color: #6b7280;" id="kpi4-label">Belum Bayar</div>
+            <div class="kpi-value" style="color: #111827;" id="kpi4-value">—</div>
+            <div class="kpi-sub" style="color: #9ca3af;" id="kpi4-sub">Menunggak / Belum bayar</div>
+            <i class="fas fa-times-circle kpi-icon" style="color: rgba(0,0,0,0.05); font-size: 1.5rem;"></i>
           </div>
         </div>
 
         <!-- Charts Row -->
         <div class="charts-row">
           <div class="chart-box">
-            <div class="chart-title">Tren Kepatuhan & Pendapatan Iuran 2026</div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <div class="chart-title" style="margin-bottom: 0;">Tren Kepatuhan & Pendapatan Iuran 2026</div>
+              <div class="filter-group" style="display: flex; gap: 8px;">
+                <button id="chart-accrual-btn" style="background: var(--blue); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer;">Accrual Basis</button>
+                <button id="chart-cash-btn" style="background: white; color: #4b5563; border: 1px solid #d1d5db; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer;">Cash Basis</button>
+              </div>
+            </div>
             <div style="position:relative; height:320px; width:100%;">
               <canvas id="chart-tren"></canvas>
             </div>
@@ -218,6 +226,11 @@
 
         <!-- Table Row -->
         <div class="table-container">
+          <!-- Month Filter Bar (Moved here) -->
+          <div class="filter-bar" id="month-filter-bar" style="margin-bottom: 16px; overflow-x: auto; white-space: nowrap;">
+            <!-- Populated dynamically via JS -->
+          </div>
+          
           <div class="table-header">
             <div class="chart-title" style="margin-bottom:0;">Rincian Pembayaran Anggota</div>
             <div class="filter-group">

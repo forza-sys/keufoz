@@ -152,47 +152,9 @@ function updateDashboard() {
 }
 
 function updateKPIs() {
-  if (activeTab === 'pemasukan') {
-    let lembagaCount = 0;
-    let totalTransaksi = 0;
-    let totalNominal = 0;
-    let totalAktif = 0;
-
-    membersData.forEach(m => {
-      let isWajibAtAll = false;
-      let memberTransaksiBulanIni = 0;
-
-      m.monthlyStatus.forEach(st => {
-        if (st.status !== 'na') isWajibAtAll = true;
-        if (activeMonthIdx === 'all') {
-          if (st.status === 'lunas') {
-            memberTransaksiBulanIni++;
-          }
-        } else {
-          if (st.trxMonth === activeMonthIdx) {
-            memberTransaksiBulanIni++;
-          }
-        }
-      });
-
-      if (isWajibAtAll) totalAktif++;
-      if (memberTransaksiBulanIni > 0) {
-        lembagaCount++;
-        totalTransaksi += memberTransaksiBulanIni;
-        totalNominal += (m.iuranBulan * memberTransaksiBulanIni);
-      }
-    });
-
-    const persen = totalAktif > 0 ? (lembagaCount / totalAktif * 100).toFixed(1) : 0;
-
-    document.getElementById('kpi1-value').textContent = lembagaCount;
-    document.getElementById('kpi3-value').textContent = persen + '%';
-    document.getElementById('kpi4-value').textContent = formatRp(totalNominal);
-
-  } else {
     let wajib = 0;
     let lunas = 0;
-    let nominal = 0;
+    let belum = 0;
     let potensi = 0;
 
     membersData.forEach(m => {
@@ -200,10 +162,11 @@ function updateKPIs() {
         m.monthlyStatus.forEach(st => {
           if (st.status !== 'na') {
             wajib++;
-            potensi += m.iuranBulan;
+            potensi += m.iuranSeharusnyaBase;
             if (st.status === 'lunas') {
               lunas++;
-              nominal += m.iuranBulan;
+            } else {
+              belum++;
             }
           }
         });
@@ -211,22 +174,20 @@ function updateKPIs() {
         const st = m.monthlyStatus[activeMonthIdx];
         if (st.status !== 'na') {
           wajib++;
-          potensi += m.iuranBulan;
+          potensi += m.iuranSeharusnyaBase;
           if (st.status === 'lunas') {
             lunas++;
-            nominal += m.iuranBulan;
+          } else {
+            belum++;
           }
         }
       }
     });
 
-    const persen = wajib > 0 ? (lunas / wajib * 100).toFixed(1) : 0;
-
-    document.getElementById('kpi1-value').textContent = wajib;
-    document.getElementById('kpi3-value').textContent = persen + '%';
-    document.getElementById('kpi4-value').textContent = formatRp(nominal);
-    document.getElementById('kpi4-sub').textContent = 'Potensi: ' + formatRp(potensi);
-  }
+    document.getElementById('kpi1-value').textContent = membersData.length;
+    document.getElementById('kpi2-value').textContent = formatRp(potensi);
+    document.getElementById('kpi3-value').textContent = lunas;
+    document.getElementById('kpi4-value').textContent = belum;
 }
 
 function renderTable() {
@@ -357,78 +318,71 @@ function renderTable() {
   });
 }
 
+let chartMode = 'accrual';
+
 function renderTrenChart() {
   const ctx = document.getElementById('chart-tren');
   if (!ctx) return;
   if (chartTren) { chartTren.destroy(); chartTren = null; }
 
-  const nominalTerkumpul = [];
-  const persentase = [];
+  const nominal = [];
   
-  if (activeTab === 'pemasukan') {
-    for (let m = 0; m < 12; m++) {
-      let nom = 0;
-      let totalAktif = 0;
-      let lembagaCount = 0;
-      
-      membersData.forEach(mem => {
-        let isWajibAtAll = false;
-        let memberTransaksiBulanIni = 0;
-        
-        mem.monthlyStatus.forEach(st => {
-          if (st.status !== 'na') isWajibAtAll = true;
-          if (st.trxMonth === m) memberTransaksiBulanIni++;
-        });
-        
-        if (isWajibAtAll) totalAktif++;
-        if (memberTransaksiBulanIni > 0) {
-          lembagaCount++;
-          nom += (mem.iuranBulan * memberTransaksiBulanIni);
-        }
-      });
-      
-      nominalTerkumpul.push(nom);
-      persentase.push(totalAktif > 0 ? (lembagaCount / totalAktif * 100) : 0);
-    }
-  } else {
-    for (let m = 0; m < 12; m++) {
-      let w = 0, l = 0, nom = 0;
-      membersData.forEach(mem => {
-        const st = mem.monthlyStatus[m];
-        if (st.status !== 'na') {
-          w++;
+  for (let m = 0; m < 12; m++) {
+    let nom = 0;
+    membersData.forEach(mem => {
+      const st = mem.monthlyStatus[m];
+      if (st.status !== 'na') {
+        if (chartMode === 'accrual') {
+          nom += mem.iuranSeharusnyaBase;
+        } else {
+          // cash basis: hanya yang lunas
           if (st.status === 'lunas') {
-            l++;
-            nom += mem.iuranBulan;
+            nom += mem.iuranBulan; // or iuranSeharusnyaBase, assuming they pay what they should
           }
         }
-      });
-      nominalTerkumpul.push(nom);
-      persentase.push(w > 0 ? (l / w * 100) : 0);
+      }
+    });
+    nominal.push(nom);
+  }
+
+  // Update button active states
+  const accrualBtn = document.getElementById('chart-accrual-btn');
+  const cashBtn = document.getElementById('chart-cash-btn');
+  if (accrualBtn && cashBtn) {
+    if (chartMode === 'accrual') {
+      accrualBtn.style.background = 'var(--blue)';
+      accrualBtn.style.color = 'white';
+      accrualBtn.style.border = 'none';
+      cashBtn.style.background = 'white';
+      cashBtn.style.color = '#4b5563';
+      cashBtn.style.border = '1px solid #d1d5db';
+    } else {
+      cashBtn.style.background = 'var(--blue)';
+      cashBtn.style.color = 'white';
+      cashBtn.style.border = 'none';
+      accrualBtn.style.background = 'white';
+      accrualBtn.style.color = '#4b5563';
+      accrualBtn.style.border = '1px solid #d1d5db';
     }
   }
 
   chartTren = new Chart(ctx, {
-    type: 'bar',
+    type: 'line',
     data: {
       labels: MONTHS,
       datasets: [
         {
-          label: 'Nominal (Rp)',
-          data: nominalTerkumpul,
-          backgroundColor: '#8b5cf6',
-          borderRadius: 4,
-          yAxisID: 'y'
-        },
-        {
-          label: activeTab === 'pemasukan' ? 'Tingkat Partisipasi (%)' : 'Tingkat Kepatuhan (%)',
-          data: persentase,
-          type: 'line',
-          borderColor: '#10b981',
-          backgroundColor: '#10b981',
-          borderWidth: 2,
-          pointRadius: 4,
-          yAxisID: 'y1'
+          label: chartMode === 'accrual' ? 'Total Iuran Seharusnya (Rp)' : 'Total Pemasukan Riil (Rp)',
+          data: nominal,
+          borderColor: '#3b82f6',
+          backgroundColor: 'rgba(59, 130, 246, 0.1)',
+          borderWidth: 3,
+          pointRadius: 5,
+          pointBackgroundColor: '#fff',
+          pointBorderColor: '#3b82f6',
+          pointBorderWidth: 2,
+          fill: true,
+          tension: 0.3
         }
       ]
     },
@@ -436,14 +390,11 @@ function renderTrenChart() {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
-        legend: { position: 'top', labels: { usePointStyle: true, boxWidth: 8 } },
+        legend: { display: false },
         tooltip: {
           callbacks: {
             label: function(context) {
-              if (context.datasetIndex === 0) {
-                return ' ' + formatRp(context.raw);
-              }
-              return ' ' + context.raw.toFixed(1) + '%';
+              return ' ' + formatRp(context.raw);
             }
           }
         }
@@ -456,13 +407,8 @@ function renderTrenChart() {
           grid: { color: 'rgba(0,0,0,0.04)' },
           ticks: { callback: function(val) { return 'Rp ' + (val/1000000) + ' Jt'; } }
         },
-        y1: {
-          type: 'linear',
-          display: true,
-          position: 'right',
-          grid: { drawOnChartArea: false },
-          min: 0, max: 100,
-          ticks: { callback: function(val) { return val + '%'; } }
+        x: {
+          grid: { display: false }
         }
       }
     }
@@ -498,6 +444,16 @@ async function initDashboard() {
         renderTable();
       });
     }
+
+    document.getElementById('chart-accrual-btn')?.addEventListener('click', () => {
+      chartMode = 'accrual';
+      renderTrenChart();
+    });
+    
+    document.getElementById('chart-cash-btn')?.addEventListener('click', () => {
+      chartMode = 'cash';
+      renderTrenChart();
+    });
 
     const tblContainer = document.querySelector('.table-container');
     if (tblContainer && activeTab === 'pemasukan') {
