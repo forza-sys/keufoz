@@ -330,16 +330,19 @@ function renderTrenChart() {
   for (let m = 0; m < 12; m++) {
     let nom = 0;
     membersData.forEach(mem => {
-      const st = mem.monthlyStatus[m];
-      if (st.status !== 'na') {
-        if (chartMode === 'accrual') {
-          nom += mem.iuranSeharusnyaBase;
-        } else {
-          // cash basis: hanya yang lunas
-          if (st.status === 'lunas') {
-            nom += mem.iuranBulan; // or iuranSeharusnyaBase, assuming they pay what they should
-          }
+      if (chartMode === 'accrual') {
+        // Accrual basis: diakui pada bulan kewajiban jika lunas
+        const st = mem.monthlyStatus[m];
+        if (st.status === 'lunas') {
+          nom += mem.iuranBulan;
         }
+      } else {
+        // Cash basis: diakui pada bulan saat transaksi dilakukan, terlepas dari kewajiban bulan apa
+        mem.monthlyStatus.forEach(st => {
+          if (st.status === 'lunas' && st.trxMonth === m) {
+            nom += mem.iuranBulan;
+          }
+        });
       }
     });
     nominal.push(nom);
