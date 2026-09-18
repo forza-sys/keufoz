@@ -155,16 +155,16 @@ function updateKPIs() {
     let wajib = 0;
     let lunas = 0;
     let belum = 0;
-    let potensi = 0;
+    let masuk = 0;
 
     membersData.forEach(m => {
       if (activeMonthIdx === 'all') {
         m.monthlyStatus.forEach(st => {
           if (st.status !== 'na') {
             wajib++;
-            potensi += m.iuranSeharusnyaBase;
             if (st.status === 'lunas') {
               lunas++;
+              masuk += m.iuranBulan; // or iuranSeharusnyaBase, assuming they pay what they should
             } else {
               belum++;
             }
@@ -174,9 +174,9 @@ function updateKPIs() {
         const st = m.monthlyStatus[activeMonthIdx];
         if (st.status !== 'na') {
           wajib++;
-          potensi += m.iuranSeharusnyaBase;
           if (st.status === 'lunas') {
             lunas++;
+            masuk += m.iuranBulan;
           } else {
             belum++;
           }
@@ -185,7 +185,7 @@ function updateKPIs() {
     });
 
     document.getElementById('kpi1-value').textContent = membersData.length;
-    document.getElementById('kpi2-value').textContent = formatRp(potensi);
+    document.getElementById('kpi2-value').textContent = formatRp(masuk);
     document.getElementById('kpi3-value').textContent = lunas;
     document.getElementById('kpi4-value').textContent = belum;
 }
