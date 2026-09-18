@@ -164,23 +164,27 @@ function updateKPIs() {
             wajib++;
             if (st.status === 'lunas') {
               lunas++;
-              masuk += m.iuranBulan; // or iuranSeharusnyaBase, assuming they pay what they should
+              masuk += m.iuranBulan;
             } else {
               belum++;
             }
           }
         });
       } else {
-        const st = m.monthlyStatus[activeMonthIdx];
-        if (st.status !== 'na') {
-          wajib++;
-          if (st.status === 'lunas') {
-            lunas++;
-            masuk += m.iuranBulan;
-          } else {
-            belum++;
+        // Lunas and Masuk (Cash Basis): diakui jika trxMonth == activeMonthIdx
+        m.monthlyStatus.forEach(st => {
+          if (st.status !== 'na') {
+            if (st.trxMonth === activeMonthIdx && st.status === 'lunas') {
+              lunas++;
+              masuk += m.iuranBulan;
+            }
+            // Wajib dan Belum tetap pada konteks bulan tersebut (Accrual)
+            if (st.raw === MONTHS[activeMonthIdx]) {
+              wajib++;
+              if (st.status !== 'lunas') belum++;
+            }
           }
-        }
+        });
       }
     });
 
