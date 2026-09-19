@@ -326,7 +326,7 @@ function renderTable() {
   });
 }
 
-let chartMode = 'accrual';
+let chartMode = 'cash';
 
 function renderTrenChart() {
   const ctx = document.getElementById('chart-tren');
