@@ -242,10 +242,10 @@ function updateKPIs() {
     if (i2d) i2d.innerHTML = `Estimasi total iuran yang seharusnya terkumpul berdasarkan ketentuan AD/ART FOZ.`;
 
     // INSIGHT 3: % REALISASI IURAN
-    const pctRealisasi = potensiIuran > 0 ? ((masuk / potensiIuran) * 100).toFixed(1) : 0;
+    const pctRealisasiStr = (potensiIuran > 0 ? ((masuk / potensiIuran) * 100).toFixed(1) : "0").replace('.', ',');
     const i3v = document.getElementById('insight3-value');
     const i3d = document.getElementById('insight3-desc');
-    if (i3v) i3v.textContent = `${pctRealisasi}% Terkumpul`;
+    if (i3v) i3v.textContent = `${pctRealisasiStr}% Terkumpul`;
     if (i3d) {
       i3d.innerHTML = `Dari total potensi iuran, FOZ telah merealisasikan pendapatan aktual sebesar <strong>${formatRp(masuk)}</strong> (Cash Basis).`;
     }
@@ -271,11 +271,12 @@ function updateKPIs() {
     
     let nasPct = nas.total > 0 ? Math.round((nas.patuh / nas.total) * 100) : 0;
     let provPct = prov.total > 0 ? Math.round((prov.patuh / prov.total) * 100) : 0;
+    let kabPct = kab.total > 0 ? Math.round((kab.patuh / kab.total) * 100) : 0;
     
     const i4v = document.getElementById('insight4-value');
     const i4d = document.getElementById('insight4-desc');
-    if (i4v) i4v.innerHTML = `Nasional ${nasPct}% <span style="color:#cbd5e1; margin:0 6px;">|</span> Provinsi ${provPct}%`;
-    if (i4d) i4d.innerHTML = `Tingkat kepatuhan OPZ skala Nasional mencapai <strong>${nasPct}%</strong>, sedangkan tingkat kepatuhan skala Provinsi berada di angka <strong>${provPct}%</strong>.`;
+    if (i4v) i4v.innerHTML = `Nasional ${nasPct}% <span style="color:#cbd5e1; margin:0 6px;">|</span> Provinsi ${provPct}% <span style="color:#cbd5e1; margin:0 6px;">|</span> Kab/Kota ${kabPct}%`;
+    if (i4d) i4d.innerHTML = `Tingkat kepatuhan OPZ skala Nasional mencapai <strong>${nasPct}%</strong>, tingkat kepatuhan skala Provinsi <strong>${provPct}%</strong>, dan skala Kabupaten/Kota <strong>${kabPct}%</strong>.`;
 }
 
 function renderTable() {
