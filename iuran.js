@@ -224,25 +224,7 @@ function updateKPIs() {
     }
     
     const pctCompliant = totalOPZ > 0 ? Math.round((compliantOPZCount / totalOPZ) * 100) : 0;
-    const bannerTitle = document.getElementById('insight-title');
-    const bannerSub = document.getElementById('insight-sub');
-    
-    if (bannerTitle) {
-      if (activeMonthIdx === 'all') {
-        bannerTitle.textContent = `🟢 ${compliantOPZCount} LEMBAGA OPZ TELAH SESUAI (${pctCompliant}% DARI TOTAL ${totalOPZ} OPZ)`;
-      } else {
-        bannerTitle.textContent = `🟢 ${compliantOPZCount} LEMBAGA OPZ LUNAS DI BULAN ${MONTHS[activeMonthIdx].toUpperCase()} (${pctCompliant}% DARI TOTAL ${totalOPZ} OPZ)`;
-      }
-    }
-    
-    if (bannerSub) {
-      const opzNunggak = membersData.filter(m => !m.monthlyStatus.some(s => s.status === 'lunas')).length;
-      if (activeMonthIdx === 'all') {
-        bannerSub.textContent = `Total Iuran Terkumpul: ${formatRp(masuk)} | Piutang Iuran Menunggak: ${formatRp(piutang)} (${opzNunggak} Lembaga belum pernah bayar).`;
-      } else {
-        bannerSub.textContent = `Pemasukan Bulan Ini: ${formatRp(masuk)} | Potensi Piutang Bulan Ini: ${formatRp(piutang)}.`;
-      }
-    }
+
     
     // INSIGHT 1: KEPATUHAN PEMBAYARAN OPZ (Reused variables compliantOPZCount & pctCompliant)
     const i1v = document.getElementById('insight1-value');
