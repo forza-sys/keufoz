@@ -191,7 +191,8 @@ function updateKPIs() {
       }
     });
 
-    document.getElementById('kpi1-value').textContent = membersData.length;
+    const kpi1 = document.getElementById('kpi1-value');
+    if (kpi1) kpi1.textContent = membersData.length;
     document.getElementById('kpi2-value').textContent = formatRp(masuk);
     document.getElementById('kpi3-value').textContent = lunas;
     document.getElementById('kpi4-value').textContent = belum;
