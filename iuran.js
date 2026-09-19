@@ -312,8 +312,8 @@ function renderTable() {
     if (filterSt === 'belum' && trxs > 0) return;
     if (filterSt === 'na' && !isNa) return;
 
-    let badgeClass = '';
-    let badgeText = '';
+    badgeClass = '';
+    badgeText = '';
     let bulanText = '-';
     let tglText = '-';
 
