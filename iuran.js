@@ -275,12 +275,8 @@ function updateKPIs() {
       skalaStats[m.skala].potensi += p;
       skalaStats[m.skala].masuk += ms;
 
-      let isPatuh = false;
-      if (activeMonthIdx === 'all') {
-        isPatuh = m.statusKesStr.toLowerCase().includes('sesuai');
-      } else {
-        isPatuh = m.monthlyStatus[activeMonthIdx] && m.monthlyStatus[activeMonthIdx].status === 'lunas';
-      }
+      // Kepatuhan (Patuh AD/ART) bersifat statis
+      let isPatuh = m.statusKesStr.toLowerCase().includes('sesuai');
       if (isPatuh) skalaStats[m.skala].patuh++;
     });
 
