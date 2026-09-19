@@ -196,6 +196,18 @@ function updateKPIs() {
     document.getElementById('kpi2-value').textContent = formatRp(masuk);
     document.getElementById('kpi3-value').textContent = lunas;
     document.getElementById('kpi4-value').textContent = belum;
+
+    // Dynamic subtitle for Pemasukan Iuran
+    const monthNamesShort = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agt", "Sep", "Okt", "Nov", "Des"];
+    const currentActualMonthIdx = new Date().getMonth();
+    let subText = "";
+    if (activeMonthIdx === 'all') {
+      subText = `Tahun 2026 (Jan - ${monthNamesShort[currentActualMonthIdx]})`;
+    } else {
+      subText = `Bulan ${MONTHS[activeMonthIdx]} 2026`;
+    }
+    const kpi2Sub = document.getElementById('kpi2-sub');
+    if (kpi2Sub) kpi2Sub.textContent = subText;
 }
 
 function renderTable() {
