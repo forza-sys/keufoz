@@ -155,6 +155,7 @@ function updateKPIs() {
     let lunas = 0;
     let belum = 0;
     let masuk = 0;
+    let piutang = 0;
 
     membersData.forEach(m => {
       if (activeMonthIdx === 'all') {
@@ -166,6 +167,7 @@ function updateKPIs() {
               masuk += m.iuranBulan;
             } else {
               belum++;
+              piutang += m.iuranBulan;
             }
           }
         });
@@ -180,12 +182,13 @@ function updateKPIs() {
           }
         });
         
-        // Wajib dan Belum tetap pada konteks kewajiban bulan tersebut (Accrual)
+        // Wajib, Belum, dan Piutang (Accrual Basis)
         const stMonth = m.monthlyStatus[activeMonthIdx];
         if (stMonth.status !== 'na') {
           wajib++;
           if (stMonth.status !== 'lunas') {
             belum++;
+            piutang += m.iuranBulan;
           }
         }
       }
@@ -194,8 +197,15 @@ function updateKPIs() {
     const kpi1 = document.getElementById('kpi1-value');
     if (kpi1) kpi1.textContent = membersData.length;
     document.getElementById('kpi2-value').textContent = formatRp(masuk);
-    document.getElementById('kpi3-value').textContent = lunas;
-    document.getElementById('kpi4-value').textContent = belum;
+    
+    // Card 2: % Kepatuhan Invoice
+    const complianceRate = wajib > 0 ? ((lunas / wajib) * 100).toFixed(1) : 0;
+    document.getElementById('kpi3-value').textContent = complianceRate + '%';
+    const kpi3Sub = document.getElementById('kpi3-sub');
+    if (kpi3Sub) kpi3Sub.innerHTML = `${lunas} invoice terbayar<br>${belum} invoice tidak terbayar`;
+    
+    // Card 3: Piutang
+    document.getElementById('kpi4-value').textContent = formatRp(piutang);
 
     // Dynamic subtitle for Pemasukan Iuran
     const monthNamesShort = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agt", "Sep", "Okt", "Nov", "Des"];
