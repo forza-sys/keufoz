@@ -415,12 +415,16 @@ function renderTrenChart() {
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      interaction: {
+        mode: 'index',
+        intersect: false,
+      },
       plugins: {
         legend: { display: false },
         tooltip: {
           callbacks: {
             label: function(context) {
-              return ' ' + formatRp(context.raw);
+              return ' ' + context.dataset.label + ': ' + formatRp(context.raw);
             }
           }
         }
