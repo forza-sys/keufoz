@@ -148,7 +148,6 @@ window.filterMonth = function(val) {
 function updateDashboard() {
   updateKPIs();
   renderTable();
-  renderTrenChart(); // Chart labels/title change based on mode
 }
 
 function updateKPIs() {
@@ -472,6 +471,7 @@ async function initDashboard() {
     }
 
     updateDashboard();
+    renderTrenChart(); // Draw chart once on load
 
     if (loadingState) loadingState.style.display = 'none';
     if (dashboardContent) dashboardContent.style.display = 'block';
