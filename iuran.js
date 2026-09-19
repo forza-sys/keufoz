@@ -262,9 +262,6 @@ function renderTable() {
   membersData.forEach(m => {
     if (searchQ && !m.nama.toLowerCase().includes(searchQ)) return;
     
-    let badgeClass = '';
-    let badgeText = '';
-
     let kesesuaianBadge = '';
     const statusLower = m.statusKesStr.toLowerCase();
     
@@ -276,75 +273,49 @@ function renderTable() {
       kesesuaianBadge = '-';
     }
 
-    let trxs = 0;
-    let dates = [];
-    let paidMonths = [];
-    let w = 0;
-    
-    m.monthlyStatus.forEach((st, idx) => {
-      if (activeMonthIdx === 'all') {
-        if (st.status !== 'na') w++;
-        if (st.status === 'lunas') {
-          trxs++;
-          if (!dates.includes(st.raw)) dates.push(st.raw);
-          paidMonths.push(MONTHS[idx].substring(0, 3));
-        }
-      } else {
-        if (idx == activeMonthIdx) {
-          if (st.status !== 'na') w++;
-          if (st.status === 'lunas') {
-            trxs++;
-            if (!dates.includes(st.raw)) dates.push(st.raw);
-            paidMonths.push(MONTHS[idx].substring(0, 3));
-          }
-        }
-      }
-    });
-    
-    let isNa = false;
+    let monthsToRender = [];
     if (activeMonthIdx === 'all') {
-      isNa = m.monthlyStatus.every(s => s.status === 'na');
+      monthsToRender = [0,1,2,3,4,5,6,7,8,9,10,11];
     } else {
-      isNa = m.monthlyStatus[activeMonthIdx].status === 'na';
+      monthsToRender = [parseInt(activeMonthIdx)];
     }
 
-    if (filterSt === 'lunas' && trxs === 0) return;
-    if (filterSt === 'belum' && trxs > 0) return;
-    if (filterSt === 'na' && !isNa) return;
+    monthsToRender.forEach(idx => {
+      const st = m.monthlyStatus[idx];
+      
+      // Apply status filter
+      if (filterSt !== 'all' && st.status !== filterSt) return;
+      
+      // If view is 'all', maybe don't show 'na' to reduce spam, unless explicitly asked
+      if (activeMonthIdx === 'all' && filterSt === 'all' && st.status === 'na') return;
 
-    badgeClass = '';
-    badgeText = '';
-    let bulanText = '-';
-    let tglText = '-';
+      let badgeText = '';
+      let bulanText = MONTHS[idx];
+      let tglText = '-';
 
-    if (isNa) {
-      badgeClass = 'na';
-      badgeText = '-';
-      bulanText = activeMonthIdx !== 'all' ? MONTHS[activeMonthIdx] : '-';
-    } else if (trxs > 0) {
-      badgeClass = 'lunas';
-      badgeText = '<i class="fas fa-check" style="color: #10b981; font-size: 1.2rem;"></i>';
-      bulanText = paidMonths.length > 2 ? paidMonths.slice(0, 2).join(', ') + '...' : paidMonths.join(', ');
-      tglText = dates.length > 2 ? dates.slice(0, 2).join(', ') + '...' : dates.join(', ');
-    } else {
-      badgeClass = 'belum';
-      badgeText = '<i class="fas fa-times" style="color: #ef4444; font-size: 1.2rem;"></i>';
-      bulanText = activeMonthIdx !== 'all' ? MONTHS[activeMonthIdx] : '-';
-    }
+      if (st.status === 'na') {
+        badgeText = '-';
+      } else if (st.status === 'lunas') {
+        badgeText = '<i class="fas fa-check" style="color: #10b981; font-size: 1.2rem;"></i>';
+        tglText = st.raw || '-';
+      } else {
+        badgeText = '<i class="fas fa-times" style="color: #ef4444; font-size: 1.2rem;"></i>';
+      }
 
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${no++}</td>
-      <td style="font-weight:500;">${m.nama}</td>
-      <td>${m.skala}</td>
-      <td>${formatRp(m.iuranBulan)}</td>
-      <td style="font-weight:600;">${formatRp(m.iuranSeharusnyaBase)}</td>
-      <td style="text-align:center;">${badgeText}</td>
-      <td style="font-size: 0.85rem; color: #4b5563;">${bulanText}</td>
-      <td style="font-size: 0.85rem; color: #4b5563;">${tglText}</td>
-      <td style="text-align:center;">${kesesuaianBadge}</td>
-    `;
-    tbody.appendChild(tr);
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${no++}</td>
+        <td style="font-weight:500;">${m.nama}</td>
+        <td>${m.skala}</td>
+        <td>${formatRp(m.iuranBulan)}</td>
+        <td style="font-weight:600;">${formatRp(m.iuranSeharusnyaBase)}</td>
+        <td style="text-align:center;">${badgeText}</td>
+        <td style="font-size: 0.85rem; color: #4b5563;">${bulanText}</td>
+        <td style="font-size: 0.85rem; color: #4b5563;">${tglText}</td>
+        <td style="text-align:center;">${kesesuaianBadge}</td>
+      `;
+      tbody.appendChild(tr);
+    });
   });
 }
 
