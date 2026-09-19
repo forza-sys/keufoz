@@ -150,13 +150,16 @@ function updateKPIs() {
     let belum = 0;
     let masuk = 0;
     let piutang = 0;
+    let skalaInv = { 'Nasional': { w: 0, l: 0 }, 'Provinsi': { w: 0, l: 0 }, 'Kab/Kota': { w: 0, l: 0 } };
 
     membersData.forEach(m => {
       if (activeMonthIdx === 'all') {
         m.monthlyStatus.forEach(st => {
           if (st.status !== 'na') {
             wajib++;
+            if (skalaInv[m.skala]) skalaInv[m.skala].w++;
             if (st.status === 'lunas') {
+              if (skalaInv[m.skala]) skalaInv[m.skala].l++;
               lunas++;
               masuk += m.iuranBulan;
             } else {
@@ -170,6 +173,7 @@ function updateKPIs() {
         m.monthlyStatus.forEach(st => {
           if (st.status !== 'na') {
             if (st.trxMonth === activeMonthIdx && st.status === 'lunas') {
+              if (skalaInv[m.skala]) skalaInv[m.skala].l++;
               lunas++;
               masuk += m.iuranBulan;
             }
@@ -179,6 +183,7 @@ function updateKPIs() {
         // Wajib, Belum, dan Piutang (Accrual Basis)
         const stMonth = m.monthlyStatus[activeMonthIdx];
         if (stMonth.status !== 'na') {
+          if (skalaInv[m.skala]) skalaInv[m.skala].w++;
           wajib++;
           if (stMonth.status !== 'lunas') {
             belum++;
@@ -196,7 +201,12 @@ function updateKPIs() {
     const complianceRate = wajib > 0 ? ((lunas / wajib) * 100).toFixed(1) : 0;
     document.getElementById('kpi3-value').textContent = complianceRate + '%';
     const kpi3Sub = document.getElementById('kpi3-sub');
-    if (kpi3Sub) kpi3Sub.innerHTML = `${lunas} invoice terbayar<br>${belum} invoice tidak terbayar`;
+    if (kpi3Sub) {
+      let nPct = skalaInv['Nasional'].w > 0 ? ((skalaInv['Nasional'].l / skalaInv['Nasional'].w) * 100).toFixed(1).replace('.', ',') : "0";
+      let pPct = skalaInv['Provinsi'].w > 0 ? ((skalaInv['Provinsi'].l / skalaInv['Provinsi'].w) * 100).toFixed(1).replace('.', ',') : "0";
+      let kPct = skalaInv['Kab/Kota'].w > 0 ? ((skalaInv['Kab/Kota'].l / skalaInv['Kab/Kota'].w) * 100).toFixed(1).replace('.', ',') : "0";
+      kpi3Sub.innerHTML = `${lunas} terbayar | ${belum} belum<br><span style="margin-top:3px; display:inline-block; color:#6b7280;">Nasional ${nPct}% | Prov ${pPct}% | Kab ${kPct}%</span>`;
+    }
     
     // Card 3: Piutang
     document.getElementById('kpi4-value').textContent = formatRp(piutang);
