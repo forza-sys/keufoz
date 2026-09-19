@@ -255,6 +255,7 @@ function renderTable() {
   const tbody = document.querySelector('#rincian-table tbody');
   const searchQ = document.getElementById('search-input').value.toLowerCase();
   const filterSt = document.getElementById('status-filter').value;
+  const filterKes = document.getElementById('kesesuaian-filter')?.value || 'all';
 
   tbody.innerHTML = '';
   
@@ -265,7 +266,12 @@ function renderTable() {
     let kesesuaianBadge = '';
     const statusLower = m.statusKesStr.toLowerCase();
     
-    if (statusLower.includes('sesuai')) {
+    const isSesuai = statusLower.includes('sesuai');
+    
+    if (filterKes === 'sesuai' && !isSesuai) return;
+    if (filterKes === 'belum' && isSesuai) return;
+    
+    if (isSesuai) {
       kesesuaianBadge = '<i class="fas fa-check-circle" style="color: #10b981; font-size: 1.2rem;"></i>';
     } else if (statusLower.includes('belum') || statusLower === '') {
       kesesuaianBadge = '<i class="fas fa-times-circle" style="color: #ef4444; font-size: 1.2rem;"></i>';
@@ -443,8 +449,13 @@ async function initDashboard() {
     document.getElementById('search-input')?.addEventListener('input', renderTable);
     const sel = document.getElementById('status-filter');
     if (sel) {
-      sel.addEventListener('change', (e) => {
-        filterSt = e.target.value;
+      sel.addEventListener('change', () => {
+        renderTable();
+      });
+    }
+    const selKes = document.getElementById('kesesuaian-filter');
+    if (selKes) {
+      selKes.addEventListener('change', () => {
         renderTable();
       });
     }
