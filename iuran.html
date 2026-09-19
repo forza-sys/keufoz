@@ -181,7 +181,7 @@
             display: grid;
             grid-template-columns: 260px 1fr;
             gap: 20px;
-            align-items: stretch;
+            align-items: start;
             margin-top: 22px;
           }
           @media (max-width: 1024px) {
@@ -242,13 +242,13 @@
           </div>
 
           <!-- Right: Chart Row -->
-          <div class="charts-row" style="margin-bottom: 0; height: 100%;">
-            <div class="chart-box" style="display: flex; flex-direction: column; height: 100%;">
+          <div class="charts-row" style="margin-bottom: 0;">
+            <div class="chart-box" style="display: flex; flex-direction: column; height: 362px;">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                 <div class="chart-title" style="margin-bottom: 0;">Tren Kepatuhan & Pendapatan Iuran 2026</div>
                 <div class="filter-group" style="display: flex; gap: 8px;">
-                  <button id="chart-accrual-btn" style="background: var(--blue); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer;">Accrual Basis</button>
-                  <button id="chart-cash-btn" style="background: white; color: #4b5563; border: 1px solid #d1d5db; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer;">Cash Basis</button>
+                  <button id="chart-accrual-btn" style="background: white; color: #4b5563; border: 1px solid #d1d5db; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer;">Accrual Basis</button>
+                  <button id="chart-cash-btn" style="background: var(--blue); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer;">Cash Basis</button>
                 </div>
               </div>
               <div style="position:relative; flex-grow: 1; width:100%;">
