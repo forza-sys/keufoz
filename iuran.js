@@ -307,10 +307,10 @@ function renderTable() {
         <td>${no++}</td>
         <td style="font-weight:500;">${m.nama}</td>
         <td>${m.skala}</td>
+        <td style="font-weight:600; color: #374151;">${periodeText}</td>
         <td>${formatRp(m.iuranBulan)}</td>
         <td style="font-weight:600;">${formatRp(m.iuranSeharusnyaBase)}</td>
         <td style="font-weight:600;">${nominalText}</td>
-        <td style="font-size: 0.85rem; color: #4b5563;">${periodeText}</td>
         <td style="font-size: 0.85rem; color: #4b5563;">${tglText}</td>
         <td style="text-align:center;">${kesesuaianBadge}</td>
       `;
