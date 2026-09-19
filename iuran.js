@@ -227,22 +227,15 @@ function updateKPIs() {
     const totalOPZ = membersData.length;
     let compliantOPZCount = 0;
     
-    if (activeMonthIdx === 'all') {
-      compliantOPZCount = membersData.filter(m => m.statusKesStr.toLowerCase().includes('sesuai')).length;
-    } else {
-      compliantOPZCount = membersData.filter(m => m.monthlyStatus[activeMonthIdx] && m.monthlyStatus[activeMonthIdx].status === 'lunas').length;
-    }
+    // Kepatuhan AD/ART bersifat statis (komitmen nominal), tidak berubah berdasarkan filter bulan.
+    compliantOPZCount = membersData.filter(m => m.statusKesStr.toLowerCase().includes('sesuai')).length;
     
     const pctCompliant = totalOPZ > 0 ? Math.round((compliantOPZCount / totalOPZ) * 100) : 0;
     const i1v = document.getElementById('insight1-value');
     const i1d = document.getElementById('insight1-desc');
     if (i1v) i1v.textContent = `${pctCompliant}% Sesuai`;
     if (i1d) {
-      if (activeMonthIdx === 'all') {
-        i1d.innerHTML = `Sebanyak <strong>${compliantOPZCount} OPZ</strong> telah memenuhi kewajiban iuran dengan status Sesuai dari total <strong>${totalOPZ} OPZ</strong> anggota.`;
-      } else {
-        i1d.innerHTML = `Sebanyak <strong>${compliantOPZCount} OPZ</strong> lunas pada bulan ${MONTHS[activeMonthIdx]} dari total <strong>${totalOPZ} OPZ</strong> anggota.`;
-      }
+      i1d.innerHTML = `Sebanyak <strong>${compliantOPZCount} OPZ</strong> memiliki komitmen iuran yang <strong>Sesuai AD/ART</strong> dari total <strong>${totalOPZ} OPZ</strong> anggota.`;
     }
 
     // INSIGHT 2: TOTAL POTENSI IURAN (AD/ART)
