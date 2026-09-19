@@ -177,34 +177,58 @@
         </div>
 
         <!-- KPI Strip -->
-        <div class="kpi-strip" style="grid-template-columns: repeat(4, 1fr);">
+        <div class="kpi-strip" style="grid-template-columns: repeat(4, 1fr); gap: 16px;">
           <!-- 1. Total Anggota -->
-          <div class="kpi-card" style="background: var(--blue); color: #fff; border: none; box-shadow: 0 10px 25px rgba(59,130,246,0.3);">
-            <div class="kpi-label" style="color: rgba(255,255,255,0.85);" id="kpi1-label">Total Anggota</div>
-            <div class="kpi-value" id="kpi1-value">—</div>
-            <div class="kpi-sub" style="color: rgba(255,255,255,0.7);" id="kpi1-sub">dari total lembaga anggota foz</div>
-            <i class="fas fa-users kpi-icon" style="color: rgba(255,255,255,0.2);"></i>
+          <div class="kpi-card" style="background: var(--green, #10b981); color: #fff; border: none; border-radius: 14px; padding: 18px; box-shadow: 0 10px 25px rgba(16,185,129,0.25); display: flex; flex-direction: column; justify-content: space-between;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+              <div class="kpi-label" style="color: rgba(255,255,255,0.9); font-weight: 600; font-size: 0.8rem; text-transform: none;" id="kpi1-label">Total Anggota</div>
+              <div style="width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-users" style="color: #fff; font-size: 0.9rem;"></i>
+              </div>
+            </div>
+            <div>
+              <div class="kpi-value" style="font-size: 1.8rem; font-weight: 800; margin-top: 14px; margin-bottom: 4px; letter-spacing: -0.5px;" id="kpi1-value">—</div>
+              <div class="kpi-sub" style="color: rgba(255,255,255,0.8); font-size: 0.75rem; font-weight: 500;" id="kpi1-sub">dari total lembaga anggota foz</div>
+            </div>
           </div>
           <!-- 2. Total Iuran -->
-          <div class="kpi-card" style="background: #fff; border: 1px solid #e5e7eb;">
-            <div class="kpi-label" style="color: #6b7280;" id="kpi2-label">Total Iuran (Cash Basis)</div>
-            <div class="kpi-value" style="color: #111827;" id="kpi2-value">—</div>
-            <div class="kpi-sub" style="color: #9ca3af;" id="kpi2-sub">Akumulasi iuran diterima</div>
-            <i class="fas fa-file-invoice-dollar kpi-icon" style="color: rgba(0,0,0,0.05); font-size: 1.5rem;"></i>
+          <div class="kpi-card" style="background: #fff; border: 1.5px solid #f3f4f6; border-radius: 14px; padding: 18px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: space-between;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+              <div class="kpi-label" style="color: #6b7280; font-weight: 600; font-size: 0.8rem; text-transform: none;" id="kpi2-label">Total Iuran (Cash Basis)</div>
+              <div style="width: 34px; height: 34px; border-radius: 50%; background: #1f2937; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-file-invoice-dollar" style="color: #fff; font-size: 0.9rem;"></i>
+              </div>
+            </div>
+            <div>
+              <div class="kpi-value" style="color: #111827; font-size: 1.8rem; font-weight: 800; margin-top: 14px; margin-bottom: 4px; letter-spacing: -0.5px;" id="kpi2-value">—</div>
+              <div class="kpi-sub" style="color: #9ca3af; font-size: 0.75rem; font-weight: 500;" id="kpi2-sub">Akumulasi iuran diterima</div>
+            </div>
           </div>
           <!-- 3. Lunas -->
-          <div class="kpi-card" style="background: #fff; border: 1px solid #e5e7eb;">
-            <div class="kpi-label" style="color: #6b7280;" id="kpi3-label">Lunas</div>
-            <div class="kpi-value" style="color: #111827;" id="kpi3-value">—</div>
-            <div class="kpi-sub" style="color: #9ca3af;" id="kpi3-sub">Telah melakukan pembayaran</div>
-            <i class="fas fa-check-circle kpi-icon" style="color: rgba(0,0,0,0.05); font-size: 1.5rem;"></i>
+          <div class="kpi-card" style="background: #fff; border: 1.5px solid #f3f4f6; border-radius: 14px; padding: 18px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: space-between;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+              <div class="kpi-label" style="color: #6b7280; font-weight: 600; font-size: 0.8rem; text-transform: none;" id="kpi3-label">Lunas</div>
+              <div style="width: 34px; height: 34px; border-radius: 50%; background: #dcfce7; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-check" style="color: #16a34a; font-size: 0.9rem;"></i>
+              </div>
+            </div>
+            <div>
+              <div class="kpi-value" style="color: #111827; font-size: 1.8rem; font-weight: 800; margin-top: 14px; margin-bottom: 4px; letter-spacing: -0.5px;" id="kpi3-value">—</div>
+              <div class="kpi-sub" style="color: #9ca3af; font-size: 0.75rem; font-weight: 500;" id="kpi3-sub">Telah melakukan pembayaran</div>
+            </div>
           </div>
           <!-- 4. Belum Bayar -->
-          <div class="kpi-card" style="background: #fff; border: 1px solid #e5e7eb;">
-            <div class="kpi-label" style="color: #6b7280;" id="kpi4-label">Belum Bayar</div>
-            <div class="kpi-value" style="color: #111827;" id="kpi4-value">—</div>
-            <div class="kpi-sub" style="color: #9ca3af;" id="kpi4-sub">Menunggak / Belum bayar</div>
-            <i class="fas fa-times-circle kpi-icon" style="color: rgba(0,0,0,0.05); font-size: 1.5rem;"></i>
+          <div class="kpi-card" style="background: #fff; border: 1.5px solid #f3f4f6; border-radius: 14px; padding: 18px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: space-between;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+              <div class="kpi-label" style="color: #6b7280; font-weight: 600; font-size: 0.8rem; text-transform: none;" id="kpi4-label">Belum Bayar</div>
+              <div style="width: 34px; height: 34px; border-radius: 50%; background: #fee2e2; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-times" style="color: #dc2626; font-size: 0.9rem;"></i>
+              </div>
+            </div>
+            <div>
+              <div class="kpi-value" style="color: #111827; font-size: 1.8rem; font-weight: 800; margin-top: 14px; margin-bottom: 4px; letter-spacing: -0.5px;" id="kpi4-value">—</div>
+              <div class="kpi-sub" style="color: #9ca3af; font-size: 0.75rem; font-weight: 500;" id="kpi4-sub">Menunggak / Belum bayar</div>
+            </div>
           </div>
         </div>
 
