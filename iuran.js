@@ -178,13 +178,17 @@ function updateKPIs() {
               lunas++;
               masuk += m.iuranBulan;
             }
-            // Wajib dan Belum tetap pada konteks bulan tersebut (Accrual)
-            if (st.raw === MONTHS[activeMonthIdx]) {
-              wajib++;
-              if (st.status !== 'lunas') belum++;
-            }
           }
         });
+        
+        // Wajib dan Belum tetap pada konteks kewajiban bulan tersebut (Accrual)
+        const stMonth = m.monthlyStatus[activeMonthIdx];
+        if (stMonth.status !== 'na') {
+          wajib++;
+          if (stMonth.status !== 'lunas') {
+            belum++;
+          }
+        }
       }
     });
 
