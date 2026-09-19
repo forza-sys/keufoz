@@ -135,12 +135,6 @@ async function fetchAllData() {
 
 window.filterMonth = function(val) {
   activeMonthIdx = val;
-  document.querySelectorAll('.filter-btn-month').forEach(btn => {
-    btn.classList.remove('active');
-  });
-  const id = val === 'all' ? 'btn-month-all' : `btn-month-${val}`;
-  const activeBtn = document.getElementById(id);
-  if (activeBtn) activeBtn.classList.add('active');
   updateDashboard();
 };
 
@@ -435,14 +429,19 @@ async function initDashboard() {
   try {
     await fetchAllData();
 
-    // Build month pill filters
-    const fBar = document.getElementById('month-filter-bar');
-    if (fBar) {
-      let html = `<button class="filter-btn active filter-btn-month" id="btn-month-all" onclick="window.filterMonth('all')">Semua</button>`;
+    // Build month dropdown options
+    const fSel = document.getElementById('month-filter');
+    if (fSel) {
+      let html = `<option value="all">Semua Bulan</option>`;
       MONTHS.forEach((m, i) => {
-        html += `<button class="filter-btn filter-btn-month" id="btn-month-${i}" onclick="window.filterMonth(${i})">${m}</button>`;
+        html += `<option value="${i}">${m}</option>`;
       });
-      fBar.innerHTML = html;
+      fSel.innerHTML = html;
+      
+      fSel.addEventListener('change', (e) => {
+        const val = e.target.value;
+        window.filterMonth(val === 'all' ? 'all' : parseInt(val));
+      });
     }
 
     // Attach filter listeners

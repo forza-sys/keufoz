@@ -258,17 +258,14 @@
           </div>
         </div>
 
-        <!-- Table Row -->
         <div class="table-container">
-          <!-- Month Filter Bar (Moved here) -->
-          <div class="filter-bar" id="month-filter-bar" style="margin-bottom: 16px; overflow-x: auto; white-space: nowrap;">
-            <!-- Populated dynamically via JS -->
-          </div>
-          
           <div class="table-header">
             <div class="chart-title" style="margin-bottom:0;">Rincian Pembayaran Anggota</div>
             <div class="filter-group">
               <input type="text" id="search-input" placeholder="Cari lembaga...">
+              <select id="month-filter">
+                <!-- Populated dynamically via JS -->
+              </select>
               <select id="kesesuaian-filter">
                 <option value="all">Semua Kesesuaian</option>
                 <option value="sesuai">Sesuai (Lunas)</option>
