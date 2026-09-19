@@ -205,7 +205,7 @@ function updateKPIs() {
       let nPct = skalaInv['Nasional'].w > 0 ? ((skalaInv['Nasional'].l / skalaInv['Nasional'].w) * 100).toFixed(1).replace('.', ',') : "0";
       let pPct = skalaInv['Provinsi'].w > 0 ? ((skalaInv['Provinsi'].l / skalaInv['Provinsi'].w) * 100).toFixed(1).replace('.', ',') : "0";
       let kPct = skalaInv['Kab/Kota'].w > 0 ? ((skalaInv['Kab/Kota'].l / skalaInv['Kab/Kota'].w) * 100).toFixed(1).replace('.', ',') : "0";
-      kpi3Sub.innerHTML = `${lunas} invoice terbayar<br>${belum} invoice tidak terbayar`;
+      kpi3Sub.innerHTML = `${lunas} terbayar <span style="margin:0 4px; color:#cbd5e1;">|</span> ${belum} belum`;
     }
     
     // Card 3: Piutang
