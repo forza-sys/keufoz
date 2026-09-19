@@ -373,6 +373,7 @@ function renderTable() {
       <td>${m.skala}</td>
       <td>${formatRp(m.iuranBulan)}</td>
       <td style="font-weight:600;">${formatRp(m.iuranSeharusnyaBase)}</td>
+      <td><span class="status-badge ${badgeClass}">${badgeText}</span></td>
       <td style="text-align:center;">${kesesuaianBadge}</td>
     `;
     tbody.appendChild(tr);
