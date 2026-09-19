@@ -213,28 +213,16 @@ function updateKPIs() {
     const kpi2Sub = document.getElementById('kpi2-sub');
     if (kpi2Sub) kpi2Sub.textContent = subText;
     
-    // UPDATE EXECUTIVE BANNER
-    const totalOPZ = membersData.length;
-    let compliantOPZCount = 0;
-    
-    if (activeMonthIdx === 'all') {
-      compliantOPZCount = membersData.filter(m => m.statusKesStr.toLowerCase().includes('sesuai')).length;
-    } else {
-      compliantOPZCount = membersData.filter(m => m.monthlyStatus[activeMonthIdx] && m.monthlyStatus[activeMonthIdx].status === 'lunas').length;
-    }
-    
-    const pctCompliant = totalOPZ > 0 ? Math.round((compliantOPZCount / totalOPZ) * 100) : 0;
-
-    
-    // INSIGHT 1: KEPATUHAN PEMBAYARAN OPZ (Reused variables compliantOPZCount & pctCompliant)
+    // INSIGHT 1: KEPATUHAN PEMBAYARAN INVOICE
+    const pctCompliant = wajib > 0 ? Math.round((lunas / wajib) * 100) : 0;
     const i1v = document.getElementById('insight1-value');
     const i1d = document.getElementById('insight1-desc');
-    if (i1v) i1v.textContent = `${pctCompliant}% Sesuai`;
+    if (i1v) i1v.textContent = `${pctCompliant}% Terbayar`;
     if (i1d) {
       if (activeMonthIdx === 'all') {
-        i1d.innerHTML = `Sebanyak <strong>${compliantOPZCount} OPZ</strong> telah memenuhi kewajiban iuran dengan status Sesuai dari total <strong>${totalOPZ} OPZ</strong> anggota.`;
+        i1d.innerHTML = `Sebanyak <strong>${lunas} invoice</strong> telah terbayar dari total kewajiban <strong>${wajib} invoice</strong> sepanjang tahun.`;
       } else {
-        i1d.innerHTML = `Sebanyak <strong>${compliantOPZCount} OPZ</strong> lunas pada bulan ${MONTHS[activeMonthIdx]} dari total <strong>${totalOPZ} OPZ</strong> anggota.`;
+        i1d.innerHTML = `Sebanyak <strong>${lunas} invoice</strong> telah terbayar dari total kewajiban <strong>${wajib} invoice</strong> pada bulan ${MONTHS[activeMonthIdx]}.`;
       }
     }
 
@@ -552,7 +540,6 @@ async function initDashboard() {
     if (dashboardContent) dashboardContent.style.display = 'block';
 
     // Set default tab explicitly
-    window.switchTab('pemasukan');
 
   } catch (err) {
     if (loadingState) {
