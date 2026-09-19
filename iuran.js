@@ -229,7 +229,7 @@ function updateKPIs() {
     
     if (bannerTitle) {
       if (activeMonthIdx === 'all') {
-        bannerTitle.textContent = `🟢 ${compliantOPZCount} LEMBAGA OPZ TELAH SESUAI / LUNAS (${pctCompliant}% DARI TOTAL ${totalOPZ} OPZ)`;
+        bannerTitle.textContent = `🟢 ${compliantOPZCount} LEMBAGA OPZ TELAH SESUAI (${pctCompliant}% DARI TOTAL ${totalOPZ} OPZ)`;
       } else {
         bannerTitle.textContent = `🟢 ${compliantOPZCount} LEMBAGA OPZ LUNAS DI BULAN ${MONTHS[activeMonthIdx].toUpperCase()} (${pctCompliant}% DARI TOTAL ${totalOPZ} OPZ)`;
       }
