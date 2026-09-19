@@ -250,21 +250,28 @@ function updateKPIs() {
     if (i2v) i2v.textContent = formatRp(potensiIuran);
     if (i2d) i2d.innerHTML = `Estimasi total iuran yang seharusnya terkumpul berdasarkan ketentuan AD/ART FOZ.`;
 
-    // INSIGHT 3: % REALISASI IURAN
-    const pctRealisasiStr = (potensiIuran > 0 ? ((masuk / potensiIuran) * 100).toFixed(1) : "0").replace('.', ',');
-    const i3v = document.getElementById('insight3-value');
-    const i3d = document.getElementById('insight3-desc');
-    if (i3v) i3v.textContent = `${pctRealisasiStr}% Terkumpul`;
-    if (i3d) {
-      i3d.innerHTML = `Dari total potensi iuran, FOZ telah merealisasikan pendapatan aktual sebesar <strong>${formatRp(masuk)}</strong> (Cash Basis).`;
-    }
-
-    // INSIGHT 4: KINERJA SKALA
+    // COLLECT SKALA STATS (For Insight 3 & 4)
     let skalaStats = {};
     membersData.forEach(m => {
-      if (!skalaStats[m.skala]) skalaStats[m.skala] = { total: 0, patuh: 0 };
+      if (!skalaStats[m.skala]) skalaStats[m.skala] = { total: 0, patuh: 0, masuk: 0, potensi: 0 };
       skalaStats[m.skala].total++;
       
+      let p = 0;
+      let ms = 0;
+      if (activeMonthIdx === 'all') {
+        p = m.iuranSeharusnyaBase * 12;
+        m.monthlyStatus.forEach(st => {
+          if (st.status === 'lunas') ms += m.iuranBulan;
+        });
+      } else {
+        p = m.iuranSeharusnyaBase;
+        m.monthlyStatus.forEach(st => {
+          if (st.trxMonth === activeMonthIdx && st.status === 'lunas') ms += m.iuranBulan;
+        });
+      }
+      skalaStats[m.skala].potensi += p;
+      skalaStats[m.skala].masuk += ms;
+
       let isPatuh = false;
       if (activeMonthIdx === 'all') {
         isPatuh = m.statusKesStr.toLowerCase().includes('sesuai');
@@ -273,6 +280,26 @@ function updateKPIs() {
       }
       if (isPatuh) skalaStats[m.skala].patuh++;
     });
+
+    // INSIGHT 3: % REALISASI IURAN
+    const pctRealisasiStr = (potensiIuran > 0 ? ((masuk / potensiIuran) * 100).toFixed(1) : "0").replace('.', ',');
+    const i3v = document.getElementById('insight3-value');
+    const i3d = document.getElementById('insight3-desc');
+    if (i3v) i3v.textContent = `${pctRealisasiStr}% Terkumpul`;
+    if (i3d) {
+      let nasM = skalaStats['Nasional']?.masuk || 0;
+      let nasP = skalaStats['Nasional']?.potensi || 0;
+      let provM = skalaStats['Provinsi']?.masuk || 0;
+      let provP = skalaStats['Provinsi']?.potensi || 0;
+      let kabM = skalaStats['Kab/Kota']?.masuk || 0;
+      let kabP = skalaStats['Kab/Kota']?.potensi || 0;
+      
+      let nasPctR = nasP > 0 ? ((nasM / nasP) * 100).toFixed(1).replace('.', ',') : "0";
+      let provPctR = provP > 0 ? ((provM / provP) * 100).toFixed(1).replace('.', ',') : "0";
+      let kabPctR = kabP > 0 ? ((kabM / kabP) * 100).toFixed(1).replace('.', ',') : "0";
+      
+      i3d.innerHTML = `Dari potensi keseluruhan, FOZ merealisasikan <strong>${formatRp(masuk)}</strong> (Cash Basis).<br><span style="display:inline-block; margin-top:4px;">Realisasi: Nasional ${nasPctR}% | Provinsi ${provPctR}% | Kab/Kota ${kabPctR}%</span>`;
+    }
 
     let nas = skalaStats['Nasional'] || { total: 0, patuh: 0 };
     let prov = skalaStats['Provinsi'] || { total: 0, patuh: 0 };
