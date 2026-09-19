@@ -370,25 +370,47 @@ function renderTrenChart() {
     }
   }
 
+  const datasets = [
+    {
+      label: chartMode === 'accrual' ? 'Total Iuran Seharusnya (Rp)' : 'Total Pemasukan Riil (Rp)',
+      data: nominal,
+      borderColor: '#3b82f6',
+      backgroundColor: 'rgba(59, 130, 246, 0.1)',
+      borderWidth: 3,
+      pointRadius: 5,
+      pointBackgroundColor: '#fff',
+      pointBorderColor: '#3b82f6',
+      pointBorderWidth: 2,
+      fill: true,
+      tension: 0.3
+    }
+  ];
+
+  if (chartMode === 'cash') {
+    const sum = nominal.reduce((a, b) => a + b, 0);
+    // Hitung rata-rata berdasarkan bulan yang sudah berjalan (YTD) agar tidak drop karena bulan depan masih 0
+    const elapsedMonths = Math.max(1, new Date().getMonth() + 1);
+    const avg = sum / elapsedMonths;
+    const avgData = new Array(12).fill(avg);
+    
+    datasets.push({
+      label: 'Rata-rata Pemasukan (YTD)',
+      data: avgData,
+      borderColor: '#f59e0b', // amber / orange color for average line
+      backgroundColor: 'transparent',
+      borderWidth: 2,
+      borderDash: [6, 4],
+      pointRadius: 0,
+      fill: false,
+      tension: 0
+    });
+  }
+
   chartTren = new Chart(ctx, {
     type: 'line',
     data: {
       labels: MONTHS,
-      datasets: [
-        {
-          label: chartMode === 'accrual' ? 'Total Iuran Seharusnya (Rp)' : 'Total Pemasukan Riil (Rp)',
-          data: nominal,
-          borderColor: '#3b82f6',
-          backgroundColor: 'rgba(59, 130, 246, 0.1)',
-          borderWidth: 3,
-          pointRadius: 5,
-          pointBackgroundColor: '#fff',
-          pointBorderColor: '#3b82f6',
-          pointBorderWidth: 2,
-          fill: true,
-          tension: 0.3
-        }
-      ]
+      datasets: datasets
     },
     options: {
       responsive: true,
