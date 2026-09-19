@@ -218,6 +218,37 @@ function updateKPIs() {
     }
     const kpi2Sub = document.getElementById('kpi2-sub');
     if (kpi2Sub) kpi2Sub.textContent = subText;
+    
+    // UPDATE EXECUTIVE BANNER
+    const totalOPZ = membersData.length;
+    let compliantOPZCount = 0;
+    
+    if (activeMonthIdx === 'all') {
+      compliantOPZCount = membersData.filter(m => m.statusKesStr.toLowerCase().includes('sesuai')).length;
+    } else {
+      compliantOPZCount = membersData.filter(m => m.monthlyStatus[activeMonthIdx] && m.monthlyStatus[activeMonthIdx].status === 'lunas').length;
+    }
+    
+    const pctCompliant = totalOPZ > 0 ? Math.round((compliantOPZCount / totalOPZ) * 100) : 0;
+    const bannerTitle = document.getElementById('insight-title');
+    const bannerSub = document.getElementById('insight-sub');
+    
+    if (bannerTitle) {
+      if (activeMonthIdx === 'all') {
+        bannerTitle.textContent = `🟢 ${compliantOPZCount} LEMBAGA OPZ TELAH SESUAI / LUNAS (${pctCompliant}% DARI TOTAL ${totalOPZ} OPZ)`;
+      } else {
+        bannerTitle.textContent = `🟢 ${compliantOPZCount} LEMBAGA OPZ LUNAS DI BULAN ${MONTHS[activeMonthIdx].toUpperCase()} (${pctCompliant}% DARI TOTAL ${totalOPZ} OPZ)`;
+      }
+    }
+    
+    if (bannerSub) {
+      const opzNunggak = membersData.filter(m => !m.monthlyStatus.some(s => s.status === 'lunas')).length;
+      if (activeMonthIdx === 'all') {
+        bannerSub.textContent = `Total Iuran Terkumpul: ${formatRp(masuk)} | Piutang Iuran Menunggak: ${formatRp(piutang)} (${opzNunggak} Lembaga belum pernah bayar).`;
+      } else {
+        bannerSub.textContent = `Pemasukan Bulan Ini: ${formatRp(masuk)} | Potensi Piutang Bulan Ini: ${formatRp(piutang)}.`;
+      }
+    }
 }
 
 function renderTable() {
