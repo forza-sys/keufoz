@@ -306,7 +306,7 @@ function renderTable() {
       tr.innerHTML = `
         <td>${no++}</td>
         <td style="font-weight:500;">${m.nama}</td>
-        <td>${m.skala}</td>
+        <td><span class="badge-skala">${m.skala}</span></td>
         <td style="font-weight:600; color: #374151;">${periodeText}</td>
         <td>${formatRp(m.iuranBulan)}</td>
         <td style="font-weight:600;">${formatRp(m.iuranSeharusnyaBase)}</td>

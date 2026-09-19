@@ -98,24 +98,37 @@
       margin-top: 20px;
       background: var(--bg-card, #fff);
       border-radius: 14px;
-      border: 1.5px solid var(--border-color, #e5e7eb);
-      padding: 16px;
-      overflow-x: auto;
+      border: 1px solid var(--border-color, #e5e7eb);
+      overflow: hidden;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
     }
     .table-header {
-      display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 20px 20px 16px;
     }
+    .filter-group { display: flex; gap: 8px; }
     .filter-group select, .filter-group input {
-      border: 1.5px solid var(--border-color, #e5e7eb);
-      padding: 6px 12px;
-      border-radius: 6px;
-      font-size: 0.85rem;
+      border: 1px solid #e2e8f0;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.8rem;
       outline: none;
+      color: #334155;
+      background-color: #fff;
     }
     table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-    th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--border-color, #e5e7eb); }
-    th { font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.02em; font-size: 0.75rem; }
-    tr:hover td { background: rgba(0,0,0,0.02); }
+    thead {
+      background-color: #f8fafc;
+      border-top: 1px solid #e2e8f0;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    th, td { padding: 16px 20px; text-align: left; }
+    th { font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.04em; font-size: 0.72rem; }
+    td { border-bottom: 1px solid #f1f5f9; color: #334155; font-size: 0.82rem; }
+    tr:hover td { background: #f8fafc; }
+    .badge-skala {
+      background: #eff6ff; color: #2563eb; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; display: inline-block;
+    }
     .badge {
       padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 0.7rem; display: inline-block;
     }
@@ -260,9 +273,20 @@
 
         <div class="table-container">
           <div class="table-header">
-            <div class="chart-title" style="margin-bottom:0;">Rincian Pembayaran Anggota</div>
+            <div style="display: flex; gap: 14px; align-items: center;">
+              <div style="width: 44px; height: 44px; background: #10b981; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem;">
+                <i class="fas fa-file-excel"></i>
+              </div>
+              <div>
+                <div style="font-size: 1.1rem; font-weight: 700; color: #0f172a; line-height: 1.2;">Rincian Pembayaran Anggota</div>
+                <div style="font-size: 0.8rem; color: #64748b; margin-top: 4px;">Detail tagihan dan riwayat pembayaran seluruh OPZ</div>
+              </div>
+            </div>
             <div class="filter-group">
-              <input type="text" id="search-input" placeholder="Cari lembaga...">
+              <div style="position: relative;">
+                <i class="fas fa-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 0.8rem;"></i>
+                <input type="text" id="search-input" placeholder="Cari lembaga..." style="padding-left: 32px; width: 180px;">
+              </div>
               <select id="month-filter">
                 <!-- Populated dynamically via JS -->
               </select>
