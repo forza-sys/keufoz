@@ -271,6 +271,74 @@
           </div>
         </div>
 
+        <!-- INSIGHT DATA COMPONENT -->
+        <div style="background: #f4fbf7; border-radius: 16px; padding: 24px; margin-top: 24px;">
+          
+          <!-- Header Insight -->
+          <div style="display: flex; align-items: center; gap: 16px;">
+            <div style="width: 48px; height: 48px; background: #10b981; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.4rem; box-shadow: 0 4px 12px rgba(16,185,129,0.3);">
+              <i class="fas fa-lightbulb"></i>
+            </div>
+            <div>
+              <div style="font-size: 1.25rem; font-weight: 800; color: #0f172a; line-height: 1.2;">Insight Data</div>
+              <div style="font-size: 0.85rem; color: #64748b; margin-top: 4px;">Analisis otomatis dari data iuran yang terkumpul</div>
+            </div>
+          </div>
+
+          <!-- 4 Cards Grid -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px;" id="insight-grid">
+            
+            <!-- Card 1: Kepatuhan -->
+            <div style="background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); display: flex; gap: 16px;">
+              <div style="width: 40px; height: 40px; background: #dcfce7; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <i class="fas fa-chart-line" style="color: #16a34a; font-size: 1.1rem;"></i>
+              </div>
+              <div>
+                <div style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">KEPATUHAN PEMBAYARAN OPZ</div>
+                <div style="font-size: 1.4rem; font-weight: 800; color: #16a34a; margin: 4px 0;" id="insight1-value">—</div>
+                <div style="font-size: 0.8rem; color: #64748b; line-height: 1.6;" id="insight1-desc">Memuat data...</div>
+              </div>
+            </div>
+
+            <!-- Card 2: Potensi Iuran -->
+            <div style="background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); display: flex; gap: 16px;">
+              <div style="width: 40px; height: 40px; background: #e0f2fe; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <i class="fas fa-file-contract" style="color: #0284c7; font-size: 1.1rem;"></i>
+              </div>
+              <div>
+                <div style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">TOTAL POTENSI IURAN (AD/ART)</div>
+                <div style="font-size: 1.4rem; font-weight: 800; color: #0284c7; margin: 4px 0;" id="insight2-value">—</div>
+                <div style="font-size: 0.8rem; color: #64748b; line-height: 1.6;" id="insight2-desc">Memuat data...</div>
+              </div>
+            </div>
+
+            <!-- Card 3: % Realisasi -->
+            <div style="background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); display: flex; gap: 16px;">
+              <div style="width: 40px; height: 40px; background: #fef08a; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <i class="fas fa-percentage" style="color: #ca8a04; font-size: 1.1rem;"></i>
+              </div>
+              <div>
+                <div style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">REALISASI VS POTENSI AD/ART</div>
+                <div style="font-size: 1.4rem; font-weight: 800; color: #ca8a04; margin: 4px 0;" id="insight3-value">—</div>
+                <div style="font-size: 0.8rem; color: #64748b; line-height: 1.6;" id="insight3-desc">Memuat data...</div>
+              </div>
+            </div>
+
+            <!-- Card 4: Kinerja Skala -->
+            <div style="background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); display: flex; gap: 16px;">
+              <div style="width: 40px; height: 40px; background: #f3e8ff; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <i class="fas fa-building" style="color: #9333ea; font-size: 1.1rem;"></i>
+              </div>
+              <div>
+                <div style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">KINERJA KEPATUHAN BERDASARKAN SKALA</div>
+                <div style="font-size: 1.1rem; font-weight: 800; color: #9333ea; margin: 4px 0;" id="insight4-value">—</div>
+                <div style="font-size: 0.8rem; color: #64748b; line-height: 1.6;" id="insight4-desc">Memuat data...</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
         <div class="table-container">
           <div class="table-header">
             <div style="display: flex; gap: 14px; align-items: center;">

@@ -243,6 +243,69 @@ function updateKPIs() {
         bannerSub.textContent = `Pemasukan Bulan Ini: ${formatRp(masuk)} | Potensi Piutang Bulan Ini: ${formatRp(piutang)}.`;
       }
     }
+    
+    // INSIGHT 1: KEPATUHAN PEMBAYARAN OPZ (Reused variables compliantOPZCount & pctCompliant)
+    const i1v = document.getElementById('insight1-value');
+    const i1d = document.getElementById('insight1-desc');
+    if (i1v) i1v.textContent = `${pctCompliant}% Sesuai`;
+    if (i1d) {
+      if (activeMonthIdx === 'all') {
+        i1d.innerHTML = `Sebanyak <strong>${compliantOPZCount} OPZ</strong> telah memenuhi kewajiban iuran dengan status Sesuai dari total <strong>${totalOPZ} OPZ</strong> anggota.`;
+      } else {
+        i1d.innerHTML = `Sebanyak <strong>${compliantOPZCount} OPZ</strong> lunas pada bulan ${MONTHS[activeMonthIdx]} dari total <strong>${totalOPZ} OPZ</strong> anggota.`;
+      }
+    }
+
+    // INSIGHT 2: TOTAL POTENSI IURAN (AD/ART)
+    let potensiIuran = 0;
+    membersData.forEach(m => {
+      if (activeMonthIdx === 'all') {
+        potensiIuran += (m.iuranSeharusnyaBase * 12);
+      } else {
+        potensiIuran += m.iuranSeharusnyaBase;
+      }
+    });
+    
+    const i2v = document.getElementById('insight2-value');
+    const i2d = document.getElementById('insight2-desc');
+    if (i2v) i2v.textContent = formatRp(potensiIuran);
+    if (i2d) i2d.innerHTML = `Estimasi total iuran yang seharusnya terkumpul berdasarkan ketentuan AD/ART FOZ.`;
+
+    // INSIGHT 3: % REALISASI IURAN
+    const pctRealisasi = potensiIuran > 0 ? ((masuk / potensiIuran) * 100).toFixed(1) : 0;
+    const i3v = document.getElementById('insight3-value');
+    const i3d = document.getElementById('insight3-desc');
+    if (i3v) i3v.textContent = `${pctRealisasi}% Terkumpul`;
+    if (i3d) {
+      i3d.innerHTML = `Dari total potensi iuran, FOZ telah merealisasikan pendapatan aktual sebesar <strong>${formatRp(masuk)}</strong> (Cash Basis).`;
+    }
+
+    // INSIGHT 4: KINERJA SKALA
+    let skalaStats = {};
+    membersData.forEach(m => {
+      if (!skalaStats[m.skala]) skalaStats[m.skala] = { total: 0, patuh: 0 };
+      skalaStats[m.skala].total++;
+      
+      let isPatuh = false;
+      if (activeMonthIdx === 'all') {
+        isPatuh = m.statusKesStr.toLowerCase().includes('sesuai');
+      } else {
+        isPatuh = m.monthlyStatus[activeMonthIdx] && m.monthlyStatus[activeMonthIdx].status === 'lunas';
+      }
+      if (isPatuh) skalaStats[m.skala].patuh++;
+    });
+
+    let nas = skalaStats['Nasional'] || { total: 0, patuh: 0 };
+    let prov = skalaStats['Provinsi'] || { total: 0, patuh: 0 };
+    let kab = skalaStats['Kab/Kota'] || { total: 0, patuh: 0 };
+    
+    let nasPct = nas.total > 0 ? Math.round((nas.patuh / nas.total) * 100) : 0;
+    let provPct = prov.total > 0 ? Math.round((prov.patuh / prov.total) * 100) : 0;
+    
+    const i4v = document.getElementById('insight4-value');
+    const i4d = document.getElementById('insight4-desc');
+    if (i4v) i4v.innerHTML = `Nasional ${nasPct}% <span style="color:#cbd5e1; margin:0 6px;">|</span> Provinsi ${provPct}%`;
+    if (i4d) i4d.innerHTML = `Tingkat kepatuhan OPZ skala Nasional mencapai <strong>${nasPct}%</strong>, sedangkan tingkat kepatuhan skala Provinsi berada di angka <strong>${provPct}%</strong>.`;
 }
 
 function renderTable() {
