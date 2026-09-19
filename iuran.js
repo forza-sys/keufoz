@@ -205,7 +205,7 @@ function updateKPIs() {
       let nPct = skalaInv['Nasional'].w > 0 ? ((skalaInv['Nasional'].l / skalaInv['Nasional'].w) * 100).toFixed(1).replace('.', ',') : "0";
       let pPct = skalaInv['Provinsi'].w > 0 ? ((skalaInv['Provinsi'].l / skalaInv['Provinsi'].w) * 100).toFixed(1).replace('.', ',') : "0";
       let kPct = skalaInv['Kab/Kota'].w > 0 ? ((skalaInv['Kab/Kota'].l / skalaInv['Kab/Kota'].w) * 100).toFixed(1).replace('.', ',') : "0";
-      kpi3Sub.innerHTML = `<div style="margin-bottom:4px; white-space:nowrap;">${lunas} terbayar <span style="color:#cbd5e1; margin:0 4px;">|</span> ${belum} belum</div><div style="color:#6b7280; font-size:0.65rem; white-space:nowrap;">Nas <strong style="color:#374151;">${nPct}%</strong> <span style="color:#cbd5e1; margin:0 4px;">|</span> Prov <strong style="color:#374151;">${pPct}%</strong> <span style="color:#cbd5e1; margin:0 4px;">|</span> Kab <strong style="color:#374151;">${kPct}%</strong></div>`;
+      kpi3Sub.innerHTML = `<span style="display:block; margin-bottom:4px; white-space:nowrap;">${lunas} terbayar <span style="color:#cbd5e1; margin:0 4px;">|</span> ${belum} belum</span><span style="display:block; color:#6b7280; font-size:0.65rem; white-space:nowrap;">Nas <strong style="color:#374151;">${nPct}%</strong> <span style="color:#cbd5e1; margin:0 4px;">|</span> Prov <strong style="color:#374151;">${pPct}%</strong> <span style="color:#cbd5e1; margin:0 4px;">|</span> Kab <strong style="color:#374151;">${kPct}%</strong></span>`;
     }
     
     // Card 3: Piutang
