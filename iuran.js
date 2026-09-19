@@ -276,94 +276,60 @@ function renderTable() {
       kesesuaianBadge = '-';
     }
 
-    if (activeTab === 'pemasukan') {
-      let dates = [];
-      let trxs = 0;
-      m.monthlyStatus.forEach(st => {
-        if (activeMonthIdx === 'all') {
+    let trxs = 0;
+    let dates = [];
+    let paidMonths = [];
+    let w = 0;
+    
+    m.monthlyStatus.forEach((st, idx) => {
+      if (activeMonthIdx === 'all') {
+        if (st.status !== 'na') w++;
+        if (st.status === 'lunas') {
+          trxs++;
+          if (!dates.includes(st.raw)) dates.push(st.raw);
+          paidMonths.push(MONTHS[idx].substring(0, 3));
+        }
+      } else {
+        if (idx == activeMonthIdx) {
+          if (st.status !== 'na') w++;
           if (st.status === 'lunas') {
             trxs++;
             if (!dates.includes(st.raw)) dates.push(st.raw);
-          }
-        } else {
-          if (st.trxMonth === activeMonthIdx) {
-            trxs++;
-            if (!dates.includes(st.raw)) dates.push(st.raw);
+            paidMonths.push(MONTHS[idx].substring(0, 3));
           }
         }
-      });
-      
-      if (filterSt === 'lunas' && trxs === 0) return;
-      if (filterSt === 'belum' && trxs > 0) return;
-      if (filterSt === 'na') {
-        if (activeMonthIdx === 'all') {
-          const allNa = m.monthlyStatus.every(s => s.status === 'na');
-          if (!allNa) return;
-        } else {
-          const isNa = m.monthlyStatus[activeMonthIdx].status === 'na';
-          if (!isNa) return;
-        }
       }
-      
-      if (trxs > 0) {
-        badgeClass = 'lunas';
-        badgeText = `<i class="fas fa-check"></i> ${trxs} Trx (${dates.slice(0,2).join(', ')}${dates.length > 2 ? ', dst' : ''})`;
-      } else {
-        let isNa = false;
-        if (activeMonthIdx === 'all') {
-          isNa = m.monthlyStatus.every(s => s.status === 'na');
-        } else {
-          isNa = m.monthlyStatus[activeMonthIdx].status === 'na';
-        }
-
-        if (isNa) {
-          badgeClass = 'na';
-          badgeText = '-';
-        } else {
-          badgeClass = 'belum';
-          badgeText = 'Tidak ada transaksi';
-        }
-      }
+    });
+    
+    let isNa = false;
+    if (activeMonthIdx === 'all') {
+      isNa = m.monthlyStatus.every(s => s.status === 'na');
     } else {
-      if (activeMonthIdx === 'all') {
-        let w = 0, l = 0;
-        m.monthlyStatus.forEach(st => {
-          if (st.status !== 'na') w++;
-          if (st.status === 'lunas') l++;
-        });
-        
-        if (filterSt === 'lunas' && l < w) return;
-        if (filterSt === 'belum' && l > 0) return;
-        if (filterSt === 'na' && w > 0) return;
+      isNa = m.monthlyStatus[activeMonthIdx].status === 'na';
+    }
 
-        if (w === 0) {
-          badgeClass = 'na';
-          badgeText = '-';
-        } else if (l === w) {
-          badgeClass = 'lunas';
-          badgeText = `<i class="fas fa-check"></i> Lunas Penuh (${l}/${w})`;
-        } else if (l > 0) {
-          badgeClass = 'belum';
-          badgeText = `<i class="fas fa-exclamation-triangle"></i> Sebagian (${l}/${w})`;
-        } else {
-          badgeClass = 'belum';
-          badgeText = '<i class="fas fa-times"></i> Belum Bayar';
-        }
-      } else {
-        const st = m.monthlyStatus[activeMonthIdx];
-        if (filterSt !== 'all' && st.status !== filterSt) return;
+    if (filterSt === 'lunas' && trxs === 0) return;
+    if (filterSt === 'belum' && trxs > 0) return;
+    if (filterSt === 'na' && !isNa) return;
 
-        if (st.status === 'lunas') {
-          badgeClass = 'lunas';
-          badgeText = '<i class="fas fa-check"></i> Lunas (' + st.raw + ')';
-        } else if (st.status === 'belum') {
-          badgeClass = 'belum';
-          badgeText = '<i class="fas fa-times"></i> Belum Bayar';
-        } else {
-          badgeClass = 'na';
-          badgeText = '-';
-        }
-      }
+    let badgeClass = '';
+    let badgeText = '';
+    let bulanText = '-';
+    let tglText = '-';
+
+    if (isNa) {
+      badgeClass = 'na';
+      badgeText = '-';
+      bulanText = activeMonthIdx !== 'all' ? MONTHS[activeMonthIdx] : '-';
+    } else if (trxs > 0) {
+      badgeClass = 'lunas';
+      badgeText = '<i class="fas fa-check" style="color: #10b981; font-size: 1.2rem;"></i>';
+      bulanText = paidMonths.length > 2 ? paidMonths.slice(0, 2).join(', ') + '...' : paidMonths.join(', ');
+      tglText = dates.length > 2 ? dates.slice(0, 2).join(', ') + '...' : dates.join(', ');
+    } else {
+      badgeClass = 'belum';
+      badgeText = '<i class="fas fa-times" style="color: #ef4444; font-size: 1.2rem;"></i>';
+      bulanText = activeMonthIdx !== 'all' ? MONTHS[activeMonthIdx] : '-';
     }
 
     const tr = document.createElement('tr');
@@ -373,7 +339,9 @@ function renderTable() {
       <td>${m.skala}</td>
       <td>${formatRp(m.iuranBulan)}</td>
       <td style="font-weight:600;">${formatRp(m.iuranSeharusnyaBase)}</td>
-      <td><span class="status-badge ${badgeClass}">${badgeText}</span></td>
+      <td style="text-align:center;">${badgeText}</td>
+      <td style="font-size: 0.85rem; color: #4b5563;">${bulanText}</td>
+      <td style="font-size: 0.85rem; color: #4b5563;">${tglText}</td>
       <td style="text-align:center;">${kesesuaianBadge}</td>
     `;
     tbody.appendChild(tr);
