@@ -54,11 +54,17 @@ function parseCSV(text) {
 
 function parseTransactionMonth(dateStr) {
   if (!dateStr || dateStr === '-') return -1;
-  // expects format dd/mm/yy
+  // expects format dd/mm/yyyy
   const parts = dateStr.split('/');
-  if (parts.length === 3) {
-    const m = parseInt(parts[1], 10);
-    if (!isNaN(m) && m >= 1 && m <= 12) {
+  if (parts.length >= 2) {
+    const d = parseInt(parts[0], 10);
+    let m = parseInt(parts[1], 10);
+    if (!isNaN(d) && !isNaN(m) && m >= 1 && m <= 12) {
+      // Cut-off: tanggal > 21 masuk ke bulan berikutnya
+      if (d > 21) {
+        m = m + 1;
+        if (m > 12) m = 1; // Desember > 21 masuk ke Januari (siklus tahun depan, tapi di chart masuk indeks 0)
+      }
       return m - 1; // 0-indexed month
     }
   }
