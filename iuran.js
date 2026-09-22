@@ -60,10 +60,11 @@ function parseTransactionMonth(dateStr) {
     const d = parseInt(parts[0], 10);
     let m = parseInt(parts[1], 10);
     if (!isNaN(d) && !isNaN(m) && m >= 1 && m <= 12) {
-      // Cut-off: tanggal > 21 masuk ke bulan berikutnya
-      if (d > 21) {
+      // Cut-off: tanggal 21 bulan sebelumnya sampai 20 bulan berjalan
+      // Jika d > 20, maka masuk pembukuan bulan berikutnya
+      if (d > 20) {
         m = m + 1;
-        if (m > 12) m = 1; // Desember > 21 masuk ke Januari (siklus tahun depan, tapi di chart masuk indeks 0)
+        if (m > 12) m = 1; // Desember > 20 masuk ke Januari
       }
       return m - 1; // 0-indexed month
     }
