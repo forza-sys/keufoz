@@ -325,6 +325,7 @@ function renderTable() {
   const tbody = document.querySelector('#rincian-table tbody');
   const searchQ = document.getElementById('search-input').value.toLowerCase();
   const filterSt = document.getElementById('status-filter').value;
+  const filterSkala = document.getElementById('skala-filter')?.value || 'all';
   const filterKes = document.getElementById('kesesuaian-filter')?.value || 'all';
 
   tbody.innerHTML = '';
@@ -332,6 +333,7 @@ function renderTable() {
   let no = 1;
   membersData.forEach(m => {
     if (searchQ && !m.nama.toLowerCase().includes(searchQ)) return;
+    if (filterSkala !== 'all' && m.skala !== filterSkala) return;
     
     let kesesuaianBadge = '';
     const statusLower = m.statusKesStr.toLowerCase();
@@ -557,6 +559,12 @@ async function initDashboard() {
     const selKes = document.getElementById('kesesuaian-filter');
     if (selKes) {
       selKes.addEventListener('change', () => {
+        renderTable();
+      });
+    }
+    const selSkala = document.getElementById('skala-filter');
+    if (selSkala) {
+      selSkala.addEventListener('change', () => {
         renderTable();
       });
     }
