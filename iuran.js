@@ -82,8 +82,15 @@ async function fetchAllData() {
   const csvKes = parseCSV(resKes);
   const csvIuran = parseCSV(resIuran);
 
+  const kesHeaders = csvKes[0] ? csvKes[0].map(h => h.trim().toLowerCase()) : [];
   const kesData = csvKes.slice(1);
   const iuranData = csvIuran.slice(1);
+
+  // Dynamic column finder for Kesepakatan sheet
+  const idxKesNama = kesHeaders.findIndex(h => h.includes('nama'));
+  const idxKesIuranBulan = kesHeaders.findIndex(h => h.includes('iuran') && (h.includes('bulan') || h.includes('/')));
+  const idxKesIuranSeharusnya = kesHeaders.findIndex(h => h.includes('iuran') && h.includes('seharusnya'));
+  const idxKesStatus = kesHeaders.findIndex(h => h.includes('status'));
 
   membersData = [];
 
@@ -95,10 +102,14 @@ async function fetchAllData() {
     const skala = rowIuran[2]?.trim() || '';
     
     // Find matching Kesepakatan row
-    const rowKes = kesData.find(r => r[1] && r[1].trim() === nama);
-    const iuranBulanStr = rowKes && rowKes[3] ? rowKes[3] : '0';
-    const iuranSeharusnyaStr = rowKes && rowKes[8] ? rowKes[8] : '0';
-    const statusKesStr = rowKes && rowKes[9] ? rowKes[9].trim() : '';
+    const rowKes = kesData.find(r => {
+      const rNama = (idxKesNama !== -1 ? r[idxKesNama] : r[1]);
+      return rNama && rNama.trim() === nama;
+    });
+
+    const iuranBulanStr = rowKes ? (idxKesIuranBulan !== -1 ? rowKes[idxKesIuranBulan] : (rowKes[4] || '0')) : '0';
+    const iuranSeharusnyaStr = rowKes ? (idxKesIuranSeharusnya !== -1 ? rowKes[idxKesIuranSeharusnya] : (rowKes[10] || '0')) : '0';
+    const statusKesStr = rowKes ? (idxKesStatus !== -1 ? (rowKes[idxKesStatus] || '').trim() : (rowKes[11] || '').trim()) : '';
     
     let iuranBulan = parseRp(iuranBulanStr);
     const iuranSeharusnyaBase = parseRp(iuranSeharusnyaStr);
