@@ -335,6 +335,9 @@ function updateKPIs() {
     if (i4d) i4d.innerHTML = `Tingkat kepatuhan OPZ skala Nasional mencapai <strong>${nasPct}%</strong>, tingkat kepatuhan skala Provinsi <strong>${provPct}%</strong>, dan skala Kabupaten/Kota <strong>${kabPct}%</strong>.`;
 }
 
+let sortColumn = null;
+let sortDirection = 'asc'; // 'asc' or 'desc'
+
 function renderTable() {
   const tbody = document.querySelector('#rincian-table tbody');
   const searchQ = document.getElementById('search-input').value.toLowerCase();
@@ -344,14 +347,16 @@ function renderTable() {
 
   tbody.innerHTML = '';
   
-  let no = 1;
+  // 1. Gather all row items
+  let rowsToRender = [];
+  let originalIndex = 1;
+
   membersData.forEach(m => {
     if (searchQ && !m.nama.toLowerCase().includes(searchQ)) return;
     if (filterSkala !== 'all' && m.skala !== filterSkala) return;
     
     let kesesuaianBadge = '';
     const statusLower = m.statusKesStr.toLowerCase();
-    
     const isSesuai = statusLower.includes('sesuai');
     
     if (filterKes === 'sesuai' && !isSesuai) return;
@@ -377,8 +382,6 @@ function renderTable() {
       
       // Apply status filter
       if (filterSt !== 'all' && st.status !== filterSt) return;
-      
-      // If view is 'all', maybe don't show 'na' to reduce spam, unless explicitly asked
       if (activeMonthIdx === 'all' && filterSt === 'all' && st.status === 'na') return;
 
       let bayarBadge = '';
@@ -394,21 +397,101 @@ function renderTable() {
         bayarBadge = '<i class="fas fa-times-circle" style="color: #ef4444; font-size: 1.2rem;"></i>';
       }
 
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td style="width: 48px; text-align: center; padding-right: 4px;">${no++}</td>
-        <td style="font-weight:500; padding-left: 4px;">${m.nama}</td>
-        <td><span class="badge-skala">${m.skala}</span></td>
-        <td style="font-weight:600; color: #374151;">${periodeText}</td>
-        <td style="text-align:center;">${bayarBadge}</td>
-        <td style="font-size: 0.85rem; color: #4b5563;">${tglText}</td>
-        <td>${formatRp(m.iuranBulan)}</td>
-        <td style="font-weight:600;">${formatRp(m.iuranSeharusnyaBase)}</td>
-        <td style="text-align:center;">${kesesuaianBadge}</td>
-        <td style="font-size: 0.82rem; color: #64748b; max-width: 220px;">${m.catatanStr || '-'}</td>
-      `;
-      tbody.appendChild(tr);
+      rowsToRender.push({
+        origNo: originalIndex++,
+        nama: m.nama,
+        skala: m.skala,
+        periodeIdx: idx,
+        periodeText: periodeText,
+        bayarStatus: st.status, // 'lunas', 'belum', 'na'
+        bayarBadge: bayarBadge,
+        tglText: tglText,
+        rawDate: st.raw || '',
+        iuranBulan: m.iuranBulan,
+        iuranSeharusnyaBase: m.iuranSeharusnyaBase,
+        isSesuai: isSesuai,
+        kesesuaianBadge: kesesuaianBadge,
+        catatanStr: m.catatanStr || ''
+      });
     });
+  });
+
+  // 2. Sort if sortColumn is active
+  if (sortColumn) {
+    rowsToRender.sort((a, b) => {
+      let vA, vB;
+      switch (sortColumn) {
+        case 'no':
+          vA = a.origNo; vB = b.origNo;
+          break;
+        case 'nama':
+          vA = a.nama.toLowerCase(); vB = b.nama.toLowerCase();
+          break;
+        case 'skala':
+          vA = a.skala.toLowerCase(); vB = b.skala.toLowerCase();
+          break;
+        case 'periode':
+          vA = a.periodeIdx; vB = b.periodeIdx;
+          break;
+        case 'bayar':
+          vA = a.bayarStatus; vB = b.bayarStatus;
+          break;
+        case 'tgl':
+          vA = a.rawDate; vB = b.rawDate;
+          break;
+        case 'iuran':
+          vA = a.iuranBulan; vB = b.iuranBulan;
+          break;
+        case 'seharusnya':
+          vA = a.iuranSeharusnyaBase; vB = b.iuranSeharusnyaBase;
+          break;
+        case 'kesesuaian':
+          vA = a.isSesuai ? 1 : 0; vB = b.isSesuai ? 1 : 0;
+          break;
+        case 'keterangan':
+          vA = a.catatanStr.toLowerCase(); vB = b.catatanStr.toLowerCase();
+          break;
+        default:
+          return 0;
+      }
+      if (vA < vB) return sortDirection === 'asc' ? -1 : 1;
+      if (vA > vB) return sortDirection === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }
+
+  // 3. Update header sort icons
+  document.querySelectorAll('#rincian-table thead th[data-sort]').forEach(th => {
+    const col = th.getAttribute('data-sort');
+    const icon = th.querySelector('i');
+    if (icon) {
+      if (sortColumn === col) {
+        icon.className = sortDirection === 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down';
+        icon.style.color = '#10b981';
+      } else {
+        icon.className = 'fas fa-sort';
+        icon.style.color = '#94a3b8';
+      }
+    }
+  });
+
+  // 4. Render rows to DOM
+  let no = 1;
+  rowsToRender.forEach(row => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="width: 48px; text-align: center; padding-right: 4px;">${no++}</td>
+      <td style="font-weight:500; padding-left: 4px;">${row.nama}</td>
+      <td><span class="badge-skala">${row.skala}</span></td>
+      <td style="font-weight:600; color: #374151;">${row.periodeText}</td>
+      <td style="text-align:center;">${row.bayarBadge}</td>
+      <td style="font-size: 0.85rem; color: #4b5563;">${row.tglText}</td>
+      <td>${formatRp(row.iuranBulan)}</td>
+      <td style="font-weight:600;">${formatRp(row.iuranSeharusnyaBase)}</td>
+      <td style="text-align:center;">${row.kesesuaianBadge}</td>
+      <td style="font-size: 0.82rem; color: #64748b; max-width: 220px;">${row.catatanStr || '-'}</td>
+    `;
+    tbody.appendChild(tr);
   });
 }
 
@@ -583,6 +666,20 @@ async function initDashboard() {
         renderTable();
       });
     }
+
+    // Attach click listeners to table sort headers
+    document.querySelectorAll('#rincian-table thead th[data-sort]').forEach(th => {
+      th.addEventListener('click', () => {
+        const col = th.getAttribute('data-sort');
+        if (sortColumn === col) {
+          sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+          sortColumn = col;
+          sortDirection = 'asc';
+        }
+        renderTable();
+      });
+    });
 
     document.getElementById('chart-accrual-btn')?.addEventListener('click', () => {
       chartMode = 'accrual';

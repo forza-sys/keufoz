@@ -367,16 +367,16 @@
             <table id="rincian-table">
               <thead>
                 <tr>
-                  <th style="width: 48px; text-align: center; padding-right: 4px;">No</th>
-                  <th style="padding-left: 4px;">Nama Lembaga</th>
-                  <th>Skala</th>
-                  <th>Periode</th>
-                  <th style="text-align:center;">Bayar</th>
-                  <th>Tgl Bayar</th>
-                  <th id="th-iuran">Iuran/Bulan</th>
-                  <th>Iuran Seharusnya</th>
-                  <th style="text-align:center;">Kesesuaian</th>
-                  <th>Keterangan</th>
+                  <th data-sort="no" style="width: 48px; text-align: center; padding-right: 4px; cursor: pointer; user-select: none;">No <i class="fas fa-sort" style="font-size: 0.75rem; color: #94a3b8; margin-left: 2px;"></i></th>
+                  <th data-sort="nama" style="padding-left: 4px; cursor: pointer; user-select: none;">Nama Lembaga <i class="fas fa-sort" style="font-size: 0.75rem; color: #94a3b8; margin-left: 2px;"></i></th>
+                  <th data-sort="skala" style="cursor: pointer; user-select: none;">Skala <i class="fas fa-sort" style="font-size: 0.75rem; color: #94a3b8; margin-left: 2px;"></i></th>
+                  <th data-sort="periode" style="cursor: pointer; user-select: none;">Periode <i class="fas fa-sort" style="font-size: 0.75rem; color: #94a3b8; margin-left: 2px;"></i></th>
+                  <th data-sort="bayar" style="text-align:center; cursor: pointer; user-select: none;">Bayar <i class="fas fa-sort" style="font-size: 0.75rem; color: #94a3b8; margin-left: 2px;"></i></th>
+                  <th data-sort="tgl" style="cursor: pointer; user-select: none;">Tgl Bayar <i class="fas fa-sort" style="font-size: 0.75rem; color: #94a3b8; margin-left: 2px;"></i></th>
+                  <th data-sort="iuran" id="th-iuran" style="cursor: pointer; user-select: none;">Iuran/Bulan <i class="fas fa-sort" style="font-size: 0.75rem; color: #94a3b8; margin-left: 2px;"></i></th>
+                  <th data-sort="seharusnya" style="cursor: pointer; user-select: none;">Iuran Seharusnya <i class="fas fa-sort" style="font-size: 0.75rem; color: #94a3b8; margin-left: 2px;"></i></th>
+                  <th data-sort="kesesuaian" style="text-align:center; cursor: pointer; user-select: none;">Kesesuaian <i class="fas fa-sort" style="font-size: 0.75rem; color: #94a3b8; margin-left: 2px;"></i></th>
+                  <th data-sort="keterangan" style="cursor: pointer; user-select: none;">Keterangan <i class="fas fa-sort" style="font-size: 0.75rem; color: #94a3b8; margin-left: 2px;"></i></th>
                 </tr>
               </thead>
               <tbody>
@@ -391,6 +391,6 @@
   </div>
 
   <script src="sidebar.js"></script>
-  <script src="iuran.js?v=26"></script>
+  <script src="iuran.js?v=27"></script>
 </body>
 </html>
