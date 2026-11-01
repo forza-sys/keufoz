@@ -91,6 +91,7 @@ async function fetchAllData() {
   const idxKesIuranBulan = kesHeaders.findIndex(h => h.includes('iuran') && (h.includes('bulan') || h.includes('/')));
   const idxKesIuranSeharusnya = kesHeaders.findIndex(h => h.includes('iuran') && h.includes('seharusnya'));
   const idxKesStatus = kesHeaders.findIndex(h => h.includes('status'));
+  const idxKesCatatan = kesHeaders.findIndex(h => h.includes('catatan') || h.includes('keterangan'));
 
   membersData = [];
 
@@ -110,6 +111,7 @@ async function fetchAllData() {
     const iuranBulanStr = rowKes ? (idxKesIuranBulan !== -1 ? rowKes[idxKesIuranBulan] : (rowKes[4] || '0')) : '0';
     const iuranSeharusnyaStr = rowKes ? (idxKesIuranSeharusnya !== -1 ? rowKes[idxKesIuranSeharusnya] : (rowKes[10] || '0')) : '0';
     const statusKesStr = rowKes ? (idxKesStatus !== -1 ? (rowKes[idxKesStatus] || '').trim() : (rowKes[11] || '').trim()) : '';
+    const catatanStr = rowKes ? (idxKesCatatan !== -1 ? (rowKes[idxKesCatatan] || '').trim() : (rowKes[12] || '').trim()) : '';
     
     let iuranBulan = parseRp(iuranBulanStr);
     const iuranSeharusnyaBase = parseRp(iuranSeharusnyaStr);
@@ -141,6 +143,7 @@ async function fetchAllData() {
       iuranBulan,
       iuranSeharusnyaBase,
       statusKesStr,
+      catatanStr,
       monthlyStatus
     });
   }
@@ -393,8 +396,8 @@ function renderTable() {
 
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td>${no++}</td>
-        <td style="font-weight:500;">${m.nama}</td>
+        <td style="width: 48px; text-align: center; padding-right: 4px;">${no++}</td>
+        <td style="font-weight:500; padding-left: 4px;">${m.nama}</td>
         <td><span class="badge-skala">${m.skala}</span></td>
         <td style="font-weight:600; color: #374151;">${periodeText}</td>
         <td style="text-align:center;">${bayarBadge}</td>
@@ -402,6 +405,7 @@ function renderTable() {
         <td>${formatRp(m.iuranBulan)}</td>
         <td style="font-weight:600;">${formatRp(m.iuranSeharusnyaBase)}</td>
         <td style="text-align:center;">${kesesuaianBadge}</td>
+        <td style="font-size: 0.82rem; color: #64748b; max-width: 220px;">${m.catatanStr || '-'}</td>
       `;
       tbody.appendChild(tr);
     });
