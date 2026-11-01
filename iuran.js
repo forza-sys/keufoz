@@ -378,17 +378,17 @@ function renderTable() {
       // If view is 'all', maybe don't show 'na' to reduce spam, unless explicitly asked
       if (activeMonthIdx === 'all' && filterSt === 'all' && st.status === 'na') return;
 
-      let nominalText = '';
+      let bayarBadge = '';
       let periodeText = MONTHS[idx];
       let tglText = '-';
 
       if (st.status === 'na') {
-        nominalText = '-';
+        bayarBadge = '<span style="color: #9ca3af; font-weight: 600;">-</span>';
       } else if (st.status === 'lunas') {
-        nominalText = `<span style="color: #10b981;">${formatRp(m.iuranBulan)}</span>`;
+        bayarBadge = '<i class="fas fa-check-circle" style="color: #10b981; font-size: 1.2rem;"></i>';
         tglText = st.raw || '-';
       } else {
-        nominalText = `<span style="color: #ef4444;">Rp 0</span>`;
+        bayarBadge = '<i class="fas fa-times-circle" style="color: #ef4444; font-size: 1.2rem;"></i>';
       }
 
       const tr = document.createElement('tr');
@@ -397,10 +397,10 @@ function renderTable() {
         <td style="font-weight:500;">${m.nama}</td>
         <td><span class="badge-skala">${m.skala}</span></td>
         <td style="font-weight:600; color: #374151;">${periodeText}</td>
+        <td style="text-align:center;">${bayarBadge}</td>
+        <td style="font-size: 0.85rem; color: #4b5563;">${tglText}</td>
         <td>${formatRp(m.iuranBulan)}</td>
         <td style="font-weight:600;">${formatRp(m.iuranSeharusnyaBase)}</td>
-        <td style="font-weight:600;">${nominalText}</td>
-        <td style="font-size: 0.85rem; color: #4b5563;">${tglText}</td>
         <td style="text-align:center;">${kesesuaianBadge}</td>
       `;
       tbody.appendChild(tr);
